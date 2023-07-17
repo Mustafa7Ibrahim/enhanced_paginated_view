@@ -4,12 +4,17 @@ Enhanced Paginated View is an unopinionated, extensible, and highly customizable
 
 Designed to feel like part of the Flutter framework.
 
-<img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/master/assets/example.gif?raw=true" alt="Example Project" />
+
+<img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/master/assets/bloc.gif" alt="Example Project" />
+
+| Vanilla      | Bloc         |
+|--------------|--------------|
+| Content Cell | Content Cell |
+
 
 ## Features
 
 - **Pagination Loading**: The package includes a loading widget that is displayed at the bottom of the list when new items are being loaded, giving visual feedback to the user.
-
 - **Automatic Loading**: When the user reaches the end of the list, the package triggers the onLoadMore callback, allowing developers to fetch and load the next page of data.
 - **Max Reached**: The package provides an option to set the isMaxReached flag, which stops the loading widget from showing when the end of the list is reached.
 - **Header Widget**: Developers can add a header widget at the top of the list to display additional information or custom UI elements.

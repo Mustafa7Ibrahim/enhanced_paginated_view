@@ -25,61 +25,57 @@ class _BlocViewState extends State<BlocView> {
               case PaginatedLoading():
                 return const Center(child: CircularProgressIndicator());
               case PaginatedLoaded():
-                return ListOfData(
-                  listOfData: state.listOfData,
-                  isLoading: state.isLoading,
-                  isMaxReached: state.isMaxReached,
+                return SafeArea(
+                  child: EnhancedPaginatedView<int>(
+                    listOfData: state.listOfData,
+                    isLoadingState: state.isLoading,
+                    isMaxReached: state.isMaxReached,
+                    onLoadMore: (page) => context.read<PaginatedBloc>()
+                      ..add(NewDataEvent(
+                          listOfData: state.listOfData, page: page)),
+                    loadingWidget:
+                        const Center(child: CircularProgressIndicator()),
+                    errorWidget: (page) => Column(
+                      children: [
+                        Center(child: Text(' ${state.error}')),
+                        ElevatedButton(
+                          onPressed: () => context.read<PaginatedBloc>()
+                            ..add(
+                              NewDataEvent(
+                                listOfData: state.listOfData,
+                                page: page,
+                              ),
+                            ),
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                    showErrorWidget: state.error != null,
+                    builder: (physics, items, shrinkWrap) {
+                      return ListView.separated(
+                        // here we must pass the physics, items and shrinkWrap
+                        // that came from the builder function
+                        physics: physics,
+                        shrinkWrap: shrinkWrap,
+                        itemCount: items.length,
+                        separatorBuilder: (BuildContext context, int index) {
+                          return const Divider(
+                            height: 16,
+                          );
+                        },
+                        itemBuilder: (BuildContext context, int index) {
+                          return ListTile(
+                            title: Text('Item ${index + 1}'),
+                            subtitle: Text('Item ${items[index]}'),
+                          );
+                        },
+                      );
+                    },
+                  ),
                 );
             }
           },
         ),
-      ),
-    );
-  }
-}
-
-class ListOfData extends StatelessWidget {
-  const ListOfData({
-    required this.listOfData,
-    required this.isLoading,
-    required this.isMaxReached,
-    super.key,
-  });
-
-  final List<int> listOfData;
-  final bool isMaxReached;
-  final bool isLoading;
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: EnhancedPaginatedView<int>(
-        listOfData: listOfData,
-        isLoadingState: isLoading,
-        isMaxReached: isMaxReached,
-        onLoadMore: (page) => context.read<PaginatedBloc>()
-          ..add(NewDataEvent(listOfData: listOfData, page: page)),
-        loadingWidget: const Center(child: CircularProgressIndicator()),
-        builder: (physics, items, shrinkWrap) {
-          return ListView.separated(
-            // here we must pass the physics, items and shrinkWrap
-            // that came from the builder function
-            physics: physics,
-            shrinkWrap: shrinkWrap,
-            itemCount: items.length,
-            separatorBuilder: (BuildContext context, int index) {
-              return const Divider(
-                height: 16,
-              );
-            },
-            itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                title: Text('Item ${index + 1}'),
-                subtitle: Text('Item ${items[index]}'),
-              );
-            },
-          );
-        },
       ),
     );
   }

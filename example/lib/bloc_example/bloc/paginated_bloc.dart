@@ -7,6 +7,7 @@ part 'paginated_state.dart';
 class PaginatedBloc extends Bloc<PaginatedEvent, PaginatedState> {
   bool _isMaxReached = false;
   final int _maxPageNumber = 5;
+
   PaginatedBloc() : super(PaginatedLoading()) {
     on<PaginatedEvent>((event, emit) {});
 
@@ -41,6 +42,17 @@ class PaginatedBloc extends Bloc<PaginatedEvent, PaginatedState> {
         await Future.delayed(
           const Duration(seconds: 2),
           () {
+            if (event.page == 3) {
+              emit(
+                PaginatedLoaded(
+                  listOfData: event.listOfData,
+                  isMaxReached: _isMaxReached,
+                  isLoading: false,
+                  error: 'Error',
+                ),
+              );
+              return;
+            }
             _isMaxReached = _maxPageNumber <= event.page;
             event.listOfData.addAll(
               List<int>.generate(10, (index) => index + 1),

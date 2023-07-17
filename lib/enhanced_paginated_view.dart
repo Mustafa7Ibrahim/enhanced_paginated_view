@@ -13,8 +13,10 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
     required this.isMaxReached,
     required this.listOfData,
     required this.builder,
-    this.header = const SizedBox(),
-    this.emptyWidget = const SizedBox(),
+    this.header,
+    this.emptyWidget,
+    required this.errorWidget,
+    this.showErrorWidget = false,
     super.key,
   });
 
@@ -56,12 +58,22 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
   /// [header] is a list of widgets that will be shown
   /// at the top of the list
   /// this list is not required
-  final Widget header;
+  final Widget? header;
 
   /// [emptyWidget] is a list of widgets that will be shown
   /// when the list is empty
   /// this list is not required
-  final Widget emptyWidget;
+  final Widget? emptyWidget;
+
+  /// [errorWidget] is a widget that will be shown
+  /// when an error occurs during data loading.
+  /// This widget is optional and can be null.
+  final Widget Function(int page) errorWidget;
+
+  /// [showErrorWidget] is a boolean that will be used
+  /// to control the error widget
+  /// this boolean will be set to true when an error occurs
+  final bool showErrorWidget;
 
   /// [builder] is a function that will be used to build the widget
   /// wither it is a [ListView] or a [GridView] or any other widget
@@ -95,6 +107,7 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
   void scrollListener() {
     if (widget.isMaxReached) return;
     if (widget.isLoadingState) return;
+    if (widget.showErrorWidget) return;
     if (scrollController.offset >= scrollController.position.maxScrollExtent &&
         !scrollController.position.outOfRange) {
       loadMore();
@@ -119,15 +132,19 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
       controller: scrollController,
       child: Column(
         children: [
-          widget.header,
+          widget.header ?? const SizedBox(),
           Visibility(
             visible: widget.listOfData.isNotEmpty,
-            replacement: widget.emptyWidget,
+            replacement: widget.emptyWidget ?? const SizedBox(),
             child: widget.builder(
               const NeverScrollableScrollPhysics(),
               widget.listOfData,
               true,
             ),
+          ),
+          Visibility(
+            visible: widget.showErrorWidget,
+            child: widget.errorWidget(page),
           ),
           Padding(
             padding: const EdgeInsets.all(16),

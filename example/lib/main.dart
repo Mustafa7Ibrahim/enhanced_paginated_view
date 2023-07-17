@@ -66,6 +66,19 @@ class _VanillaViewState extends State<VanillaView> {
           isMaxReached: isMaxReached,
           onLoadMore: loadMore,
           loadingWidget: const Center(child: CircularProgressIndicator()),
+          showErrorWidget: false,
+          errorWidget: (page) => Center(
+            child: Column(
+              children: [
+                const Text('No items found'),
+                ElevatedButton(
+                  onPressed: () => loadMore(page),
+                  child: const Text('Reload'),
+                )
+              ],
+            ),
+          ),
+          emptyWidget: const Center(child: Text('No items found')),
           header: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
