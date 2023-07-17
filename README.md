@@ -4,7 +4,7 @@ Enhanced Paginated View is an unopinionated, extensible, and highly customizable
 
 Designed to feel like part of the Flutter framework.
 
-<img src="https://raw.githubusercontent.com/EdsonBueno/infinite_scroll_pagination/master/docs/assets/demo.gif" alt="Example Project" />
+<img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/master/assets/example.gif?raw=true" alt="Example Project" />
 
 ## Features
 
