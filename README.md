@@ -5,11 +5,10 @@ Enhanced Paginated View is an unopinionated, extensible, and highly customizable
 Designed to feel like part of the Flutter framework.
 
 
-<img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/master/assets/bloc.gif" alt="Example Project" />
 
-| Vanilla      | Bloc         |
-|--------------|--------------|
-| Content Cell | Content Cell |
+| Vanilla                                                                                                                             | Bloc         |
+|-------------------------------------------------------------------------------------------------------------------------------------|--------------|
+| <img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/master/assets/vanilla.gif?raw=true" alt="bloc Project" /> | <img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/master/assets/bloc.gif?raw=true" alt="bloc Project" />|
 
 
 ## Features
