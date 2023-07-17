@@ -30,7 +30,7 @@ class VanillaView extends StatefulWidget {
 class _VanillaViewState extends State<VanillaView> {
   final initList = List<int>.generate(10, (int index) => index);
   bool isLoading = false;
-  final maxItems = 50;
+  final maxItems = 30;
   bool isMaxReached = false;
 
   Future<void> loadMore(int page) async {
@@ -66,28 +66,26 @@ class _VanillaViewState extends State<VanillaView> {
           isMaxReached: isMaxReached,
           onLoadMore: loadMore,
           loadingWidget: const Center(child: CircularProgressIndicator()),
-          header: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Text(
-                    'Header',
-                    style: Theme.of(context).textTheme.headlineLarge,
-                  ),
-                  const SizedBox(height: 16),
-                  OutlinedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const BlocView(),
-                        ),
-                      );
-                    },
-                    child: const Text('Bloc Example'),
-                  ),
-                ],
-              ),
+          header: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Text(
+                  'Header',
+                  style: Theme.of(context).textTheme.headlineLarge,
+                ),
+                const SizedBox(height: 16),
+                OutlinedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const BlocView(),
+                      ),
+                    );
+                  },
+                  child: const Text('Bloc Example'),
+                ),
+              ],
             ),
           ),
           builder: (physics, items, shrinkWrap) {
