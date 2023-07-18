@@ -132,7 +132,10 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
       controller: scrollController,
       child: Column(
         children: [
-          widget.header ?? const SizedBox(),
+          Visibility(
+            visible: widget.header != null,
+            child: widget.header ?? const SizedBox(),
+          ),
           Visibility(
             visible: widget.listOfData.isNotEmpty,
             replacement: widget.emptyWidget ?? const SizedBox(),
@@ -146,12 +149,9 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
             visible: widget.showErrorWidget,
             child: widget.errorWidget(page),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Visibility(
-              visible: widget.isLoadingState,
-              child: widget.loadingWidget,
-            ),
+          Visibility(
+            visible: widget.isLoadingState,
+            child: widget.loadingWidget,
           ),
         ],
       ),
