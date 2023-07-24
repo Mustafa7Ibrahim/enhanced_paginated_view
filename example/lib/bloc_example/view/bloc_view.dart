@@ -51,7 +51,7 @@ class _BlocViewState extends State<BlocView> {
                       ],
                     ),
                     showErrorWidget: state.error != null,
-                    builder: (physics, items, shrinkWrap) {
+                    builder: (physics, items, shrinkWrap, chatMode) {
                       return ListView.separated(
                         // here we must pass the physics, items and shrinkWrap
                         // that came from the builder function

@@ -66,6 +66,10 @@ class _VanillaViewState extends State<VanillaView> {
           isMaxReached: isMaxReached,
           onLoadMore: loadMore,
           loadingWidget: const Center(child: CircularProgressIndicator()),
+
+          /// [showErrorWidget] is a boolean that will be used
+          /// to control the error widget
+          /// this boolean will be set to true when an error occurs
           showErrorWidget: false,
           errorWidget: (page) => Center(
             child: Column(
@@ -101,10 +105,17 @@ class _VanillaViewState extends State<VanillaView> {
               ],
             ),
           ),
-          builder: (physics, items, shrinkWrap) {
+
+          /// the `reverse` parameter is a boolean that will be used
+          /// to reverse the list and its children
+          /// it code be handy when you are building a chat app for example
+          /// and you want to reverse the list to show the latest messages
+          reverse: false,
+          builder: (physics, items, shrinkWrap, chatMode) {
             return ListView.separated(
               // here we must pass the physics, items and shrinkWrap
               // that came from the builder function
+              reverse: chatMode,
               physics: physics,
               shrinkWrap: shrinkWrap,
               itemCount: items.length,

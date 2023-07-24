@@ -94,7 +94,7 @@ class VanillaView extends StatefulWidget {
 class _VanillaViewState extends State<VanillaView> {
   final initList = List<int>.generate(10, (int index) => index);
   bool isLoading = false;
-  final maxItems = 50;
+  final maxItems = 30;
   bool isMaxReached = false;
 
   Future<void> loadMore(int page) async {
@@ -130,34 +130,56 @@ class _VanillaViewState extends State<VanillaView> {
           isMaxReached: isMaxReached,
           onLoadMore: loadMore,
           loadingWidget: const Center(child: CircularProgressIndicator()),
-          header: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Text(
-                    'Header',
-                    style: Theme.of(context).textTheme.headlineLarge,
-                  ),
-                  const SizedBox(height: 16),
-                  OutlinedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const BlocView(),
-                        ),
-                      );
-                    },
-                    child: const Text('Bloc Example'),
-                  ),
-                ],
-              ),
+
+          /// [showErrorWidget] is a boolean that will be used
+          /// to control the error widget
+          /// this boolean will be set to true when an error occurs
+          showErrorWidget: false,
+          errorWidget: (page) => Center(
+            child: Column(
+              children: [
+                const Text('No items found'),
+                ElevatedButton(
+                  onPressed: () => loadMore(page),
+                  child: const Text('Reload'),
+                )
+              ],
             ),
           ),
-          builder: (physics, items, shrinkWrap) {
+          emptyWidget: const Center(child: Text('No items found')),
+          header: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Text(
+                  'Header',
+                  style: Theme.of(context).textTheme.headlineLarge,
+                ),
+                const SizedBox(height: 16),
+                OutlinedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const BlocView(),
+                      ),
+                    );
+                  },
+                  child: const Text('Bloc Example'),
+                ),
+              ],
+            ),
+          ),
+
+          /// the `reverse` parameter is a boolean that will be used
+          /// to reverse the list and its children
+          /// it code be handy when you are building a chat app for example
+          /// and you want to reverse the list to show the latest messages
+          reverse: false,
+          builder: (physics, items, shrinkWrap, chatMode) {
             return ListView.separated(
               // here we must pass the physics, items and shrinkWrap
               // that came from the builder function
+              reverse: chatMode,
               physics: physics,
               shrinkWrap: shrinkWrap,
               itemCount: items.length,

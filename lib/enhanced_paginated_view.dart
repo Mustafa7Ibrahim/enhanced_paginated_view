@@ -2,20 +2,21 @@ library enhanced_paginated_view;
 
 import 'package:flutter/material.dart';
 
-/// this is the load more widget
+/// this is the EnhancedPaginatedView widget
 /// the T is the type of the items that will be loaded
 class EnhancedPaginatedView<T> extends StatefulWidget {
   /// this is the load more widget constructor
   const EnhancedPaginatedView({
-    required this.loadingWidget,
-    required this.onLoadMore,
     required this.isLoadingState,
     required this.isMaxReached,
     required this.listOfData,
+    required this.onLoadMore,
+    required this.loadingWidget,
+    required this.errorWidget,
     required this.builder,
+    this.reverse = false,
     this.header,
     this.emptyWidget,
-    required this.errorWidget,
     this.showErrorWidget = false,
     super.key,
   });
@@ -75,19 +76,39 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
   /// this boolean will be set to true when an error occurs
   final bool showErrorWidget;
 
+  /// [reverse] is a boolean that will be used
+  /// to reverse the list and its children
+  final bool reverse;
+
   /// [builder] is a function that will be used to build the widget
   /// wither it is a [ListView] or a [GridView] or any other widget
-  /// the *physics* parameter is the physics that will be used
+  ///
+  /// the `physics` parameter is the physics that will be used
   /// for the widget to control the scrolling behavior of the widget
   /// by default the physics will be [NeverScrollableScrollPhysics]
   /// to prevent the widget from scrolling
   /// this parameter is required
-  /// the *items* parameter is the list of items that will be shown
+  ///
+  /// the `items` parameter is the list of items that will be shown
   /// in the widget
+  /// this parameter is required
+  ///
+  /// the `shrinkWrap` parameter is a boolean that will be used
+  /// to control the shrinkWrap property of the widget
+  /// by default the shrinkWrap will be true
+  /// this parameter is required
+  ///
+  /// the `reverse` parameter is a boolean that will be used
+  /// to reverse the list and its children
+  /// it code be handy when you are building a chat app for example
+  /// and you want to reverse the list to show the latest messages
+  /// at the bottom of the list
+  /// this parameter is required
   final Widget Function(
     ScrollPhysics physics,
     List<T> items,
     bool shrinkWrap,
+    bool reverse,
   ) builder;
 
   @override
@@ -129,12 +150,29 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      reverse: widget.reverse,
       controller: scrollController,
       child: Column(
         children: [
           Visibility(
-            visible: widget.header != null,
-            child: widget.header ?? const SizedBox(),
+            visible: widget.reverse,
+            child: Column(children: [
+              Visibility(
+                visible: widget.showErrorWidget,
+                child: widget.errorWidget(page),
+              ),
+              Visibility(
+                visible: widget.isLoadingState,
+                child: widget.loadingWidget,
+              ),
+            ]),
+          ),
+          Visibility(
+            visible: !widget.reverse,
+            child: Visibility(
+              visible: widget.header != null,
+              child: widget.header ?? const SizedBox(),
+            ),
           ),
           Visibility(
             visible: widget.listOfData.isNotEmpty,
@@ -143,15 +181,28 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
               const NeverScrollableScrollPhysics(),
               widget.listOfData,
               true,
+              widget.reverse,
             ),
           ),
           Visibility(
-            visible: widget.showErrorWidget,
-            child: widget.errorWidget(page),
+            visible: widget.reverse,
+            child: Visibility(
+              visible: widget.header != null,
+              child: widget.header ?? const SizedBox(),
+            ),
           ),
           Visibility(
-            visible: widget.isLoadingState,
-            child: widget.loadingWidget,
+            visible: !widget.reverse,
+            child: Column(children: [
+              Visibility(
+                visible: widget.showErrorWidget,
+                child: widget.errorWidget(page),
+              ),
+              Visibility(
+                visible: widget.isLoadingState,
+                child: widget.loadingWidget,
+              ),
+            ]),
           ),
         ],
       ),
