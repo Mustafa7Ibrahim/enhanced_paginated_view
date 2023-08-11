@@ -1,13 +1,4 @@
-include: package:very_good_analysis/analysis_options.yaml
+include: package:flutter_lints/flutter.yaml
 
-analyzer:
-  exclude:
-    - test/.test_coverage.dart
-    - lib/generated_plugin_registrant.dart
-    - lib/**.freezed.dart
-    - lib/**.g.dart
-    - lib/**.gr.dart
-
-linter:
-  rules:
-    sort_pub_dependencies: false
+# Additional information about this file can be found at
+# https://dart.dev/guides/language/analysis-options

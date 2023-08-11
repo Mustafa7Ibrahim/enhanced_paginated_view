@@ -62,7 +62,7 @@ class _VanillaViewState extends State<VanillaView> {
       body: SafeArea(
         child: EnhancedPaginatedView<int>(
           listOfData: initList,
-          isLoadingState: isLoading,
+          showLoading: isLoading,
           isMaxReached: isMaxReached,
           onLoadMore: loadMore,
           loadingWidget: const Center(child: CircularProgressIndicator()),
@@ -70,7 +70,7 @@ class _VanillaViewState extends State<VanillaView> {
           /// [showErrorWidget] is a boolean that will be used
           /// to control the error widget
           /// this boolean will be set to true when an error occurs
-          showErrorWidget: false,
+          showError: false,
           errorWidget: (page) => Center(
             child: Column(
               children: [
@@ -82,7 +82,7 @@ class _VanillaViewState extends State<VanillaView> {
               ],
             ),
           ),
-          emptyWidget: const Center(child: Text('No items found')),
+          emptyView: const Center(child: Text('No items found')),
           header: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(

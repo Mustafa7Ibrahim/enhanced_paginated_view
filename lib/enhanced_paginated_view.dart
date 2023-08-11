@@ -8,50 +8,60 @@ import 'package:flutter/material.dart';
 class EnhancedPaginatedView<T> extends StatefulWidget {
   /// this is the load more widget constructor
   const EnhancedPaginatedView({
-    required this.isLoadingState,
-    required this.isMaxReached,
     required this.listOfData,
-    required this.onLoadMore,
     required this.loadingWidget,
     required this.errorWidget,
+    required this.onLoadMore,
     required this.builder,
+    this.showLoading = false,
+    this.isMaxReached = false,
     this.reverse = false,
+    this.showError = false,
     this.header,
-    this.emptyWidget,
-    this.showErrorWidget = false,
+    this.emptyView,
     super.key,
   });
 
-  /// the loading widget that will be shown when loading
-  /// new items from the server or any other source
-  /// this widget will be shown at the bottom of the list
-  /// and will be removed when the new items are loaded
-  /// and the list is rebuilt
-  /// this widget will be shown only if [isLoadingState] is true
-  /// and [isMaxReached] is false
-  /// this widget is required
-  /// this widget is not nullable
-  final Widget loadingWidget;
+  /// [isMaxReached] is a boolean that will be used
+  /// to control the loading widget
+  /// this boolean will be set to true when the list reaches the end
+  final bool isMaxReached;
 
-  /// [onLoadMore] is a function that will be called when
-  /// the user reaches the end of the list
-  /// this function will be called only if [isMaxReached] is false
-  /// this function is required
-  final void Function(int) onLoadMore;
-
-  /// [isLoadingState] is a [ValueNotifier] that will be used
+  /// [showLoading] is a [ValueNotifier] that will be used
   /// to control the loading widget
   /// this [ValueNotifier] will be set to true when the user
   /// reaches the end of the list and [onLoadMore] is called
   /// and will be set to false when the new items are loaded
   /// and the list is rebuilt
   /// this [ValueNotifier] is required
-  final bool isLoadingState;
+  final bool showLoading;
 
-  /// [isMaxReached] is a boolean that will be used
-  /// to control the loading widget
-  /// this boolean will be set to true when the list reaches the end
-  final bool isMaxReached;
+  /// the loading widget that will be shown when loading
+  /// new items from the server or any other source
+  /// this widget will be shown at the bottom of the list
+  /// and will be removed when the new items are loaded
+  /// and the list is rebuilt
+  /// this widget will be shown only if [showLoading] is true
+  /// and [isMaxReached] is false
+  /// this widget is required
+  /// this widget is not nullable
+  final Widget loadingWidget;
+
+  /// [showError] is a boolean that will be used
+  /// to control the error widget
+  /// this boolean will be set to true when an error occurs
+  final bool showError;
+
+  /// [errorWidget] is a widget that will be shown
+  /// when an error occurs during data loading.
+  /// This widget is optional and can be null.
+  final Widget Function(int page) errorWidget;
+
+  /// [onLoadMore] is a function that will be called when
+  /// the user reaches the end of the list
+  /// this function will be called only if [isMaxReached] is false
+  /// this function is required
+  final void Function(int) onLoadMore;
 
   /// [listOfData] is a list of items that will be added to the list
   /// this list is required
@@ -62,20 +72,10 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
   /// this list is not required
   final Widget? header;
 
-  /// [emptyWidget] is a list of widgets that will be shown
+  /// [emptyView] is a widgets that will be shown
   /// when the list is empty
   /// this list is not required
-  final Widget? emptyWidget;
-
-  /// [errorWidget] is a widget that will be shown
-  /// when an error occurs during data loading.
-  /// This widget is optional and can be null.
-  final Widget Function(int page) errorWidget;
-
-  /// [showErrorWidget] is a boolean that will be used
-  /// to control the error widget
-  /// this boolean will be set to true when an error occurs
-  final bool showErrorWidget;
+  final Widget? emptyView;
 
   /// [reverse] is a boolean that will be used
   /// to reverse the list and its children
@@ -128,8 +128,8 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
 
   void scrollListener() {
     if (widget.isMaxReached) return;
-    if (widget.isLoadingState) return;
-    if (widget.showErrorWidget) return;
+    if (widget.showLoading) return;
+    if (widget.showError) return;
     if (scrollController.offset >= scrollController.position.maxScrollExtent &&
         !scrollController.position.outOfRange) {
       loadMore();
@@ -160,11 +160,11 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
             child: Column(
               children: [
                 Visibility(
-                  visible: widget.showErrorWidget,
+                  visible: widget.showError,
                   child: widget.errorWidget(page),
                 ),
                 Visibility(
-                  visible: widget.isLoadingState,
+                  visible: widget.showLoading,
                   child: widget.loadingWidget,
                 ),
               ],
@@ -179,7 +179,7 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
           ),
           Visibility(
             visible: widget.listOfData.isNotEmpty,
-            replacement: widget.emptyWidget ?? const SizedBox(),
+            replacement: widget.emptyView ?? const SizedBox(),
             child: widget.builder(
               const NeverScrollableScrollPhysics(),
               widget.listOfData,
@@ -199,11 +199,11 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
             child: Column(
               children: [
                 Visibility(
-                  visible: widget.showErrorWidget,
+                  visible: widget.showError,
                   child: widget.errorWidget(page),
                 ),
                 Visibility(
-                  visible: widget.isLoadingState,
+                  visible: widget.showLoading,
                   child: widget.loadingWidget,
                 ),
               ],
