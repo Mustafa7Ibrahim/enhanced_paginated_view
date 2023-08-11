@@ -35,6 +35,7 @@ class PaginatedBloc extends Bloc<PaginatedEvent, PaginatedState> {
       () {
         if (event.page == 3) {
           emit(state.copyWith(status: PaginatedStatus.error, error: 'Error'));
+          return;
         }
         _isMaxReached = _maxPageNumber <= event.page;
         _listOfData.addAll(List<int>.generate(10, (index) => index + 1));

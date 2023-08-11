@@ -7,14 +7,12 @@ final class PaginatedState extends Equatable {
     this.status = PaginatedStatus.initial,
     this.listOfData = const [],
     this.isMaxReached = false,
-    this.hasError = false,
     this.error,
   });
 
   final PaginatedStatus status;
   final List<int> listOfData;
   final bool isMaxReached;
-  final bool hasError;
   final String? error;
 
   /// copyWith method is used to copy the current state
@@ -23,14 +21,12 @@ final class PaginatedState extends Equatable {
     PaginatedStatus? status,
     List<int>? listOfData,
     bool? isMaxReached,
-    bool? hasError,
     String? error,
   }) {
     return PaginatedState(
       status: status ?? this.status,
       listOfData: listOfData ?? this.listOfData,
       isMaxReached: isMaxReached ?? this.isMaxReached,
-      hasError: hasError ?? this.hasError,
       error: error ?? this.error,
     );
   }
@@ -41,6 +37,5 @@ final class PaginatedState extends Equatable {
         isMaxReached,
         error ?? '',
         status,
-        hasError,
       ];
 }

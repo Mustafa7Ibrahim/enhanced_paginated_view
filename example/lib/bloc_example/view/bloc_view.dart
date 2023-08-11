@@ -26,6 +26,7 @@ class _BlocViewState extends State<BlocView> {
               child: EnhancedPaginatedView<int>(
                 listOfData: state.listOfData,
                 isLoadingState: state.status == PaginatedStatus.loading,
+                showErrorWidget: state.status == PaginatedStatus.error,
                 isMaxReached: state.isMaxReached,
                 onLoadMore: (page) {
                   context.read<PaginatedBloc>().add(FetchDataEvent(page: page));
@@ -46,7 +47,6 @@ class _BlocViewState extends State<BlocView> {
                     ),
                   ],
                 ),
-                showErrorWidget: state.hasError,
                 builder: (physics, items, shrinkWrap, chatMode) {
                   return ListView.separated(
                     // here we must pass the physics, items and shrinkWrap
