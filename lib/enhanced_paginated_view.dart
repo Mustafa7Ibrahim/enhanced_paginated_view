@@ -1,3 +1,4 @@
+/// this is the enhanced_paginated_view library
 library enhanced_paginated_view;
 
 import 'package:flutter/material.dart';
@@ -120,7 +121,7 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
   final ScrollController scrollController = ScrollController();
   int page = 1;
 
-  void loadMore() async {
+  void loadMore() {
     page++;
     widget.onLoadMore(page);
   }
@@ -156,16 +157,18 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
         children: [
           Visibility(
             visible: widget.reverse,
-            child: Column(children: [
-              Visibility(
-                visible: widget.showErrorWidget,
-                child: widget.errorWidget(page),
-              ),
-              Visibility(
-                visible: widget.isLoadingState,
-                child: widget.loadingWidget,
-              ),
-            ]),
+            child: Column(
+              children: [
+                Visibility(
+                  visible: widget.showErrorWidget,
+                  child: widget.errorWidget(page),
+                ),
+                Visibility(
+                  visible: widget.isLoadingState,
+                  child: widget.loadingWidget,
+                ),
+              ],
+            ),
           ),
           Visibility(
             visible: !widget.reverse,
@@ -193,16 +196,18 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
           ),
           Visibility(
             visible: !widget.reverse,
-            child: Column(children: [
-              Visibility(
-                visible: widget.showErrorWidget,
-                child: widget.errorWidget(page),
-              ),
-              Visibility(
-                visible: widget.isLoadingState,
-                child: widget.loadingWidget,
-              ),
-            ]),
+            child: Column(
+              children: [
+                Visibility(
+                  visible: widget.showErrorWidget,
+                  child: widget.errorWidget(page),
+                ),
+                Visibility(
+                  visible: widget.isLoadingState,
+                  child: widget.loadingWidget,
+                ),
+              ],
+            ),
           ),
         ],
       ),

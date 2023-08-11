@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -5,66 +7,43 @@ part 'paginated_event.dart';
 part 'paginated_state.dart';
 
 class PaginatedBloc extends Bloc<PaginatedEvent, PaginatedState> {
-  bool _isMaxReached = false;
-  final int _maxPageNumber = 5;
-
-  PaginatedBloc() : super(PaginatedLoading()) {
-    on<PaginatedEvent>((event, emit) {});
-
-    on<FetchDataEvent>(
+  PaginatedBloc() : super(const PaginatedState()) {
+    on<PaginatedEvent>(
       (event, emit) async {
-        emit(PaginatedLoading());
-        await Future.delayed(
-          const Duration(seconds: 2),
-          () {
-            emit(
-              PaginatedLoaded(
-                listOfData: List<int>.generate(10, (index) => index + 1),
-                isMaxReached: _isMaxReached,
-                isLoading: false,
-              ),
-            );
-          },
-        );
+        switch (event) {
+          case FetchDataEvent():
+            await _fetchData(event, emit);
+        }
       },
     );
+  }
 
-    on<NewDataEvent>(
-      (event, emit) async {
+  bool _isMaxReached = false;
+  final int _maxPageNumber = 5;
+  final List<int> _listOfData = [];
+
+  /// fetch data
+  Future<void> _fetchData(
+    FetchDataEvent event,
+    Emitter<PaginatedState> emit,
+  ) async {
+    if (state.status != PaginatedStatus.initial) {
+      emit(state.copyWith(status: PaginatedStatus.loading));
+    }
+    await Future.delayed(
+      const Duration(seconds: 3),
+      () {
+        if (event.page == 3) {
+          emit(state.copyWith(status: PaginatedStatus.error, error: 'Error'));
+        }
         _isMaxReached = _maxPageNumber <= event.page;
+        _listOfData.addAll(List<int>.generate(10, (index) => index + 1));
         emit(
-          PaginatedLoaded(
-            listOfData: event.listOfData,
+          state.copyWith(
+            status: PaginatedStatus.loaded,
+            listOfData: _listOfData,
             isMaxReached: _isMaxReached,
-            isLoading: true,
           ),
-        );
-        await Future.delayed(
-          const Duration(seconds: 2),
-          () {
-            if (event.page == 3) {
-              emit(
-                PaginatedLoaded(
-                  listOfData: event.listOfData,
-                  isMaxReached: _isMaxReached,
-                  isLoading: false,
-                  error: 'Error',
-                ),
-              );
-              return;
-            }
-            _isMaxReached = _maxPageNumber <= event.page;
-            event.listOfData.addAll(
-              List<int>.generate(10, (index) => index + 1),
-            );
-            emit(
-              PaginatedLoaded(
-                listOfData: event.listOfData,
-                isMaxReached: _isMaxReached,
-                isLoading: false,
-              ),
-            );
-          },
         );
       },
     );

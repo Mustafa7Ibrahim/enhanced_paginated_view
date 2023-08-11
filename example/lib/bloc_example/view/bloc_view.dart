@@ -14,66 +14,59 @@ class _BlocViewState extends State<BlocView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Bloc Example'),
-      ),
+      appBar: AppBar(title: const Text('Bloc Example')),
       body: BlocProvider(
         create: (context) => PaginatedBloc()..add(const FetchDataEvent()),
         child: BlocBuilder<PaginatedBloc, PaginatedState>(
           builder: (context, state) {
-            switch (state) {
-              case PaginatedLoading():
-                return const Center(child: CircularProgressIndicator());
-              case PaginatedLoaded():
-                return SafeArea(
-                  child: EnhancedPaginatedView<int>(
-                    listOfData: state.listOfData,
-                    isLoadingState: state.isLoading,
-                    isMaxReached: state.isMaxReached,
-                    onLoadMore: (page) => context.read<PaginatedBloc>()
-                      ..add(NewDataEvent(
-                          listOfData: state.listOfData, page: page)),
-                    loadingWidget:
-                        const Center(child: CircularProgressIndicator()),
-                    errorWidget: (page) => Column(
-                      children: [
-                        Center(child: Text(' ${state.error}')),
-                        ElevatedButton(
-                          onPressed: () => context.read<PaginatedBloc>()
-                            ..add(
-                              NewDataEvent(
-                                listOfData: state.listOfData,
-                                page: page,
-                              ),
-                            ),
-                          child: const Text('Retry'),
-                        ),
-                      ],
+            if (state.status == PaginatedStatus.initial) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            return SafeArea(
+              child: EnhancedPaginatedView<int>(
+                listOfData: state.listOfData,
+                isLoadingState: state.status == PaginatedStatus.loading,
+                isMaxReached: state.isMaxReached,
+                onLoadMore: (page) {
+                  context.read<PaginatedBloc>().add(FetchDataEvent(page: page));
+                },
+                loadingWidget: const Center(
+                  child: CircularProgressIndicator(),
+                ),
+                errorWidget: (page) => Column(
+                  children: [
+                    Center(child: Text(' ${state.error}')),
+                    ElevatedButton(
+                      onPressed: () {
+                        context
+                            .read<PaginatedBloc>()
+                            .add(FetchDataEvent(page: page));
+                      },
+                      child: const Text('Retry'),
                     ),
-                    showErrorWidget: state.error != null,
-                    builder: (physics, items, shrinkWrap, chatMode) {
-                      return ListView.separated(
-                        // here we must pass the physics, items and shrinkWrap
-                        // that came from the builder function
-                        physics: physics,
-                        shrinkWrap: shrinkWrap,
-                        itemCount: items.length,
-                        separatorBuilder: (BuildContext context, int index) {
-                          return const Divider(
-                            height: 16,
-                          );
-                        },
-                        itemBuilder: (BuildContext context, int index) {
-                          return ListTile(
-                            title: Text('Item ${index + 1}'),
-                            subtitle: Text('Item ${items[index]}'),
-                          );
-                        },
+                  ],
+                ),
+                showErrorWidget: state.hasError,
+                builder: (physics, items, shrinkWrap, chatMode) {
+                  return ListView.separated(
+                    // here we must pass the physics, items and shrinkWrap
+                    // that came from the builder function
+                    physics: physics,
+                    shrinkWrap: shrinkWrap,
+                    itemCount: items.length,
+                    separatorBuilder: (BuildContext context, int index) {
+                      return const Divider(height: 16);
+                    },
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        title: Text('Item ${index + 1}'),
+                        subtitle: Text('Item ${items[index]}'),
                       );
                     },
-                  ),
-                );
-            }
+                  );
+                },
+              ),
+            );
           },
         ),
       ),

@@ -5,19 +5,10 @@ sealed class PaginatedEvent extends Equatable {
 }
 
 class FetchDataEvent extends PaginatedEvent {
-  const FetchDataEvent();
-  @override
-  List<Object> get props => [];
-}
+  const FetchDataEvent({this.page = 1});
 
-class NewDataEvent extends PaginatedEvent {
-  final List<int> listOfData;
   final int page;
 
-  const NewDataEvent({
-    required this.listOfData,
-    required this.page,
-  });
   @override
-  List<Object> get props => [listOfData, page];
+  List<Object> get props => [page];
 }
