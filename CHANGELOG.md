@@ -1,3 +1,6 @@
+## 1.0.3
+- Fix docs.
+
 ## 1.0.2
 
 - Improve the performance of the `onLoadMore` behavior to have three modes.

@@ -6,12 +6,17 @@ Designed to feel like part of the Flutter framework.
 
 | Vanilla                                                                                                   | Bloc                                                                                                   |
 | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| <img src="https://github.com/Mustafa7Ibrahim/blob/master/assets/vanilla.gif?raw=true" alt="bloc Project"> | <img src="https://github.com/Mustafa7Ibrahim/blob/master/assets/bloc.gif?raw=true" alt="bloc Project"> |
+| <img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/master/assets/vanilla.gif?raw=true" alt="bloc Project"> | <img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/master/assets/bloc.gif?raw=true" alt="bloc Project"> |
 
 ## Documentation
 
 - [Basic Documentation](https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/master/README.md)
-- [Bloc Documentation](https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/master/docs/bloc_doc.md)
+- [Bloc Documentation](https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/master/doc/bloc_doc.md)
+
+## Examples
+
+- [Basic example](https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/master/example/lib/main.dart)
+- [bloc example](https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/master/example/lib/bloc_example/view/bloc_view.dart).
 
 
 ## Features
@@ -207,11 +212,6 @@ class _VanillaViewState extends State<VanillaView> {
   }
 }
 ```
-
-## Examples
-
-- [bloc example](https://github.com/Mustafa7Ibrahim/tree/master/example/lib/bloc_example).
-- [vanilla example](https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/master/example/lib/main.dart)
 
 ## License
 
