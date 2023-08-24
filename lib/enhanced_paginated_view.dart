@@ -1,7 +1,7 @@
 /// this is the enhanced_paginated_view library
 library enhanced_paginated_view;
 
-import 'dart:developer';
+export 'src/models/loading_mode.dart';
 
 import 'package:enhanced_paginated_view/src/models/loading_mode.dart';
 import 'package:enhanced_paginated_view/src/widgets/empty_widget.dart';
@@ -159,7 +159,6 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
 
     if (currentScrollOffset >= maxScrollExtent * triggerPercentage &&
         !scrollController.position.outOfRange) {
-      log('load more called');
       loadMore();
     }
   }

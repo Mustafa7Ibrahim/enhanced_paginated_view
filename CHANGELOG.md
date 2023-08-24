@@ -1,9 +1,9 @@
 ## 1.0.2
 
 - Improve the performance of the `onLoadMore` behavior to have three modes.
-  `LoadingMode.loosely`: it will trigger the `onLoadMore` when the user scroll to 50% of the list.
   `LoadingMode.smooth`: is the default mode, it will trigger the `onLoadMore` when the user scroll to 75% of the list.
   `LoadingMode.restrict`: it will trigger the `onLoadMore` when the user scroll to 100% of the list.
+
 - New default `emptyWidget` widget.
 - New default `LoadingWidget` widget.
 - New default `errorWidget` widget.

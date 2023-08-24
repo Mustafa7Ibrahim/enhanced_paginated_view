@@ -109,12 +109,12 @@ class _VanillaViewState extends State<VanillaView> {
           /// to reverse the list and its children
           /// it code be handy when you are building a chat app for example
           /// and you want to reverse the list to show the latest messages
-          reverse: false,
-          builder: (physics, items, shrinkWrap, chatMode) {
+
+          builder: (physics, items, shrinkWrap, reverse) {
             return ListView.separated(
               // here we must pass the physics, items and shrinkWrap
               // that came from the builder function
-              reverse: chatMode,
+              reverse: reverse,
               physics: physics,
               shrinkWrap: shrinkWrap,
               itemCount: items.length,
