@@ -4,19 +4,25 @@ Enhanced Paginated View is an unopinionated, extensible, and highly customizable
 
 Designed to feel like part of the Flutter framework.
 
-| Vanilla | Bloc |
-| ------- | ---- |
+| Vanilla                                                                                                   | Bloc                                                                                                   |
+| --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | <img src="https://github.com/Mustafa7Ibrahim/blob/master/assets/vanilla.gif?raw=true" alt="bloc Project"> | <img src="https://github.com/Mustafa7Ibrahim/blob/master/assets/bloc.gif?raw=true" alt="bloc Project"> |
+
+## Documentation
+
+- [Basic Documentation](https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/master/README.md)
+- [Bloc Documentation](https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/master/docs/bloc_doc.md)
+
 
 ## Features
 
-* **Pagination Loading**: The package includes a loading widget that is displayed at the bottom of the list when new items are being loaded, giving visual feedback to the user.
-* **Automatic Loading**: When the user reaches the end of the list, the package triggers the onLoadMore callback, allowing developers to fetch and load the next page of data.
-* **Max Reached**: The package provides an option to set the isMaxReached flag, which stops the loading widget from showing when the end of the list is reached.
-* **Header Widget**: Developers can add a header widget at the top of the list to display additional information or custom UI elements.
-* **Empty Widget**: When the list is empty, developers can provide a custom widget to display a message or any other desired content.
-* **Customizable Builder Function**: The builder function allows developers to build the widget using their own preferred widget, such as ListView, GridView, or any other widget that fits their requirements.
-Scroll Physics Control: The builder function provides the flexibility to customize the scroll physics for the widget, controlling the scrolling behavior.
+- **Pagination Loading**: The package includes a loading widget that is displayed at the bottom of the list when new items are being loaded, giving visual feedback to the user.
+- **Automatic Loading**: When the user reaches the end of the list, the package triggers the onLoadMore callback, allowing developers to fetch and load the next page of data.
+- **Max Reached**: The package provides an option to set the isMaxReached flag, which stops the loading widget from showing when the end of the list is reached.
+- **Header Widget**: Developers can add a header widget at the top of the list to display additional information or custom UI elements.
+- **Empty Widget**: When the list is empty, developers can provide a custom widget to display a message or any other desired content.
+- **Customizable Builder Function**: The builder function allows developers to build the widget using their own preferred widget, such as ListView, GridView, or any other widget that fits their requirements.
+  Scroll Physics Control: The builder function provides the flexibility to customize the scroll physics for the widget, controlling the scrolling behavior.
 
 ## Usage
 
@@ -24,7 +30,7 @@ Scroll Physics Control: The builder function provides the flexibility to customi
 
 here is the example of the header parameter
 
-``` dart
+```dart
 header: Padding(
   padding: const EdgeInsets.all(8.0),
   child: Column(
@@ -54,11 +60,9 @@ there are 4 things you need to make for the package to work fine
 
 4- `reverse`: this is a boolean that will be used to reverse the list and its children it code be handy when you are building a chat app for example and you want to reverse the list to show the latest messages.
 
-
-
 here is an example for the builder parameter
 
-``` dart
+```dart
 builder: (physics, items, shrinkWrap, reverse) {
   return ListView.separated(
     // here we must pass the physics, items and shrinkWrap
@@ -84,7 +88,7 @@ builder: (physics, items, shrinkWrap, reverse) {
 
 Here is a full example of how to use the package:
 
-``` dart
+```dart
 
 class VanillaView extends StatefulWidget {
   const VanillaView({super.key});
@@ -204,4 +208,37 @@ class _VanillaViewState extends State<VanillaView> {
 }
 ```
 
-For more examples of bloc usage, refer to our [bloc example](https://github.com/Mustafa7Ibrahim/tree/master/example/lib/bloc_example).
+## Examples
+
+- [bloc example](https://github.com/Mustafa7Ibrahim/tree/master/example/lib/bloc_example).
+- [vanilla example](https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/master/example/lib/main.dart)
+
+## License
+
+```
+MIT License
+
+Copyright (c) 2023 Mustafa Ibrahim.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+## Author
+
+- [Mustafa Ibrahim](https://github.com/Mustafa7Ibrahim)
