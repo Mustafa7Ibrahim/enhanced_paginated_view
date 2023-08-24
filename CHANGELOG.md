@@ -1,3 +1,10 @@
+## 1.0.1
+- **BREAKING** : The `isLoadingState` is now `showLoading`.
+- **BREAKING** : The `showErrorWidget` is now `showError`.
+- **BREAKING** : The `emptyWidget` is now `emptyView`.
+- update the bloc example and the docs.
+
+
 ## 1.0.0
 - stable version. 
 - add reverse support. that would be handy when you for example want to show a list of items in reverse order. in a chat app for example.
