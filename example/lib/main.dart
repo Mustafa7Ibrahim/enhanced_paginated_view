@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      title: 'Flutter Demo for enhanced_paginated_view',
+      title: 'Enhanced Paginated View',
       home: VanillaView(),
     );
   }
@@ -82,7 +82,6 @@ class _VanillaViewState extends State<VanillaView> {
               ],
             ),
           ),
-          emptyView: const Center(child: Text('No items found')),
           header: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(

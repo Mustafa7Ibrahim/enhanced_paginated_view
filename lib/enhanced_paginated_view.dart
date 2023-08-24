@@ -1,6 +1,12 @@
 /// this is the enhanced_paginated_view library
 library enhanced_paginated_view;
 
+import 'dart:developer';
+
+import 'package:enhanced_paginated_view/src/models/loading_mode.dart';
+import 'package:enhanced_paginated_view/src/widgets/empty_widget.dart';
+import 'package:enhanced_paginated_view/src/widgets/error_widget.dart';
+import 'package:enhanced_paginated_view/src/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 
 /// this is the EnhancedPaginatedView widget
@@ -9,18 +15,34 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
   /// this is the load more widget constructor
   const EnhancedPaginatedView({
     required this.listOfData,
-    required this.loadingWidget,
-    required this.errorWidget,
     required this.onLoadMore,
     required this.builder,
+    this.loadingMode = LoadingMode.smooth,
+    this.loadingWidget,
+    this.errorWidget,
     this.showLoading = false,
     this.isMaxReached = false,
     this.reverse = false,
     this.showError = false,
+    this.physics,
     this.header,
     this.emptyView,
     super.key,
   });
+
+  /// [physics] is a [ScrollPhysics] that will be used
+  /// to control the scrolling behavior of the widget
+  ///
+  /// the default value is [null]
+  final ScrollPhysics? physics;
+
+  /// [loadingMode] is a [LoadingMode] that will be used
+  /// to control the loading widget
+  /// this [LoadingMode] will be used to determine when
+  /// to call [onLoadMore] function
+  ///
+  /// the default value is [LoadingMode.smooth]
+  final LoadingMode loadingMode;
 
   /// [isMaxReached] is a boolean that will be used
   /// to control the loading widget
@@ -45,7 +67,7 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
   /// and [isMaxReached] is false
   /// this widget is required
   /// this widget is not nullable
-  final Widget loadingWidget;
+  final Widget? loadingWidget;
 
   /// [showError] is a boolean that will be used
   /// to control the error widget
@@ -55,7 +77,7 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
   /// [errorWidget] is a widget that will be shown
   /// when an error occurs during data loading.
   /// This widget is optional and can be null.
-  final Widget Function(int page) errorWidget;
+  final Widget Function(int page)? errorWidget;
 
   /// [onLoadMore] is a function that will be called when
   /// the user reaches the end of the list
@@ -130,8 +152,14 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
     if (widget.isMaxReached) return;
     if (widget.showLoading) return;
     if (widget.showError) return;
-    if (scrollController.offset >= scrollController.position.maxScrollExtent &&
+
+    double maxScrollExtent = scrollController.position.maxScrollExtent;
+    double currentScrollOffset = scrollController.offset;
+    double triggerPercentage = widget.loadingMode.percentage;
+
+    if (currentScrollOffset >= maxScrollExtent * triggerPercentage &&
         !scrollController.position.outOfRange) {
+      log('load more called');
       loadMore();
     }
   }
@@ -153,6 +181,7 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
     return SingleChildScrollView(
       reverse: widget.reverse,
       controller: scrollController,
+      physics: widget.physics,
       child: Column(
         children: [
           Visibility(
@@ -161,11 +190,13 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
               children: [
                 Visibility(
                   visible: widget.showError,
-                  child: widget.errorWidget(page),
+                  child: widget.errorWidget != null
+                      ? widget.errorWidget!(page)
+                      : const SomethingWentWrong(),
                 ),
                 Visibility(
                   visible: widget.showLoading,
-                  child: widget.loadingWidget,
+                  child: widget.loadingWidget ?? const LoadingWidget(),
                 ),
               ],
             ),
@@ -179,7 +210,7 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
           ),
           Visibility(
             visible: widget.listOfData.isNotEmpty,
-            replacement: widget.emptyView ?? const SizedBox(),
+            replacement: widget.emptyView ?? const EmptyWidget(),
             child: widget.builder(
               const NeverScrollableScrollPhysics(),
               widget.listOfData,
@@ -200,11 +231,13 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
               children: [
                 Visibility(
                   visible: widget.showError,
-                  child: widget.errorWidget(page),
+                  child: widget.errorWidget != null
+                      ? widget.errorWidget!(page)
+                      : const SomethingWentWrong(),
                 ),
                 Visibility(
                   visible: widget.showLoading,
-                  child: widget.loadingWidget,
+                  child: widget.loadingWidget ?? const LoadingWidget(),
                 ),
               ],
             ),
