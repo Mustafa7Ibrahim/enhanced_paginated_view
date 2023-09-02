@@ -1,9 +1,8 @@
 /// this is the enhanced_paginated_view library
 library enhanced_paginated_view;
 
-export 'src/models/loading_mode.dart';
+import 'dart:developer';
 
-import 'package:enhanced_paginated_view/src/models/loading_mode.dart';
 import 'package:enhanced_paginated_view/src/widgets/empty_widget.dart';
 import 'package:enhanced_paginated_view/src/widgets/error_widget.dart';
 import 'package:enhanced_paginated_view/src/widgets/loading_widget.dart';
@@ -17,13 +16,12 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
     required this.listOfData,
     required this.onLoadMore,
     required this.builder,
-    this.loadingMode = LoadingMode.smooth,
+    required this.showError,
+    required this.showLoading,
+    required this.isMaxReached,
+    this.reverse = false,
     this.loadingWidget,
     this.errorWidget,
-    this.showLoading = false,
-    this.isMaxReached = false,
-    this.reverse = false,
-    this.showError = false,
     this.physics,
     this.header,
     this.emptyView,
@@ -35,14 +33,6 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
   ///
   /// the default value is [null]
   final ScrollPhysics? physics;
-
-  /// [loadingMode] is a [LoadingMode] that will be used
-  /// to control the loading widget
-  /// this [LoadingMode] will be used to determine when
-  /// to call [onLoadMore] function
-  ///
-  /// the default value is [LoadingMode.smooth]
-  final LoadingMode loadingMode;
 
   /// [isMaxReached] is a boolean that will be used
   /// to control the loading widget
@@ -142,22 +132,33 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
 class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
   final ScrollController scrollController = ScrollController();
   int page = 1;
+  bool isLoading = false;
 
   void loadMore() {
+    if (isLoading) {
+      return; // Ignore if a loading operation is already in progress
+    }
+
+    isLoading = true;
     page++;
+    log('loadMore called from EnhancedPaginatedView with page $page');
     widget.onLoadMore(page);
+    // Use a delayed Future to reset the loading flag after a short delay
+    Future.delayed(const Duration(milliseconds: 500), () {
+      isLoading = false;
+    });
   }
 
   void scrollListener() {
-    if (widget.isMaxReached) return;
-    if (widget.showLoading) return;
-    if (widget.showError) return;
+    if (widget.isMaxReached || widget.showLoading || widget.showError) {
+      return;
+    }
 
     double maxScrollExtent = scrollController.position.maxScrollExtent;
     double currentScrollOffset = scrollController.offset;
-    double triggerPercentage = widget.loadingMode.percentage;
+    double buffer = 90.0;
 
-    if (currentScrollOffset >= maxScrollExtent * triggerPercentage &&
+    if (currentScrollOffset + buffer >= maxScrollExtent &&
         !scrollController.position.outOfRange) {
       loadMore();
     }
@@ -177,72 +178,56 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return ListView(
       reverse: widget.reverse,
       controller: scrollController,
       physics: widget.physics,
-      child: Column(
-        children: [
-          Visibility(
-            visible: widget.reverse,
-            child: Column(
-              children: [
-                Visibility(
-                  visible: widget.showError,
-                  child: widget.errorWidget != null
-                      ? widget.errorWidget!(page)
-                      : const SomethingWentWrong(),
-                ),
-                Visibility(
-                  visible: widget.showLoading,
-                  child: widget.loadingWidget ?? const LoadingWidget(),
-                ),
-              ],
-            ),
+      children: [
+        // if reverse is true then show the loading widget
+        // before the list
+        if (widget.reverse)
+          Column(
+            children: [
+              if (widget.showLoading)
+                widget.loadingWidget ?? const LoadingWidget()
+              else if (widget.showError)
+                widget.errorWidget != null
+                    ? widget.errorWidget!(page)
+                    : const SomethingWentWrong(),
+            ],
           ),
-          Visibility(
-            visible: !widget.reverse,
-            child: Visibility(
-              visible: widget.header != null,
-              child: widget.header ?? const SizedBox(),
-            ),
+
+        // if reverse is true, then show the header before the list
+        if (!widget.reverse)
+          if (widget.header != null) widget.header ?? const SizedBox(),
+
+        // if the list is not empty, then show the list
+        // otherwise show the empty view
+        if (widget.listOfData.isNotEmpty)
+          widget.builder(
+            const NeverScrollableScrollPhysics(),
+            widget.listOfData,
+            true,
+            widget.reverse,
+          )
+        else
+          widget.emptyView ?? const EmptyWidget(),
+
+        // if reverse is true, then show the header after the list
+        if (widget.reverse)
+          if (widget.header != null) widget.header ?? const SizedBox(),
+        if (!widget.reverse)
+          Column(
+            children: [
+              if (widget.showLoading)
+                widget.loadingWidget ?? const LoadingWidget()
+              else if (widget.showError)
+                widget.errorWidget != null
+                    ? widget.errorWidget!(page)
+                    : const SomethingWentWrong(),
+            ],
           ),
-          Visibility(
-            visible: widget.listOfData.isNotEmpty,
-            replacement: widget.emptyView ?? const EmptyWidget(),
-            child: widget.builder(
-              const NeverScrollableScrollPhysics(),
-              widget.listOfData,
-              true,
-              widget.reverse,
-            ),
-          ),
-          Visibility(
-            visible: widget.reverse,
-            child: Visibility(
-              visible: widget.header != null,
-              child: widget.header ?? const SizedBox(),
-            ),
-          ),
-          Visibility(
-            visible: !widget.reverse,
-            child: Column(
-              children: [
-                Visibility(
-                  visible: widget.showError,
-                  child: widget.errorWidget != null
-                      ? widget.errorWidget!(page)
-                      : const SomethingWentWrong(),
-                ),
-                Visibility(
-                  visible: widget.showLoading,
-                  child: widget.loadingWidget ?? const LoadingWidget(),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+      ],
     );
   }
 }

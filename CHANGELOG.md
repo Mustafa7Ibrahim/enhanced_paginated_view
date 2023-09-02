@@ -1,3 +1,7 @@
+## 1.0.4 
+- Improve overall performance. 
+- Get rid of the `LoadingModes` and use a new way to trigger the `onLoadMore` behavior.
+
 ## 1.0.3
 - Fix docs.
 
@@ -29,14 +33,3 @@
 
 - some enhancement.
 
-## 0.0.3
-
-- add error widget.
-
-## 0.0.2
-
-- add some example and readme.
-
-## 0.0.1
-
-- init.

@@ -30,8 +30,9 @@ class VanillaView extends StatefulWidget {
 class _VanillaViewState extends State<VanillaView> {
   final initList = List<int>.generate(10, (int index) => index);
   bool isLoading = false;
-  final maxItems = 30;
+  final maxItems = 100;
   bool isMaxReached = false;
+  bool showError = false;
 
   Future<void> loadMore(int page) async {
     // here we simulate that the list reached the end
@@ -48,6 +49,11 @@ class _VanillaViewState extends State<VanillaView> {
     // we pass the page number to the onLoadMore function
     // that the package provide to load the next page
     setState(() {
+      if (page == 5) {
+        showError = true;
+        isLoading = false;
+        return;
+      }
       initList.addAll(List<int>.generate(10, (int index) => index));
       isLoading = false;
     });
@@ -65,18 +71,20 @@ class _VanillaViewState extends State<VanillaView> {
           showLoading: isLoading,
           isMaxReached: isMaxReached,
           onLoadMore: loadMore,
-          loadingWidget: const Center(child: CircularProgressIndicator()),
 
-          /// [showErrorWidget] is a boolean that will be used
+          /// [showError] is a boolean that will be used
           /// to control the error widget
           /// this boolean will be set to true when an error occurs
-          showError: false,
+          showError: showError,
           errorWidget: (page) => Center(
             child: Column(
               children: [
                 const Text('No items found'),
                 ElevatedButton(
-                  onPressed: () => loadMore(page),
+                  onPressed: () {
+                    showError = false;
+                    loadMore(page);
+                  },
                   child: const Text('Reload'),
                 )
               ],

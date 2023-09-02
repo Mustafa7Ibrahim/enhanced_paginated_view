@@ -31,9 +31,6 @@ class _BlocViewState extends State<BlocView> {
                 onLoadMore: (page) {
                   context.read<PaginatedBloc>().add(FetchDataEvent(page: page));
                 },
-                loadingWidget: const Center(
-                  child: CircularProgressIndicator(),
-                ),
                 errorWidget: (page) => Column(
                   children: [
                     Center(child: Text(' ${state.error}')),
