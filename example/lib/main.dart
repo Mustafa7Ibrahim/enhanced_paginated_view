@@ -28,11 +28,42 @@ class VanillaView extends StatefulWidget {
 }
 
 class _VanillaViewState extends State<VanillaView> {
-  final initList = List<int>.generate(10, (int index) => index);
+  var initList = [
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 4',
+    'Item 5',
+    'Item 6',
+    'Item 7',
+    'Item 8',
+    'Item 9',
+    'Item 10',
+
+    /// here we add a duplicate item
+    'Item 1',
+    'Item 2',
+  ];
   bool isLoading = false;
   final maxItems = 100;
   bool isMaxReached = false;
   bool showError = false;
+  final List<String> items = [
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 4',
+    'Item 5',
+    'Item 6',
+    'Item 7',
+    'Item 8',
+    'Item 9',
+    'Item 10',
+
+    /// here we add a duplicate item
+    'Item 1',
+    'Item 2',
+  ];
 
   Future<void> loadMore(int page) async {
     // here we simulate that the list reached the end
@@ -56,7 +87,8 @@ class _VanillaViewState extends State<VanillaView> {
             isLoading = false;
             return;
           }
-          initList.addAll(List<int>.generate(10, (int index) => index));
+          initList.addAll(items);
+          initList = initList.enhancedDeduplication();
           isLoading = false;
         },
       ),
@@ -77,11 +109,12 @@ class _VanillaViewState extends State<VanillaView> {
         title: const Text('Vanilla Example'),
       ),
       body: SafeArea(
-        child: EnhancedPaginatedView<int>(
+        child: EnhancedPaginatedView(
           listOfData: initList,
           showLoading: isLoading,
           isMaxReached: isMaxReached,
           onLoadMore: loadMore,
+          itemsPerPage: 10,
 
           /// [showError] is a boolean that will be used
           /// to control the error widget
@@ -145,8 +178,8 @@ class _VanillaViewState extends State<VanillaView> {
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
                   onTap: () => removeItem(index),
-                  title: Text('Item ${index + 1}'),
-                  subtitle: Text('Item ${items[index]}'),
+                  title: Text('Item ${items[index]}'),
+                  subtitle: Text('Item ${index + 1}'),
                 );
               },
             );

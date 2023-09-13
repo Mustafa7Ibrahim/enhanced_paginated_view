@@ -25,6 +25,7 @@ class _BlocViewState extends State<BlocView> {
             return SafeArea(
               child: EnhancedPaginatedView<int>(
                 listOfData: state.listOfData,
+                itemsPerPage: 10,
                 showLoading: state.status == PaginatedStatus.loading,
                 showError: state.status == PaginatedStatus.error,
                 isMaxReached: state.isMaxReached,
