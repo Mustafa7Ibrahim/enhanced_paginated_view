@@ -42,20 +42,31 @@ class _VanillaViewState extends State<VanillaView> {
       setState(() => isMaxReached = true);
       return;
     }
-    setState(() => isLoading = true);
+    Future.microtask(() => setState(() => isLoading = true));
     await Future.delayed(const Duration(seconds: 3));
     // here we simulate the loading of new items
     // from the server or any other source
     // we pass the page number to the onLoadMore function
     // that the package provide to load the next page
+    Future.microtask(
+      () => setState(
+        () {
+          if (page == 5) {
+            showError = true;
+            isLoading = false;
+            return;
+          }
+          initList.addAll(List<int>.generate(10, (int index) => index));
+          isLoading = false;
+        },
+      ),
+    );
+  }
+
+  /// remove an item from the list
+  void removeItem(int index) {
     setState(() {
-      if (page == 5) {
-        showError = true;
-        isLoading = false;
-        return;
-      }
-      initList.addAll(List<int>.generate(10, (int index) => index));
-      isLoading = false;
+      initList.removeAt(index);
     });
   }
 
@@ -133,6 +144,7 @@ class _VanillaViewState extends State<VanillaView> {
               },
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
+                  onTap: () => removeItem(index),
                   title: Text('Item ${index + 1}'),
                   subtitle: Text('Item ${items[index]}'),
                 );

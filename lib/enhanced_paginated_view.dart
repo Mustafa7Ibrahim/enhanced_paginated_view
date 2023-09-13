@@ -131,8 +131,11 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
 
 class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
   final ScrollController scrollController = ScrollController();
+  final GlobalKey<State> _widgetKey = GlobalKey();
+
   int page = 1;
   bool isLoading = false;
+  int loadThreshold = 7;
 
   void loadMore() {
     if (isLoading) {
@@ -149,85 +152,112 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
     });
   }
 
-  void scrollListener() {
-    if (widget.isMaxReached || widget.showLoading || widget.showError) {
-      return;
-    }
-
-    double maxScrollExtent = scrollController.position.maxScrollExtent;
-    double currentScrollOffset = scrollController.offset;
-    double buffer = 90.0;
-
-    if (currentScrollOffset + buffer >= maxScrollExtent &&
-        !scrollController.position.outOfRange) {
-      loadMore();
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    scrollController.addListener(scrollListener);
-  }
-
   @override
   void dispose() {
     scrollController.dispose();
     super.dispose();
   }
 
+  void checkAndLoadDataIfNeeded() {
+    if (widget.isMaxReached || widget.showLoading || widget.showError) {
+      return;
+    }
+    if (page > 1) {
+      return;
+    }
+    if (widget.listOfData.length <= loadThreshold) {
+      // Load more data when the list gets shorter than the minimum threshold
+      page = 0;
+      loadMore();
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant EnhancedPaginatedView<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    checkAndLoadDataIfNeeded();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      reverse: widget.reverse,
-      controller: scrollController,
-      physics: widget.physics,
-      children: [
-        // if reverse is true then show the loading widget
-        // before the list
-        if (widget.reverse)
-          Column(
+    return NotificationListener(
+      onNotification: (ScrollNotification scrollInfo) {
+        if (widget.isMaxReached || widget.showLoading || widget.showError) {
+          return false;
+        }
+        if (scrollInfo is ScrollUpdateNotification) {
+          // Check if the last 5 items are visible
+          final lastVisibleIndex = scrollController.position.maxScrollExtent -
+              scrollInfo.metrics.pixels;
+          if (lastVisibleIndex <= 3) {
+            // The last 5 items are visible
+            // You can now take appropriate action
+            loadMore();
+          }
+        }
+        return false;
+      },
+      child: Listener(
+        child: SingleChildScrollView(
+          reverse: widget.reverse,
+          controller: scrollController,
+          physics: widget.physics,
+          child: Column(
             children: [
-              if (widget.showLoading)
-                widget.loadingWidget ?? const LoadingWidget()
-              else if (widget.showError)
-                widget.errorWidget != null
-                    ? widget.errorWidget!(page)
-                    : const SomethingWentWrong(),
+              // if reverse is true then show the loading widget
+              // before the list
+              if (widget.reverse)
+                Column(
+                  children: [
+                    if (widget.showLoading)
+                      widget.loadingWidget ?? const LoadingWidget()
+                    else if (widget.showError)
+                      widget.errorWidget != null
+                          ? widget.errorWidget!(page)
+                          : const SomethingWentWrong(),
+                  ],
+                ),
+
+              // if reverse is true, then show the header before the list
+              if (!widget.reverse)
+                if (widget.header != null) widget.header ?? const SizedBox(),
+
+              // if the list is not empty, then show the list
+              // otherwise show the empty view
+              if (widget.listOfData.isNotEmpty)
+                widget.builder(
+                  const NeverScrollableScrollPhysics(),
+                  widget.listOfData,
+                  true,
+                  widget.reverse,
+                )
+              else
+                widget.emptyView ?? const EmptyWidget(),
+
+              if (!widget.reverse)
+                SizedBox(
+                  key: _widgetKey,
+                  height: 5,
+                ),
+
+              // if reverse is true, then show the header after the list
+              if (widget.reverse)
+                if (widget.header != null) widget.header ?? const SizedBox(),
+              if (!widget.reverse)
+                Column(
+                  children: [
+                    if (widget.showLoading)
+                      widget.loadingWidget ?? const LoadingWidget()
+                    else if (widget.showError)
+                      widget.errorWidget != null
+                          ? widget.errorWidget!(page)
+                          : const SomethingWentWrong(),
+                  ],
+                ),
             ],
           ),
-
-        // if reverse is true, then show the header before the list
-        if (!widget.reverse)
-          if (widget.header != null) widget.header ?? const SizedBox(),
-
-        // if the list is not empty, then show the list
-        // otherwise show the empty view
-        if (widget.listOfData.isNotEmpty)
-          widget.builder(
-            const NeverScrollableScrollPhysics(),
-            widget.listOfData,
-            true,
-            widget.reverse,
-          )
-        else
-          widget.emptyView ?? const EmptyWidget(),
-
-        // if reverse is true, then show the header after the list
-        if (widget.reverse)
-          if (widget.header != null) widget.header ?? const SizedBox(),
-        if (!widget.reverse)
-          Column(
-            children: [
-              if (widget.showLoading)
-                widget.loadingWidget ?? const LoadingWidget()
-              else if (widget.showError)
-                widget.errorWidget != null
-                    ? widget.errorWidget!(page)
-                    : const SomethingWentWrong(),
-            ],
-          ),
-      ],
+        ),
+      ),
     );
   }
 }
