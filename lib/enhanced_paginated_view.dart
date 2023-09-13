@@ -3,6 +3,7 @@ library enhanced_paginated_view;
 
 import 'dart:developer';
 
+import 'package:dartx/dartx.dart';
 import 'package:enhanced_paginated_view/src/widgets/empty_widget.dart';
 import 'package:enhanced_paginated_view/src/widgets/error_widget.dart';
 import 'package:enhanced_paginated_view/src/widgets/loading_widget.dart';
@@ -63,6 +64,8 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
   /// to control the error widget
   /// this boolean will be set to true when an error occurs
   final bool showError;
+
+  final int itemsPerPage = 10;
 
   /// [errorWidget] is a widget that will be shown
   /// when an error occurs during data loading.
@@ -133,9 +136,14 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
   final ScrollController scrollController = ScrollController();
   final GlobalKey<State> _widgetKey = GlobalKey();
 
-  int page = 1;
   bool isLoading = false;
-  int loadThreshold = 12;
+  int loadThreshold = 7;
+
+  /// get the current page
+  int get page {
+    log('page ${widget.listOfData.length ~/ widget.itemsPerPage + 1} getter called from EnhancedPaginatedView');
+    return widget.listOfData.length ~/ widget.itemsPerPage + 1;
+  }
 
   void loadMore() {
     if (isLoading) {
@@ -143,8 +151,12 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
     }
 
     isLoading = true;
-    page++;
     log('loadMore called from EnhancedPaginatedView with page $page');
+    final data = widget.listOfData;
+    data.removeRange(
+      (widget.listOfData.length ~/ widget.itemsPerPage),
+      data.lastIndex,
+    );
     widget.onLoadMore(page);
     // Use a delayed Future to reset the loading flag after a short delay
     Future.delayed(const Duration(milliseconds: 500), () {
@@ -162,13 +174,12 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
     if (widget.isMaxReached || widget.showLoading || widget.showError) {
       return;
     }
-    if (page > 1) {
-      return;
-    }
+
     if (widget.listOfData.length <= loadThreshold) {
       // Load more data when the list gets shorter than the minimum threshold
-      page = 0;
-      loadMore();
+      if (page < 2) {
+        loadMore();
+      }
     }
   }
 
@@ -233,12 +244,6 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
                 )
               else
                 widget.emptyView ?? const EmptyWidget(),
-
-              if (!widget.reverse)
-                SizedBox(
-                  key: _widgetKey,
-                  height: 5,
-                ),
 
               // if reverse is true, then show the header after the list
               if (widget.reverse)
