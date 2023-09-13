@@ -154,7 +154,7 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
     log('loadMore called from EnhancedPaginatedView with page $page');
     final data = widget.listOfData;
     data.removeRange(
-      (widget.listOfData.length ~/ widget.itemsPerPage),
+      (widget.listOfData.length ~/ widget.itemsPerPage) * widget.itemsPerPage,
       data.lastIndex,
     );
     widget.onLoadMore(page);
