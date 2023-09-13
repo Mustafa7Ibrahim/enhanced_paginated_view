@@ -135,7 +135,7 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
 
   int page = 1;
   bool isLoading = false;
-  int loadThreshold = 7;
+  int loadThreshold = 12;
 
   void loadMore() {
     if (isLoading) {
