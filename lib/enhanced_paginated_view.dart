@@ -21,9 +21,9 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
     required this.showError,
     required this.showLoading,
     required this.isMaxReached,
-    this.deduplication = true,
+    this.shouldDeduplicate = true,
     this.reverse = false,
-    this.itemsPerPage = 10,
+    this.itemsPerPage = 15,
     this.loadingWidget,
     this.errorWidget,
     this.physics,
@@ -36,7 +36,7 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
   /// to control wither the list will be deduplicated or not
   /// the default value is true
   /// if you want to disable the deduplication, then set this value to false
-  final bool deduplication;
+  final bool shouldDeduplicate;
 
   /// [physics] is a [ScrollPhysics] that will be used
   /// to control the scrolling behavior of the widget
@@ -79,7 +79,7 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
   /// per page
   /// this help with requesting the right page number from the server
   /// in case of delete or update operations
-  /// the default value is 10
+  /// the default value is 15
   final int itemsPerPage;
 
   /// [errorWidget] is a widget that will be shown
@@ -246,7 +246,7 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
             if (widget.listOfData.isNotEmpty)
               widget.builder(
                 const NeverScrollableScrollPhysics(),
-                widget.deduplication
+                widget.shouldDeduplicate
                     ? widget.listOfData.enhancedDeduplication()
                     : widget.listOfData,
                 true,
