@@ -28,41 +28,49 @@ class VanillaView extends StatefulWidget {
 }
 
 class _VanillaViewState extends State<VanillaView> {
-  var initList = [
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-    'Item 5',
-    'Item 6',
-    'Item 7',
-    'Item 8',
-    'Item 9',
-    'Item 10',
-
-    /// here we add a duplicate item
-    'Item 1',
-    'Item 2',
-  ];
+  final initList = [];
   bool isLoading = false;
   final maxItems = 100;
   bool isMaxReached = false;
   bool showError = false;
-  final List<String> items = [
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-    'Item 5',
-    'Item 6',
-    'Item 7',
-    'Item 8',
-    'Item 9',
-    'Item 10',
 
-    /// here we add a duplicate item
-    'Item 1',
-    'Item 2',
+  final List<String> item1 = [
+    'Item Internal Mr',
+    'Item Senior Qua',
+    'Item Future Impervisor',
+    'Item National M',
+    'Item District Q',
+    'Item Corporate Executive',
+    'Item Forward Met',
+    'Item District Rnt',
+    'Item Internal Sant',
+    'Item Global Imp',
+  ];
+
+  final List<String> items2 = [
+    'Item Internal Mobility Designer',
+    'Item Senior Quality Specialist',
+    'Item Future Implementation Supervisor',
+    'Item National Markets Designer',
+    'Item District Quality Designer',
+    'Item Corporate Communications Executive',
+    'Item Forward Metrics Strategist',
+    'Item District Research Assistant',
+    'Item Internal Security Consultant',
+    'Item Global Implementation Producerh',
+  ];
+
+  final List<String> items3 = [
+    'Item Virgin Islands, U.S.',
+    'Item French Southern Territories',
+    'Item American Samoa',
+    'Item Northern Mariana Islands',
+    'Item Bosnia and Herzegovina',
+    'Item Turks and Caicos Islands',
+    'Item Bangladesh',
+    'Item Lebanon',
+    'Item Mongolia',
+    'Item this is a very long item to test the enhanced deduplication function',
   ];
 
   Future<void> loadMore(int page) async {
@@ -87,8 +95,15 @@ class _VanillaViewState extends State<VanillaView> {
             isLoading = false;
             return;
           }
-          initList.addAll(items);
-          initList = initList.enhancedDeduplication();
+          if (page == 1) {
+            initList.addAll(item1);
+          }
+          if (page == 2) {
+            initList.addAll(items2);
+          }
+          if (page == 3) {
+            initList.addAll(items3);
+          }
           isLoading = false;
         },
       ),
@@ -100,6 +115,12 @@ class _VanillaViewState extends State<VanillaView> {
     setState(() {
       initList.removeAt(index);
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initList.addAll(item1);
   }
 
   @override

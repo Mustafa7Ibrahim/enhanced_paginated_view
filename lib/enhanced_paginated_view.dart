@@ -4,6 +4,7 @@ library enhanced_paginated_view;
 export 'package:enhanced_paginated_view/src/enhanced_deduplication.dart';
 
 import 'dart:developer';
+import 'package:enhanced_paginated_view/src/enhanced_deduplication.dart';
 import 'package:enhanced_paginated_view/src/widgets/empty_widget.dart';
 import 'package:enhanced_paginated_view/src/widgets/error_widget.dart';
 import 'package:enhanced_paginated_view/src/widgets/loading_widget.dart';
@@ -20,6 +21,7 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
     required this.showError,
     required this.showLoading,
     required this.isMaxReached,
+    this.deduplication = true,
     this.reverse = false,
     this.itemsPerPage = 10,
     this.loadingWidget,
@@ -29,6 +31,12 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
     this.emptyView,
     super.key,
   });
+
+  /// [deduplication] is a boolean that will be used
+  /// to control wither the list will be deduplicated or not
+  /// the default value is true
+  /// if you want to disable the deduplication, then set this value to false
+  final bool deduplication;
 
   /// [physics] is a [ScrollPhysics] that will be used
   /// to control the scrolling behavior of the widget
@@ -238,7 +246,9 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
             if (widget.listOfData.isNotEmpty)
               widget.builder(
                 const NeverScrollableScrollPhysics(),
-                widget.listOfData,
+                widget.deduplication
+                    ? widget.listOfData.enhancedDeduplication()
+                    : widget.listOfData,
                 true,
                 widget.reverse,
               )
