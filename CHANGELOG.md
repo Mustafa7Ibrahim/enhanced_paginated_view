@@ -1,8 +1,16 @@
-## 1.0.4 
-- Improve overall performance. 
+## 1.0.5
+
+- Add new property `itemsPerPage` to calculate page number more accurately.
+- Add new property `shouldDeduplicate` to remove duplicate items from the list.
+- Add new extension method `enhancedDeduplication()` to remove duplicate items from the list.
+
+## 1.0.4
+
+- Improve overall performance.
 - Get rid of the `LoadingModes` and use a new way to trigger the `onLoadMore` behavior.
 
 ## 1.0.3
+
 - Fix docs.
 
 ## 1.0.2
@@ -32,4 +40,4 @@
 ## 0.0.4
 
 - some enhancement.
-
+  

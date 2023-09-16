@@ -4,8 +4,8 @@ Enhanced Paginated View is an unopinionated, extensible, and highly customizable
 
 Designed to feel like part of the Flutter framework.
 
-| Vanilla                                                                                                   | Bloc                                                                                                   |
-| --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Vanilla                                                                                                                           | Bloc                                                                                                                           |
+| --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | <img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/master/assets/vanilla.gif?raw=true" alt="bloc Project"> | <img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/master/assets/bloc.gif?raw=true" alt="bloc Project"> |
 
 ## Documentation
@@ -18,7 +18,6 @@ Designed to feel like part of the Flutter framework.
 - [Basic example](https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/master/example/lib/main.dart)
 - [bloc example](https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/master/example/lib/bloc_example/view/bloc_view.dart).
 
-
 ## Features
 
 - **Pagination Loading**: The package includes a loading widget that is displayed at the bottom of the list when new items are being loaded, giving visual feedback to the user.
@@ -28,6 +27,37 @@ Designed to feel like part of the Flutter framework.
 - **Empty Widget**: When the list is empty, developers can provide a custom widget to display a message or any other desired content.
 - **Customizable Builder Function**: The builder function allows developers to build the widget using their own preferred widget, such as ListView, GridView, or any other widget that fits their requirements.
   Scroll Physics Control: The builder function provides the flexibility to customize the scroll physics for the widget, controlling the scrolling behavior.
+- **Reverse**: The builder function provides the flexibility to reverse the list and its children, which is useful when building a chat app, for example, and you want to reverse the list to show the latest messages.
+- **Remove Deduplication** : The package provides an option to set the shouldDeduplicate flag, which removes duplicate items from the list.
+
+## New Features in Version 1.0.5
+
+We're excited to introduce some exciting enhancements in this latest release of our package, version 1.0.5. These improvements aim to make your experience smoother and more efficient:
+
+### 1. Accurate Page Number Calculation
+
+We've added a new property called `itemsPerPage`, which allows for more precise page number calculations. The default value for this property is set to 15. This enhancement ensures that your pagination logic works seamlessly.
+
+### 2. Deduplication for Cleaner Lists
+
+In response to user feedback, we've introduced the `shouldDeduplicate` property, which is set to `true` by default. This feature comes in handy when dealing with lists that may contain duplicate items due to multiple delete or update operations. It automatically removes duplicate items from the list when requesting the next page, keeping your data clean and clutter-free.
+
+### Manual Deduplication with `enhancedDeduplication()`
+
+For those who prefer more control over deduplication, we offer the `enhancedDeduplication()` extension method. You can use this method to remove duplicate items from your list manually. Here's an example of how to use it:
+
+```dart
+final list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+// Here, we remove the duplicate items from the list
+final result = list.enhancedDeduplication();
+print(result);
+
+// Result:
+// [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+```
+
+This feature is particularly useful when you want to customize the `onLoadMore` function and need to remove duplicate items from the list before fetching the next page.
 
 ## Usage
 
@@ -215,7 +245,7 @@ class _VanillaViewState extends State<VanillaView> {
 
 ## License
 
-```
+``` text
 MIT License
 
 Copyright (c) 2023 Mustafa Ibrahim.

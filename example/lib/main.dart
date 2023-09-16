@@ -30,7 +30,7 @@ class VanillaView extends StatefulWidget {
 class _VanillaViewState extends State<VanillaView> {
   final initList = [];
   bool isLoading = false;
-  final maxItems = 100;
+  final maxItems = 30;
   bool isMaxReached = false;
   bool showError = false;
 
@@ -111,11 +111,7 @@ class _VanillaViewState extends State<VanillaView> {
   }
 
   /// remove an item from the list
-  void removeItem(int index) {
-    setState(() {
-      initList.removeAt(index);
-    });
-  }
+  void removeItem(int index) => setState(() => initList.removeAt(index));
 
   @override
   void initState() {
