@@ -1,14 +1,16 @@
+import 'dart:collection';
+
 extension EnhancedDeduplication<T> on Iterable<T> {
-  /// Returns a new List with all duplicate elements removed.
+  /// Returns a new List with all duplicate elements removed based on their values.
   ///
   /// The order of the elements is preserved.
   ///
   /// Example:
   ///
   /// ```dart
-  /// final list = [1, 2, 3, 1, 2, 3, 4, 5];
-  /// final result = list.enhancedDeduplication();
-  /// print(result); // [1, 2, 3, 4, 5]
+  /// final list = [Person("John"), Person("Alice"), Person("John"), Person("Bob")];
+  /// final result = list.removeDuplication();
+  /// print(result); // [Person("John"), Person("Alice"), Person("Bob")]
   /// ```
   ///
   /// If you want to manually remove duplicates, avoid using
@@ -26,12 +28,18 @@ extension EnhancedDeduplication<T> on Iterable<T> {
   ///
   /// Returns: A new List with duplicate elements removed while preserving the
   /// original order.
-  List<T> enhancedDeduplication() {
-    // Convert the list to a set to remove duplicates
-    Set<T> uniqueSet = Set<T>.from(this);
+  ///
+  /// NOTE: It's Always better if you use Equatable or override == operator
+  /// in your class to compare objects.
+  List<T> removeDuplication() {
+    final uniqueSet = HashSet<T>();
+    final resultList = <T>[];
 
-    // Convert the set back to a list
-    List<T> resultList = uniqueSet.toList();
+    for (final item in this) {
+      if (uniqueSet.add(item)) {
+        resultList.add(item);
+      }
+    }
 
     return resultList;
   }

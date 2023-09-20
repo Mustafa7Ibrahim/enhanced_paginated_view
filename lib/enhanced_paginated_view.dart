@@ -247,7 +247,7 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
               widget.builder(
                 const NeverScrollableScrollPhysics(),
                 widget.shouldDeduplicate
-                    ? widget.listOfData.enhancedDeduplication()
+                    ? widget.listOfData.removeDuplication()
                     : widget.listOfData,
                 true,
                 widget.reverse,
