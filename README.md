@@ -42,15 +42,15 @@ We've added a new property called `itemsPerPage`, which allows for more precise 
 
 In response to user feedback, we've introduced the `shouldDeduplicate` property, which is set to `true` by default. This feature comes in handy when dealing with lists that may contain duplicate items due to multiple delete or update operations. It automatically removes duplicate items from the list when requesting the next page, keeping your data clean and clutter-free.
 
-### Manual Deduplication with `enhancedDeduplication()`
+### Manual Deduplication with `removeDuplication()`
 
-For those who prefer more control over deduplication, we offer the `enhancedDeduplication()` extension method. You can use this method to remove duplicate items from your list manually. Here's an example of how to use it:
+For those who prefer more control over deduplication, we offer the `removeDuplication()` extension method. You can use this method to remove duplicate items from your list manually. Here's an example of how to use it:
 
 ```dart
-final list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+final list = [1, 2, 3, 4, 5, 6, 7, 8, 8, 8, 8, 9, 9, 9 ,9, 10];
 
 // Here, we remove the duplicate items from the list
-final result = list.enhancedDeduplication();
+final result = list.removeDuplication();
 print(result);
 
 // Result:
@@ -58,6 +58,8 @@ print(result);
 ```
 
 This feature is particularly useful when you want to customize the `onLoadMore` function and need to remove duplicate items from the list before fetching the next page.
+
+### NOTE: For better results please use [Equatable](https://pub.dev/packages/equatable) or override == operator in your class model to compare objects.
 
 ## Usage
 

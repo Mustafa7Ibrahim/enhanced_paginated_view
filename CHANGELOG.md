@@ -1,3 +1,8 @@
+## 1.0.7
+
+- Change the way of comparing the items to remove the duplicate items from the list.
+- Fix docs.
+
 ## 1.0.6
 
 - Fix docs.
