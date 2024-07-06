@@ -1,5 +1,6 @@
 import 'package:enhanced_paginated_view/enhanced_paginated_view.dart';
 import 'package:example/bloc_example/view/bloc_view.dart';
+import 'package:example/core/fake_date.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -33,45 +34,6 @@ class _VanillaViewState extends State<VanillaView> {
   final maxItems = 30;
   bool isMaxReached = false;
   bool showError = false;
-
-  final List<String> item1 = [
-    'Item Internal Mr',
-    'Item Senior Qua',
-    'Item Future Impervisor',
-    'Item National M',
-    'Item District Q',
-    'Item Corporate Executive',
-    'Item Forward Met',
-    'Item District Rnt',
-    'Item Internal Sant',
-    'Item Global Imp',
-  ];
-
-  final List<String> items2 = [
-    'Item Internal Mobility Designer',
-    'Item Senior Quality Specialist',
-    'Item Future Implementation Supervisor',
-    'Item National Markets Designer',
-    'Item District Quality Designer',
-    'Item Corporate Communications Executive',
-    'Item Forward Metrics Strategist',
-    'Item District Research Assistant',
-    'Item Internal Security Consultant',
-    'Item Global Implementation Producerh',
-  ];
-
-  final List<String> items3 = [
-    'Item Virgin Islands, U.S.',
-    'Item French Southern Territories',
-    'Item American Samoa',
-    'Item Northern Mariana Islands',
-    'Item Bosnia and Herzegovina',
-    'Item Turks and Caicos Islands',
-    'Item Bangladesh',
-    'Item Lebanon',
-    'Item Mongolia',
-    'Item this is a very long item to test the enhanced deduplication function',
-  ];
 
   Future<void> loadMore(int page) async {
     // here we simulate that the list reached the end
