@@ -11,7 +11,7 @@ final class PaginatedState extends Equatable {
   });
 
   final PaginatedStatus status;
-  final List<int> listOfData;
+  final List<String> listOfData;
   final bool isMaxReached;
   final String? error;
 
@@ -19,7 +19,7 @@ final class PaginatedState extends Equatable {
   /// and update the required fields.
   PaginatedState copyWith({
     PaginatedStatus? status,
-    List<int>? listOfData,
+    List<String>? listOfData,
     bool? isMaxReached,
     String? error,
   }) {

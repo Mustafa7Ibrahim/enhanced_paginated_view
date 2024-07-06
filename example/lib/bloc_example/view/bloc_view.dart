@@ -23,7 +23,7 @@ class _BlocViewState extends State<BlocView> {
               return const Center(child: CircularProgressIndicator());
             }
             return SafeArea(
-              child: EnhancedPaginatedView<int>(
+              child: EnhancedPaginatedView<String>(
                 listOfData: state.listOfData,
                 itemsPerPage: 10,
                 showLoading: state.status == PaginatedStatus.loading,
