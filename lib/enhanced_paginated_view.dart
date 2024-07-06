@@ -1,13 +1,12 @@
-/// this is the enhanced_paginated_view library
 library enhanced_paginated_view;
 
 export 'package:enhanced_paginated_view/src/enhanced_deduplication.dart';
 
 import 'dart:developer';
+
 import 'package:enhanced_paginated_view/src/enhanced_deduplication.dart';
 import 'package:enhanced_paginated_view/src/widgets/empty_widget.dart';
-import 'package:enhanced_paginated_view/src/widgets/error_widget.dart';
-import 'package:enhanced_paginated_view/src/widgets/loading_widget.dart';
+import 'package:enhanced_paginated_view/src/widgets/loading_error_widget.dart';
 import 'package:flutter/material.dart';
 
 /// this is the EnhancedPaginatedView widget
@@ -226,20 +225,16 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
             // if reverse is true then show the loading widget
             // before the list
             if (widget.reverse)
-              Column(
-                children: [
-                  if (widget.showLoading)
-                    widget.loadingWidget ?? const LoadingWidget()
-                  else if (widget.showError)
-                    widget.errorWidget != null
-                        ? widget.errorWidget!(page)
-                        : const SomethingWentWrong(),
-                ],
+              LoadingErrorWidget(
+                page: page,
+                showError: widget.showError,
+                showLoading: widget.showLoading,
+                errorWidget: widget.errorWidget,
+                loadingWidget: widget.loadingWidget,
               ),
 
             // if reverse is true, then show the header before the list
-            if (!widget.reverse)
-              if (widget.header != null) widget.header ?? const SizedBox(),
+            if (!widget.reverse && widget.header != null) widget.header!,
 
             // if the list is not empty, then show the list
             // otherwise show the empty view
@@ -256,18 +251,15 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
               widget.emptyView ?? const EmptyWidget(),
 
             // if reverse is true, then show the header after the list
-            if (widget.reverse)
-              if (widget.header != null) widget.header ?? const SizedBox(),
+            if (widget.reverse && widget.header != null) widget.header!,
+
             if (!widget.reverse)
-              Column(
-                children: [
-                  if (widget.showLoading)
-                    widget.loadingWidget ?? const LoadingWidget()
-                  else if (widget.showError)
-                    widget.errorWidget != null
-                        ? widget.errorWidget!(page)
-                        : const SomethingWentWrong(),
-                ],
+              LoadingErrorWidget(
+                page: page,
+                showError: widget.showError,
+                showLoading: widget.showLoading,
+                errorWidget: widget.errorWidget,
+                loadingWidget: widget.loadingWidget,
               ),
           ],
         ),
