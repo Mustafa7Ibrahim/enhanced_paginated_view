@@ -1,77 +1,75 @@
 library enhanced_paginated_view;
 
-export 'package:enhanced_paginated_view/src/enhanced_deduplication.dart';
+export 'package:enhanced_paginated_view/src/core/enhanced_deduplication.dart';
+export 'package:enhanced_paginated_view/src/models/enhanced_delegate.dart';
 
 import 'dart:developer';
 
-import 'package:enhanced_paginated_view/src/enhanced_deduplication.dart';
-import 'package:enhanced_paginated_view/src/widgets/empty_widget.dart';
-import 'package:enhanced_paginated_view/src/widgets/loading_error_widget.dart';
+import 'package:enhanced_paginated_view/src/models/enhanced_delegate.dart';
+import 'package:enhanced_paginated_view/src/models/enhanced_view_type.dart';
+import 'package:enhanced_paginated_view/src/views/enhanced_box_view.dart';
+import 'package:enhanced_paginated_view/src/views/enhanced_sliver_view.dart';
 import 'package:flutter/material.dart';
 
 /// this is the EnhancedPaginatedView widget
 /// the T is the type of the items that will be loaded
 class EnhancedPaginatedView<T> extends StatefulWidget {
   /// this is the load more widget constructor
-  const EnhancedPaginatedView({
-    required this.listOfData,
+
+  // Private constructor
+  const EnhancedPaginatedView._({
     required this.onLoadMore,
-    required this.builder,
-    required this.showError,
-    required this.showLoading,
     required this.isMaxReached,
-    this.shouldDeduplicate = true,
-    this.reverse = false,
-    this.itemsPerPage = 15,
-    this.loadingWidget,
-    this.errorWidget,
-    this.physics,
-    this.header,
-    this.emptyView,
+    required this.itemsPerPage,
+    required this.type,
+    required this.delegate,
+    required this.boxBuilder,
+    required this.sliverBuilder,
     super.key,
   });
 
-  /// [deduplication] is a boolean that will be used
-  /// to control wither the list will be deduplicated or not
-  /// the default value is true
-  /// if you want to disable the deduplication, then set this value to false
-  final bool shouldDeduplicate;
+  // Factory constructor for ListView-based view
+  factory EnhancedPaginatedView({
+    required void Function(int) onLoadMore,
+    required bool isMaxReached,
+    int itemsPerPage = 15,
+    required EnhancedDelegate<T> delegate,
+    required EnhancedBoxBuilder<T> builder,
+  }) {
+    return EnhancedPaginatedView._(
+      type: EnhancedViewType.box,
+      onLoadMore: onLoadMore,
+      isMaxReached: isMaxReached,
+      itemsPerPage: itemsPerPage,
+      delegate: delegate,
+      boxBuilder: builder,
+      sliverBuilder: null,
+    );
+  }
 
-  /// [physics] is a [ScrollPhysics] that will be used
-  /// to control the scrolling behavior of the widget
-  ///
-  /// the default value is [null]
-  final ScrollPhysics? physics;
+  // Factory constructor for CustomScrollView-based view
+  factory EnhancedPaginatedView.slivers({
+    required void Function(int) onLoadMore,
+    required bool isMaxReached,
+    int itemsPerPage = 15,
+    required EnhancedDelegate<T> delegate,
+    required EnhancedSliverBuilder<T> builder,
+  }) {
+    return EnhancedPaginatedView._(
+      onLoadMore: onLoadMore,
+      type: EnhancedViewType.sliver,
+      isMaxReached: isMaxReached,
+      itemsPerPage: itemsPerPage,
+      delegate: delegate,
+      boxBuilder: null,
+      sliverBuilder: builder,
+    );
+  }
 
   /// [isMaxReached] is a boolean that will be used
   /// to control the loading widget
   /// this boolean will be set to true when the list reaches the end
   final bool isMaxReached;
-
-  /// [showLoading] is a [ValueNotifier] that will be used
-  /// to control the loading widget
-  /// this [ValueNotifier] will be set to true when the user
-  /// reaches the end of the list and [onLoadMore] is called
-  /// and will be set to false when the new items are loaded
-  /// and the list is rebuilt
-  /// this [ValueNotifier] is required
-  final bool showLoading;
-
-  /// the loading widget that will be shown when loading
-  /// new items from the server or any other source
-  /// this widget will be shown at the bottom of the list
-  /// and will be removed when the new items are loaded
-  /// and the list is rebuilt
-  /// this widget will be shown only if [showLoading] is true
-  /// and [isMaxReached] is false
-  /// this widget is required
-  /// this widget is not nullable
-  final Widget? loadingWidget;
-
-  /// [showError] is a boolean that will be used
-  /// to control the error widget
-  /// this boolean will be set to true when an error occurs
-  final bool showError;
 
   /// [itemsPerPage] is an integer that will be used
   /// to control the number of items that will be loaded
@@ -81,10 +79,17 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
   /// the default value is 15
   final int itemsPerPage;
 
-  /// [errorWidget] is a widget that will be shown
-  /// when an error occurs during data loading.
-  /// This widget is optional and can be null.
-  final Widget Function(int page)? errorWidget;
+  /// [type] is where you can specify the type of the view
+  /// whether it is a [EnhancedViewType.sliver] or a [EnhancedViewType.box]
+  ///
+  /// [EnhancedViewType.sliver] is used when you want to use a sliver widget
+  /// like a [SliverList] or a [SliverGrid]
+  ///
+  /// [EnhancedViewType.box] is used when you want to use a normal widget
+  /// like a [ListView] or a [GridView]
+  ///
+  /// the default value is [EnhancedViewType.box]
+  final EnhancedViewType type;
 
   /// [onLoadMore] is a function that will be called when
   /// the user reaches the end of the list
@@ -92,54 +97,11 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
   /// this function is required
   final void Function(int) onLoadMore;
 
-  /// [listOfData] is a list of items that will be added to the list
-  /// this list is required
-  final List<T> listOfData;
+  final EnhancedDelegate<T> delegate;
 
-  /// [header] is a list of widgets that will be shown
-  /// at the top of the list
-  /// this list is not required
-  final Widget? header;
+  final EnhancedBoxBuilder<T>? boxBuilder;
 
-  /// [emptyView] is a widgets that will be shown
-  /// when the list is empty
-  /// this list is not required
-  final Widget? emptyView;
-
-  /// [reverse] is a boolean that will be used
-  /// to reverse the list and its children
-  final bool reverse;
-
-  /// [builder] is a function that will be used to build the widget
-  /// wither it is a [ListView] or a [GridView] or any other widget
-  ///
-  /// the `physics` parameter is the physics that will be used
-  /// for the widget to control the scrolling behavior of the widget
-  /// by default the physics will be [NeverScrollableScrollPhysics]
-  /// to prevent the widget from scrolling
-  /// this parameter is required
-  ///
-  /// the `items` parameter is the list of items that will be shown
-  /// in the widget
-  /// this parameter is required
-  ///
-  /// the `shrinkWrap` parameter is a boolean that will be used
-  /// to control the shrinkWrap property of the widget
-  /// by default the shrinkWrap will be true
-  /// this parameter is required
-  ///
-  /// the `reverse` parameter is a boolean that will be used
-  /// to reverse the list and its children
-  /// it code be handy when you are building a chat app for example
-  /// and you want to reverse the list to show the latest messages
-  /// at the bottom of the list
-  /// this parameter is required
-  final Widget Function(
-    ScrollPhysics physics,
-    List<T> items,
-    bool shrinkWrap,
-    bool reverse,
-  ) builder;
+  final EnhancedSliverBuilder<T>? sliverBuilder;
 
   @override
   State<EnhancedPaginatedView<T>> createState() =>
@@ -153,7 +115,7 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
   late int loadThreshold;
 
   /// get the current page
-  int get page => widget.listOfData.length ~/ widget.itemsPerPage + 1;
+  int get page => widget.delegate.listOfData.length ~/ widget.itemsPerPage + 1;
 
   void loadMore() {
     if (isLoading) return;
@@ -162,7 +124,7 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
     log('loadMore called from EnhancedPaginatedView with page $page');
     widget.onLoadMore(page);
     // Use a delayed Future to reset the loading flag after a short delay
-    Future.delayed(const Duration(milliseconds: 500), () => isLoading = false);
+    Future.delayed(const Duration(milliseconds: 250), () => isLoading = false);
   }
 
   @override
@@ -172,16 +134,38 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
   }
 
   void checkAndLoadDataIfNeeded() {
-    if (widget.isMaxReached || widget.showLoading || widget.showError) {
+    if (widget.isMaxReached ||
+        widget.delegate.showLoading ||
+        widget.delegate.showError) {
       return;
     }
 
-    if (widget.listOfData.length <= loadThreshold) {
+    if (widget.delegate.listOfData.length <= loadThreshold) {
       // Load more data when the list gets shorter than the minimum threshold
       if (page < 2) {
         loadMore();
       }
     }
+  }
+
+  bool onNotification(ScrollNotification scrollInfo) {
+    if (widget.isMaxReached ||
+        widget.delegate.showLoading ||
+        widget.delegate.showError) {
+      return false;
+    }
+
+    if (scrollInfo is ScrollUpdateNotification) {
+      // Check if the last 5 items are visible
+      final lastVisibleIndex =
+          scrollController.position.maxScrollExtent - scrollInfo.metrics.pixels;
+      if (lastVisibleIndex <= 100) {
+        // The last 5 items are visible
+        // You can now take appropriate action
+        loadMore();
+      }
+    }
+    return false;
   }
 
   @override
@@ -199,71 +183,21 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
   @override
   Widget build(BuildContext context) {
     return NotificationListener(
-      onNotification: (ScrollNotification scrollInfo) {
-        if (widget.isMaxReached || widget.showLoading || widget.showError) {
-          return false;
-        }
-
-        if (scrollInfo is ScrollUpdateNotification) {
-          // Check if the last 5 items are visible
-          final lastVisibleIndex = scrollController.position.maxScrollExtent -
-              scrollInfo.metrics.pixels;
-          if (lastVisibleIndex <= 100) {
-            // The last 5 items are visible
-            // You can now take appropriate action
-            loadMore();
-          }
-        }
-        return false;
+      onNotification: onNotification,
+      child: switch (widget.type) {
+        EnhancedViewType.sliver => EnhancedSliverView<T>(
+            delegate: widget.delegate,
+            builder: widget.sliverBuilder!,
+            page: page,
+            scrollController: scrollController,
+          ),
+        EnhancedViewType.box => EnhancedBoxView<T>(
+            delegate: widget.delegate,
+            builder: widget.boxBuilder!,
+            page: page,
+            scrollController: scrollController,
+          ),
       },
-      child: SingleChildScrollView(
-        reverse: widget.reverse,
-        controller: scrollController,
-        physics: widget.physics,
-        child: Column(
-          children: [
-            // if reverse is true then show the loading widget
-            // before the list
-            if (widget.reverse)
-              LoadingErrorWidget(
-                page: page,
-                showError: widget.showError,
-                showLoading: widget.showLoading,
-                errorWidget: widget.errorWidget,
-                loadingWidget: widget.loadingWidget,
-              ),
-
-            // if reverse is true, then show the header before the list
-            if (!widget.reverse && widget.header != null) widget.header!,
-
-            // if the list is not empty, then show the list
-            // otherwise show the empty view
-            if (widget.listOfData.isNotEmpty)
-              widget.builder(
-                const NeverScrollableScrollPhysics(),
-                widget.shouldDeduplicate
-                    ? widget.listOfData.removeDuplication()
-                    : widget.listOfData,
-                true,
-                widget.reverse,
-              )
-            else
-              widget.emptyView ?? const EmptyWidget(),
-
-            // if reverse is true, then show the header after the list
-            if (widget.reverse && widget.header != null) widget.header!,
-
-            if (!widget.reverse)
-              LoadingErrorWidget(
-                page: page,
-                showError: widget.showError,
-                showLoading: widget.showLoading,
-                errorWidget: widget.errorWidget,
-                loadingWidget: widget.loadingWidget,
-              ),
-          ],
-        ),
-      ),
     );
   }
 }
