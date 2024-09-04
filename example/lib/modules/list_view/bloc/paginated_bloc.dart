@@ -30,10 +30,10 @@ class PaginatedBloc extends Bloc<PaginatedEvent, PaginatedState> {
     await Future.delayed(
       const Duration(seconds: 3),
       () {
-        if (event.page == 2) {
-          emit(state.copyWith(status: PaginatedStatus.error, error: 'Error'));
-          return;
-        }
+        // if (event.page == 2) {
+        //   emit(state.copyWith(status: PaginatedStatus.error, error: 'Error'));
+        //   return;
+        // }
         List<String> initList = [];
         if (event.page == 1) {
           initList.addAll(item1);
@@ -57,4 +57,6 @@ class PaginatedBloc extends Bloc<PaginatedEvent, PaginatedState> {
       },
     );
   }
+
+
 }

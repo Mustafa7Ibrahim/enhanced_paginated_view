@@ -1,11 +1,12 @@
 import 'package:enhanced_paginated_view/enhanced_paginated_view.dart';
-import 'package:example/bloc_example/view/bloc_view.dart';
 import 'package:example/core/fake_date.dart';
+import 'package:example/nav_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -16,19 +17,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: 'Enhanced Paginated View',
-      home: VanillaView(),
+      home: NavBar(),
     );
   }
 }
 
-class VanillaView extends StatefulWidget {
-  const VanillaView({super.key});
+class VanillaListExample extends StatefulWidget {
+  const VanillaListExample({super.key});
 
   @override
-  State<VanillaView> createState() => _VanillaViewState();
+  State<VanillaListExample> createState() => _VanillaListExampleState();
 }
 
-class _VanillaViewState extends State<VanillaView> {
+class _VanillaListExampleState extends State<VanillaListExample> {
   final initList = [];
   bool isLoading = false;
   final maxItems = 30;
@@ -83,88 +84,68 @@ class _VanillaViewState extends State<VanillaView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Vanilla Example'),
-      ),
-      body: SafeArea(
-        child: EnhancedPaginatedView(
-          listOfData: initList,
-          showLoading: isLoading,
-          isMaxReached: isMaxReached,
-          onLoadMore: loadMore,
-          itemsPerPage: 10,
+    return EnhancedPaginatedView(
+      delegate: EnhancedDelegate(
+        listOfData: initList,
+        showLoading: isLoading,
 
-          /// [showError] is a boolean that will be used
-          /// to control the error widget
-          /// this boolean will be set to true when an error occurs
-          showError: showError,
-          errorWidget: (page) => Center(
-            child: Column(
-              children: [
-                const Text('No items found'),
-                ElevatedButton(
-                  onPressed: () {
-                    showError = false;
-                    loadMore(page);
-                  },
-                  child: const Text('Reload'),
-                )
-              ],
-            ),
+        /// [showError] is a boolean that will be used
+        /// to control the error widget
+        /// this boolean will be set to true when an error occurs
+        showError: showError,
+        errorWidget: (page) => Center(
+          child: Column(
+            children: [
+              const Text('No items found'),
+              ElevatedButton(
+                onPressed: () {
+                  showError = false;
+                  loadMore(page);
+                },
+                child: const Text('Reload'),
+              )
+            ],
           ),
-          header: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Text(
-                  'Header',
-                  style: Theme.of(context).textTheme.headlineLarge,
-                ),
-                const SizedBox(height: 16),
-                OutlinedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const BlocView(),
-                      ),
-                    );
-                  },
-                  child: const Text('Bloc Example'),
-                ),
-              ],
-            ),
+        ),
+        header: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Text(
+                'Header',
+                style: Theme.of(context).textTheme.displayLarge,
+              ),
+            ],
           ),
-
-          /// the `reverse` parameter is a boolean that will be used
-          /// to reverse the list and its children
-          /// it code be handy when you are building a chat app for example
-          /// and you want to reverse the list to show the latest messages
-
-          builder: (physics, items, shrinkWrap, reverse) {
-            return ListView.separated(
-              // here we must pass the physics, items and shrinkWrap
-              // that came from the builder function
-              reverse: reverse,
-              physics: physics,
-              shrinkWrap: shrinkWrap,
-              itemCount: items.length,
-              separatorBuilder: (BuildContext context, int index) {
-                return const Divider(
-                  height: 16,
-                );
-              },
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  onTap: () => removeItem(index),
-                  title: Text('Item ${items[index]}'),
-                  subtitle: Text('Item ${index + 1}'),
-                );
-              },
-            );
-          },
         ),
       ),
+
+      isMaxReached: isMaxReached,
+      onLoadMore: loadMore,
+      itemsPerPage: 10,
+
+      /// the `reverse` parameter is a boolean that will be used
+      /// to reverse the list and its children
+      /// it code be handy when you are building a chat app for example
+      /// and you want to reverse the list to show the latest messages
+
+      builder: (items, physics, _, shrinkWrap) {
+        return ListView.separated(
+          // here we must pass the physics, items and shrinkWrap
+          // that came from the builder function
+          physics: physics,
+          shrinkWrap: shrinkWrap,
+          itemCount: items.length,
+          separatorBuilder: (__, _) => const Divider(height: 16),
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              onTap: () => removeItem(index),
+              title: Text('Item ${items[index]}'),
+              subtitle: Text('Item ${index + 1}'),
+            );
+          },
+        );
+      },
     );
   }
 }
