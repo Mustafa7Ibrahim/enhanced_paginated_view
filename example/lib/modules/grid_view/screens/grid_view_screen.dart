@@ -1,6 +1,7 @@
 import 'package:example/modules/grid_view/screens/grid_bloc.dart';
 import 'package:example/modules/grid_view/screens/grid_riverpod.dart';
 import 'package:example/modules/grid_view/screens/grid_sliver_bloc.dart';
+import 'package:example/modules/grid_view/screens/grid_sliver_riverpod.dart';
 import 'package:flutter/material.dart';
 
 class GridViewScreen extends StatelessWidget {
@@ -29,7 +30,7 @@ class GridViewScreen extends StatelessWidget {
             GridBloc(),
             GridSliverBloc(),
             GridRiverpod(),
-            GridSliverBloc(),
+            GridSliverRiverpod(),
           ],
         ),
       ),
