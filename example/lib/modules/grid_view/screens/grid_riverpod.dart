@@ -4,8 +4,8 @@ import 'package:example/modules/list_view/riverpod/list_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class RiverpodListExample extends ConsumerWidget {
-  const RiverpodListExample({super.key});
+class GridRiverpod extends ConsumerWidget {
+  const GridRiverpod({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,15 +29,33 @@ class RiverpodListExample extends ConsumerWidget {
           },
           itemsPerPage: 10,
           builder: (items, physics, reverse, shrinkWrap) {
-            return ListView.separated(
+            return GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: 1,
+              ),
               physics: physics,
               shrinkWrap: shrinkWrap,
               itemCount: items.length,
-              separatorBuilder: (__, _) => const Divider(height: 16),
+              padding: const EdgeInsets.all(16),
               itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  title: Text('Item ${items[index]}'),
-                  subtitle: Text('Item ${index + 1}'),
+                return Card(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        items[index],
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                      Text(
+                        'Index: $index',
+                        style: const TextStyle(fontSize: 16),
+                      )
+                    ],
+                  ),
                 );
               },
             );

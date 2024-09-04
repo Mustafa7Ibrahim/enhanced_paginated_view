@@ -93,12 +93,12 @@ class LoadingErrorWidget extends StatelessWidget {
     return SliverList(
       delegate: SliverChildListDelegate(
         [
-          if (showLoading) loadingWidget ?? LoadingWidget.sliver(),
+          if (showLoading) loadingWidget ?? LoadingWidget(),
           if (showError)
             if (errorWidget != null)
               errorWidget!(page)
             else
-              LoadingFailureWidget.sliver(model: loadingFailureModel),
+              LoadingFailureWidget(model: loadingFailureModel),
         ],
       ),
     );

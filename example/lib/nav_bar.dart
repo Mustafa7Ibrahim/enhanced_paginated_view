@@ -1,3 +1,4 @@
+import 'package:example/modules/grid_view/screens/grid_view_screen.dart';
 import 'package:example/modules/list_view/screens/list_view_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -41,10 +42,7 @@ class _NavBarState extends State<NavBar> {
         index: currentPageIndex,
         children: [
           const ListViewScreen(),
-          Container(
-            alignment: Alignment.center,
-            child: const Text('Search'),
-          ),
+          const GridViewScreen(),
           Container(
             alignment: Alignment.center,
             child: const Text('Favorites'),

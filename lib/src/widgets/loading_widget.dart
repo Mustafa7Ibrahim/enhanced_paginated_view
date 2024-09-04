@@ -47,22 +47,12 @@ class LoadingWidget extends StatelessWidget {
 
   // sliver build function
   Widget buildSliver(BuildContext context) {
-    return const SliverToBoxAdapter(
-      child: _Loading(),
-    );
-  }
-}
-
-/// A widget that displays a loading indicator in the center of the screen.
-class _Loading extends StatelessWidget {
-  const _Loading();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Padding(
-        padding: EdgeInsets.all(12.0),
-        child: CircularProgressIndicator.adaptive(),
+    return const SliverFillRemaining(
+      child: Center(
+        child: Padding(
+          padding: EdgeInsets.all(12.0),
+          child: CircularProgressIndicator.adaptive(),
+        ),
       ),
     );
   }

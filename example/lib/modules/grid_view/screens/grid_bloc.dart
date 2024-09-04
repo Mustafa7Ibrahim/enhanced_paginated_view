@@ -3,14 +3,9 @@ import 'package:example/modules/list_view/bloc/paginated_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class BlocListExample extends StatefulWidget {
-  const BlocListExample({super.key});
+class GridBloc extends StatelessWidget {
+  const GridBloc({super.key});
 
-  @override
-  State<BlocListExample> createState() => _BlocListExampleState();
-}
-
-class _BlocListExampleState extends State<BlocListExample> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -35,19 +30,6 @@ class _BlocListExampleState extends State<BlocListExample> {
               listOfData: state.data,
               showLoading: state.status == PaginatedStatus.loading,
               showError: state.status == PaginatedStatus.error,
-              errorWidget: (page) => Column(
-                children: [
-                  Center(child: Text(' ${state.error}')),
-                  ElevatedButton(
-                    onPressed: () {
-                      context
-                          .read<PaginatedBloc>()
-                          .add(FetchDataEvent(page: page));
-                    },
-                    child: const Text('Retry'),
-                  ),
-                ],
-              ),
             ),
             itemsPerPage: 10,
             isMaxReached: state.hasReachedMax,
@@ -55,17 +37,35 @@ class _BlocListExampleState extends State<BlocListExample> {
               context.read<PaginatedBloc>().add(FetchDataEvent(page: page));
             },
             builder: (items, physics, _, shrinkWrap) {
-              return ListView.separated(
+              return GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 1,
+                ),
                 // here we must pass the physics, items and shrinkWrap
                 // that came from the builder function
                 physics: physics,
                 shrinkWrap: shrinkWrap,
                 itemCount: items.length,
-                separatorBuilder: (__, _) => const Divider(height: 16),
+                padding: const EdgeInsets.all(16),
                 itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    title: Text('Item ${items[index]}'),
-                    subtitle: Text('Item ${index + 1}'),
+                  return Card(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          items[index],
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                        Text(
+                          'Index: $index',
+                          style: const TextStyle(fontSize: 16),
+                        )
+                      ],
+                    ),
                   );
                 },
               );

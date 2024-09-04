@@ -24,16 +24,18 @@ class PaginatedBloc extends Bloc<PaginatedEvent, PaginatedState> {
     FetchDataEvent event,
     Emitter<PaginatedState> emit,
   ) async {
-    if (state.status != PaginatedStatus.initial) {
+    if (state.status != PaginatedStatus.initLoading) {
       emit(state.copyWith(status: PaginatedStatus.loading));
     }
     await Future.delayed(
       const Duration(seconds: 3),
       () {
-        // if (event.page == 2) {
-        //   emit(state.copyWith(status: PaginatedStatus.error, error: 'Error'));
-        //   return;
-        // }
+        if (event.page == 3) {
+          emit(
+            state.copyWith(status: PaginatedStatus.error, error: 'Error'),
+          );
+          return;
+        }
         List<String> initList = [];
         if (event.page == 1) {
           initList.addAll(item1);
@@ -47,16 +49,11 @@ class PaginatedBloc extends Bloc<PaginatedEvent, PaginatedState> {
         emit(
           state.copyWith(
             status: PaginatedStatus.loaded,
-            listOfData: [
-              ...state.listOfData,
-              ...initList,
-            ],
-            isMaxReached: 3 <= event.page,
+            data: [...state.data, ...initList],
+            hasReachedMax: 3 <= event.page,
           ),
         );
       },
     );
   }
-
-
 }

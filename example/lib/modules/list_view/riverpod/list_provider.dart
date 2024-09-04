@@ -1,5 +1,5 @@
-import 'package:equatable/equatable.dart';
 import 'package:example/core/fake_date.dart';
+import 'package:example/modules/list_view/bloc/paginated_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -17,7 +17,7 @@ class ListP extends _$ListP {
 
   /// fetch data
   Future<void> fetchData(int page) async {
-    if (state.status != PaginatedStatus.initial) {
+    if (state.status != PaginatedStatus.initLoading) {
       state = state.copyWith(status: PaginatedStatus.loading);
     }
     await Future.delayed(
@@ -35,53 +35,13 @@ class ListP extends _$ListP {
         }
         state = state.copyWith(
           status: PaginatedStatus.loaded,
-          listOfData: [
-            ...state.listOfData,
+          data: [
+            ...state.data,
             ...initList,
           ],
-          isMaxReached: 3 <= page,
+          hasReachedMax: 3 <= page,
         );
       },
     );
   }
-}
-
-enum PaginatedStatus { initial, loading, loaded, error }
-
-final class PaginatedState extends Equatable {
-  const PaginatedState({
-    this.status = PaginatedStatus.initial,
-    this.listOfData = const [],
-    this.isMaxReached = false,
-    this.error,
-  });
-
-  final PaginatedStatus status;
-  final List<String> listOfData;
-  final bool isMaxReached;
-  final String? error;
-
-  /// copyWith method is used to copy the current state
-  /// and update the required fields.
-  PaginatedState copyWith({
-    PaginatedStatus? status,
-    List<String>? listOfData,
-    bool? isMaxReached,
-    String? error,
-  }) {
-    return PaginatedState(
-      status: status ?? this.status,
-      listOfData: listOfData ?? this.listOfData,
-      isMaxReached: isMaxReached ?? this.isMaxReached,
-      error: error ?? this.error,
-    );
-  }
-
-  @override
-  List<Object> get props => [
-        listOfData,
-        isMaxReached,
-        error ?? '',
-        status,
-      ];
 }

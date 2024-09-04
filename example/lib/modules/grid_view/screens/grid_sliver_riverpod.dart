@@ -4,8 +4,8 @@ import 'package:example/modules/list_view/riverpod/list_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class RiverpodListExample extends ConsumerWidget {
-  const RiverpodListExample({super.key});
+class GridSliverRiverpod extends ConsumerWidget {
+  const GridSliverRiverpod({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -17,7 +17,7 @@ class RiverpodListExample extends ConsumerWidget {
       PaginatedStatus.initLoading => const Center(
           child: CircularProgressIndicator(),
         ),
-      _ => EnhancedPaginatedView(
+      _ => EnhancedPaginatedView.slivers(
           delegate: EnhancedDelegate(
             listOfData: state.data,
             showError: state.status == PaginatedStatus.error,
@@ -28,16 +28,31 @@ class RiverpodListExample extends ConsumerWidget {
             ref.read(listPProvider.notifier).fetchData(page);
           },
           itemsPerPage: 10,
-          builder: (items, physics, reverse, shrinkWrap) {
-            return ListView.separated(
-              physics: physics,
-              shrinkWrap: shrinkWrap,
-              itemCount: items.length,
-              separatorBuilder: (__, _) => const Divider(height: 16),
+          builder: (context, data) {
+            return SliverGrid.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: 1,
+              ),
+              itemCount: data.length,
               itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  title: Text('Item ${items[index]}'),
-                  subtitle: Text('Item ${index + 1}'),
+                return Card(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        data[index],
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                      Text(
+                        'Index: $index',
+                        style: const TextStyle(fontSize: 16),
+                      )
+                    ],
+                  ),
                 );
               },
             );

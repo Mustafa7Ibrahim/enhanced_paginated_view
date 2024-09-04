@@ -43,17 +43,19 @@ class PageFailureWidget extends StatelessWidget {
   });
 
   // box factory constructor for the PageFailureWidget class
-  factory PageFailureWidget({required PageFailureModel model}) {
+  factory PageFailureWidget({required PageFailureModel pageFailureModel}) {
     return PageFailureWidget._(
-      model: model,
+      model: pageFailureModel,
       enhancedViewType: EnhancedViewType.box,
     );
   }
 
   // sliver factory constructor for sliver-based view type
-  factory PageFailureWidget.sliver({required PageFailureModel model}) {
+  factory PageFailureWidget.sliver({
+    required PageFailureModel pageFailureModel,
+  }) {
     return PageFailureWidget._(
-      model: model,
+      model: pageFailureModel,
       enhancedViewType: EnhancedViewType.sliver,
     );
   }
@@ -127,6 +129,9 @@ class _FailureWidget extends StatelessWidget {
           const SizedBox(height: 16 * 2.5),
           model.retryButton ??
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 48),
+                ),
                 onPressed: model.onRetry,
                 child: Text(model.btnText ?? "Retry".toUpperCase()),
               ),

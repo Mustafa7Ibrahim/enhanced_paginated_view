@@ -2,6 +2,8 @@ library enhanced_paginated_view;
 
 export 'package:enhanced_paginated_view/src/core/enhanced_deduplication.dart';
 export 'package:enhanced_paginated_view/src/models/enhanced_delegate.dart';
+export 'package:enhanced_paginated_view/src/widgets/page_failure_widget.dart';
+export 'package:enhanced_paginated_view/src/models/page_failure_model.dart';
 
 import 'dart:developer';
 
