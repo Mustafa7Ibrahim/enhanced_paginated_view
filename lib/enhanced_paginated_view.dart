@@ -2,15 +2,19 @@ library enhanced_paginated_view;
 
 export 'package:enhanced_paginated_view/src/core/enhanced_deduplication.dart';
 export 'package:enhanced_paginated_view/src/models/enhanced_delegate.dart';
-export 'package:enhanced_paginated_view/src/widgets/page_failure_widget.dart';
-export 'package:enhanced_paginated_view/src/models/page_failure_model.dart';
+export 'package:enhanced_paginated_view/src/widgets/error_page_widget.dart';
+export 'package:enhanced_paginated_view/src/models/error_page.dart';
+export 'package:enhanced_paginated_view/src/models/enhanced_status.dart';
 
 import 'dart:developer';
 
 import 'package:enhanced_paginated_view/src/models/enhanced_delegate.dart';
+import 'package:enhanced_paginated_view/src/models/enhanced_status.dart';
 import 'package:enhanced_paginated_view/src/models/enhanced_view_type.dart';
 import 'package:enhanced_paginated_view/src/views/enhanced_box_view.dart';
 import 'package:enhanced_paginated_view/src/views/enhanced_sliver_view.dart';
+import 'package:enhanced_paginated_view/src/widgets/loading_widget.dart';
+import 'package:enhanced_paginated_view/src/widgets/error_page_widget.dart';
 import 'package:flutter/material.dart';
 
 /// this is the EnhancedPaginatedView widget
@@ -137,8 +141,8 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
 
   void checkAndLoadDataIfNeeded() {
     if (widget.isMaxReached ||
-        widget.delegate.showLoading ||
-        widget.delegate.showError) {
+        widget.delegate.status == EnhancedStatus.loading ||
+        widget.delegate.status == EnhancedStatus.error) {
       return;
     }
 
@@ -152,8 +156,8 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
 
   bool onNotification(ScrollNotification scrollInfo) {
     if (widget.isMaxReached ||
-        widget.delegate.showLoading ||
-        widget.delegate.showError) {
+        widget.delegate.status == EnhancedStatus.loading ||
+        widget.delegate.status == EnhancedStatus.error) {
       return false;
     }
 
@@ -186,20 +190,24 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
   Widget build(BuildContext context) {
     return NotificationListener(
       onNotification: onNotification,
-      child: switch (widget.type) {
-        EnhancedViewType.sliver => EnhancedSliverView<T>(
-            delegate: widget.delegate,
-            builder: widget.sliverBuilder!,
-            page: page,
-            scrollController: scrollController,
-          ),
-        EnhancedViewType.box => EnhancedBoxView<T>(
-            delegate: widget.delegate,
-            builder: widget.boxBuilder!,
-            page: page,
-            scrollController: scrollController,
-          ),
-      },
+      child: widget.delegate.status == EnhancedStatus.loading && page == 1
+          ? LoadingWidget()
+          : widget.delegate.status == EnhancedStatus.error && page == 1
+              ? ErrorPageWidget(errorPage: widget.delegate.errorPage)
+              : switch (widget.type) {
+                  EnhancedViewType.sliver => EnhancedSliverView<T>(
+                      delegate: widget.delegate,
+                      builder: widget.sliverBuilder!,
+                      page: page,
+                      scrollController: scrollController,
+                    ),
+                  EnhancedViewType.box => EnhancedBoxView<T>(
+                      delegate: widget.delegate,
+                      builder: widget.boxBuilder!,
+                      page: page,
+                      scrollController: scrollController,
+                    ),
+                },
     );
   }
 }
