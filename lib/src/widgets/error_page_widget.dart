@@ -1,12 +1,12 @@
 import 'package:enhanced_paginated_view/src/models/enhanced_view_type.dart';
-import 'package:enhanced_paginated_view/src/models/page_failure_model.dart';
+import 'package:enhanced_paginated_view/src/models/error_page.dart';
 import 'package:enhanced_paginated_view/src/res/failed_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 /// A widget that displays a failure message with an optional retry button.
 ///
-/// The `PageFailureWidget` is typically used to indicate that a page has failed to load
+/// The `ErrorPageWidget` is typically used to indicate that a page has failed to load
 /// or an error has occurred. It displays an icon, a title, a description, and a retry button.
 ///
 /// The widget takes the following parameters:
@@ -18,7 +18,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 ///
 /// Example usage:
 /// ```dart
-/// PageFailureWidget(
+/// ErrorPageWidget(
 ///   title: 'Error',
 ///   description: 'Something went wrong. Please try again.',
 ///   btnText: 'Retry',
@@ -33,34 +33,34 @@ import 'package:flutter_svg/flutter_svg.dart';
 ///   ),
 /// )
 /// ```
-class PageFailureWidget extends StatelessWidget {
-  /// Creates a `PageFailureWidget`.
+class ErrorPageWidget extends StatelessWidget {
+  /// Creates a `ErrorPageWidget`.
   ///
   /// All parameters are required and must not be null.
-  const PageFailureWidget._({
+  const ErrorPageWidget._({
     required this.model,
     required this.enhancedViewType,
   });
 
-  // box factory constructor for the PageFailureWidget class
-  factory PageFailureWidget({required PageFailureModel pageFailureModel}) {
-    return PageFailureWidget._(
-      model: pageFailureModel,
+  // box factory constructor for the ErrorPageWidget class
+  factory ErrorPageWidget({required ErrorPage errorPage}) {
+    return ErrorPageWidget._(
+      model: errorPage,
       enhancedViewType: EnhancedViewType.box,
     );
   }
 
   // sliver factory constructor for sliver-based view type
-  factory PageFailureWidget.sliver({
-    required PageFailureModel pageFailureModel,
+  factory ErrorPageWidget.sliver({
+    required ErrorPage errorPage,
   }) {
-    return PageFailureWidget._(
-      model: pageFailureModel,
+    return ErrorPageWidget._(
+      model: errorPage,
       enhancedViewType: EnhancedViewType.sliver,
     );
   }
 
-  final PageFailureModel model;
+  final ErrorPage model;
 
   /// The type of view to use for the enhanced paginated view.
   final EnhancedViewType enhancedViewType;
@@ -93,7 +93,7 @@ class _FailureWidget extends StatelessWidget {
   const _FailureWidget({required this.model});
 
   /// The title of the failure message.
-  final PageFailureModel model;
+  final ErrorPage model;
 
   @override
   Widget build(BuildContext context) {
