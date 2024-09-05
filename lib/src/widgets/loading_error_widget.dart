@@ -1,70 +1,43 @@
+import 'package:enhanced_paginated_view/enhanced_paginated_view.dart';
 import 'package:enhanced_paginated_view/src/models/enhanced_view_type.dart';
-import 'package:enhanced_paginated_view/src/models/loading_failure_model.dart';
-import 'package:enhanced_paginated_view/src/widgets/loading_failure_widget.dart';
+import 'package:enhanced_paginated_view/src/widgets/error_load_more_widget.dart';
 import 'package:enhanced_paginated_view/src/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 
-class LoadingErrorWidget extends StatelessWidget {
+class LoadingErrorWidget<T> extends StatelessWidget {
   const LoadingErrorWidget._({
     required this.page,
-    required this.showError,
-    required this.showLoading,
     required this.enhancedViewType,
-    this.errorWidget,
-    this.loadingWidget,
-    required this.loadingFailureModel,
+    required this.delegate,
   });
 
   /// Creates a `LoadingErrorWidget` with a box view type.
   factory LoadingErrorWidget({
     required int page,
-    required bool showError,
-    required bool showLoading,
-    Widget Function(int)? errorWidget,
-    Widget? loadingWidget,
-    LoadingFailureModel? loadingFailureModel,
+    required EnhancedDelegate<T> delegate,
   }) {
     return LoadingErrorWidget._(
       page: page,
-      showError: showError,
-      showLoading: showLoading,
-      errorWidget: errorWidget,
-      loadingWidget: loadingWidget,
+      delegate: delegate,
       enhancedViewType: EnhancedViewType.box,
-      loadingFailureModel: loadingFailureModel,
     );
   }
 
   /// Creates a `LoadingErrorWidget` with a sliver view type.
   factory LoadingErrorWidget.sliver({
     required int page,
-    required bool showError,
-    required bool showLoading,
-    Widget Function(int)? errorWidget,
-    Widget? loadingWidget,
-    LoadingFailureModel? loadingFailureModel,
+    required EnhancedDelegate<T> delegate,
   }) {
     return LoadingErrorWidget._(
       page: page,
-      showError: showError,
-      showLoading: showLoading,
-      errorWidget: errorWidget,
-      loadingWidget: loadingWidget,
+      delegate: delegate,
       enhancedViewType: EnhancedViewType.sliver,
-      loadingFailureModel: loadingFailureModel,
     );
   }
 
   final int page;
-  final bool showError;
-  final bool showLoading;
-
   final EnhancedViewType enhancedViewType;
-
-  final Widget Function(int)? errorWidget;
-  final Widget? loadingWidget;
-
-  final LoadingFailureModel? loadingFailureModel;
+  final EnhancedDelegate<T> delegate;
 
   @override
   Widget build(BuildContext context) {
@@ -78,12 +51,13 @@ class LoadingErrorWidget extends StatelessWidget {
   Widget buildBox(BuildContext context) {
     return Column(
       children: [
-        if (showLoading) loadingWidget ?? LoadingWidget(),
-        if (showError)
-          if (errorWidget != null)
-            errorWidget!(page)
+        if (delegate.status == EnhancedStatus.loading)
+          delegate.loadingWidget ?? LoadingWidget(),
+        if (delegate.status == EnhancedStatus.error)
+          if (delegate.errorWidget != null)
+            delegate.errorWidget!(page)
           else
-            LoadingFailureWidget(model: loadingFailureModel),
+            ErrorLoadMoreWidget(errorLoadMore: delegate.errorLoadMore),
       ],
     );
   }
@@ -93,12 +67,13 @@ class LoadingErrorWidget extends StatelessWidget {
     return SliverList(
       delegate: SliverChildListDelegate(
         [
-          if (showLoading) loadingWidget ?? LoadingWidget(),
-          if (showError)
-            if (errorWidget != null)
-              errorWidget!(page)
+          if (delegate.status == EnhancedStatus.loading)
+            delegate.loadingWidget ?? LoadingWidget(),
+          if (delegate.status == EnhancedStatus.error)
+            if (delegate.errorWidget != null)
+              delegate.errorWidget!(page)
             else
-              LoadingFailureWidget(model: loadingFailureModel),
+              ErrorLoadMoreWidget.sliver(errorLoadMore: delegate.errorLoadMore),
         ],
       ),
     );
