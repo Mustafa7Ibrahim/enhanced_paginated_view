@@ -1,5 +1,5 @@
 import 'package:enhanced_paginated_view/src/models/enhanced_view_type.dart';
-import 'package:enhanced_paginated_view/src/models/error_load_more.dart';
+import 'package:enhanced_paginated_view/src/models/error_load_more_config.dart';
 import 'package:flutter/material.dart';
 /// A widget that displays an error message and a retry button when loading more data fails.
 ///

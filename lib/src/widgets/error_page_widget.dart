@@ -1,5 +1,5 @@
 import 'package:enhanced_paginated_view/src/models/enhanced_view_type.dart';
-import 'package:enhanced_paginated_view/src/models/error_page.dart';
+import 'package:enhanced_paginated_view/src/models/error_page_config.dart';
 import 'package:enhanced_paginated_view/src/res/failed_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';

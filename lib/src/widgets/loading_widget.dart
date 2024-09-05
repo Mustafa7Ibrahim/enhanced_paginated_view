@@ -1,4 +1,4 @@
-import 'package:enhanced_paginated_view/src/models/enhanced_loading_delegate.dart';
+import 'package:enhanced_paginated_view/src/models/loading_config.dart';
 import 'package:enhanced_paginated_view/src/models/enhanced_loading_type.dart';
 import 'package:enhanced_paginated_view/src/models/enhanced_view_type.dart';
 import 'package:flutter/material.dart';
