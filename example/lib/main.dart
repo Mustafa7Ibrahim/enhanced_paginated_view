@@ -79,10 +79,11 @@ class _VanillaListExampleState extends State<VanillaListExample> {
       hasReachedMax: isMaxReached,
       onLoadMore: loadMore,
       itemsPerPage: 10,
-      builder: (items, physics, _, shrinkWrap) {
+      builder: (items, physics, reverse, shrinkWrap) {
         return ListView.separated(
           physics: physics,
           shrinkWrap: shrinkWrap,
+          reverse: reverse,
           itemCount: items.length,
           separatorBuilder: (__, _) => const Divider(height: 16),
           itemBuilder: (BuildContext context, int index) {
