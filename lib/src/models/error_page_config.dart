@@ -19,6 +19,9 @@ class ErrorPageConfig {
   /// A custom widget for the retry button.
   final Widget? customButton;
 
+  /// A custom view for the error page
+  final Widget? customView;
+
   /// Creates a new instance of [ErrorPageConfig].
   ///
   /// The [title] parameter represents the title of the failure message.
@@ -30,11 +33,14 @@ class ErrorPageConfig {
   /// The [onRetry] parameter represents a callback function to be called when the retry button is pressed.
   ///
   /// The [customButton] parameter represents a custom widget for the retry button.
+  ///
+  /// The [customView] parameter represents a custom view for the whole page that will be used instead of the default one
   const ErrorPageConfig({
     this.title,
     this.description,
     this.btnText,
     this.onRetry,
     this.customButton,
+    this.customView,
   });
 }

@@ -147,7 +147,7 @@ class EnhancedBoxView<T> extends StatelessWidget {
               true,
             )
           else
-            delegate.emptyWidgetConfig.customWidget ??
+            delegate.emptyWidgetConfig.customView ??
                 EmptyWidget(config: delegate.emptyWidgetConfig),
           LoadingErrorWidget(page: page, delegate: delegate),
         ],
@@ -180,7 +180,7 @@ class EnhancedBoxView<T> extends StatelessWidget {
               true,
             )
           else
-            delegate.emptyWidgetConfig.customWidget ??
+            delegate.emptyWidgetConfig.customView ??
                 EmptyWidget(config: delegate.emptyWidgetConfig),
           if (delegate.header != null) delegate.header!,
         ],

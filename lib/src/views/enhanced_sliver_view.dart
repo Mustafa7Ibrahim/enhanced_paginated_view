@@ -104,7 +104,7 @@ class EnhancedSliverView<T> extends StatelessWidget {
                 : delegate.listOfData,
           )
         else
-          delegate.emptyWidgetConfig.customWidget ??
+          delegate.emptyWidgetConfig.customView ??
               EmptyWidget.sliver(config: delegate.emptyWidgetConfig),
         LoadingErrorWidget.sliver(page: page, delegate: delegate),
       ],
@@ -127,7 +127,7 @@ class EnhancedSliverView<T> extends StatelessWidget {
                 : delegate.listOfData,
           )
         else
-          delegate.emptyWidgetConfig.customWidget ??
+          delegate.emptyWidgetConfig.customView ??
               EmptyWidget.sliver(config: delegate.emptyWidgetConfig),
         if (delegate.header != null) delegate.header!,
       ],

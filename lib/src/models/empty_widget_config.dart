@@ -12,7 +12,7 @@ class EmptyWidgetConfig {
   final String svgIcon;
 
   /// A custom widget to be displayed as the empty widget.
-  final Widget? customWidget;
+  final Widget? customView;
 
   /// Creates a new instance of [EmptyWidgetConfig].
   ///
@@ -20,10 +20,10 @@ class EmptyWidgetConfig {
   ///
   /// The [svgIcon] parameter is used to set the SVG icon path for the empty widget. By default, it is set to [noResultsIcon].
   ///
-  /// The [customWidget] parameter is an optional custom widget to be displayed as the empty widget.
+  /// The [customView] parameter is an optional custom widget to be displayed as the empty widget.
   const EmptyWidgetConfig({
     this.title = "No results found",
     this.svgIcon = noResultsIcon,
-    this.customWidget,
+    this.customView,
   });
 }
