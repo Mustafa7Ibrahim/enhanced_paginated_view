@@ -76,17 +76,19 @@ class ErrorPageWidget extends StatelessWidget {
 
   // box build function
   Widget buildBox(BuildContext context) {
-    return SafeArea(
-      child: _FailureWidget(config: config),
-    );
+    return config.customView ??
+        SafeArea(
+          child: _FailureWidget(config: config),
+        );
   }
 
   // sliver build function
   Widget buildSliver(BuildContext context) {
-    return SliverFillRemaining(
-      hasScrollBody: false,
-      child: _FailureWidget(config: config),
-    );
+    return config.customView ??
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: _FailureWidget(config: config),
+        );
   }
 }
 

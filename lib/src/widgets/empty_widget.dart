@@ -44,13 +44,12 @@ class EmptyWidget extends StatelessWidget {
 
   /// Builds the content with a box view type.
   Widget _buildBox(BuildContext context) {
-    return config.customWidget ?? _EmptyWidget(config);
+    return config.customView ?? _EmptyWidget(config);
   }
 
   /// Builds the content with a sliver view type.
   Widget _buildSliver(BuildContext context) {
-    return config.customWidget ??
-        SliverToBoxAdapter(child: _EmptyWidget(config));
+    return config.customView ?? SliverToBoxAdapter(child: _EmptyWidget(config));
   }
 }
 
@@ -61,14 +60,15 @@ class _EmptyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
+    return LayoutBuilder(
+      builder: (context, constraints) => Container(
         padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
-              width: MediaQuery.of(context).size.width * 0.8,
+              width: constraints.maxWidth,
               child: AspectRatio(
                 aspectRatio: 1,
                 child: SvgPicture.string(
@@ -77,6 +77,7 @@ class _EmptyWidget extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: 16),
             Text(
               config.title,
               style: Theme.of(context)
