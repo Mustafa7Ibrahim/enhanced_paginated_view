@@ -1,3 +1,5 @@
+import 'package:enhanced_paginated_view/enhanced_paginated_view.dart';
+import 'package:enhanced_paginated_view/src/models/error_load_more.dart';
 import 'package:flutter/material.dart';
 
 typedef EnhancedBoxBuilder<T> = Widget Function(
@@ -13,26 +15,30 @@ typedef EnhancedSliverBuilder<T> = Widget Function(
 
 class EnhancedDelegate<T> {
   final ScrollPhysics? physics;
-  final Widget? header;
   final bool shouldDeduplicate;
-  final Widget? emptyView;
-  final Widget? loadingWidget;
-  final Widget Function(int)? errorWidget;
-  final bool showError;
-  final bool showLoading;
   final Axis scrollDirection;
   final CrossAxisAlignment crossAxisAlignment;
+
   final List<T> listOfData;
+  final EnhancedStatus status;
+
+  final Widget? header;
+  final Widget? loadingWidget;
+  final Widget Function(int)? errorWidget;
+  final Widget? emptyView;
+  final ErrorPage errorPage;
+  final ErrorLoadMore errorLoadMore;
 
   EnhancedDelegate({
     required this.listOfData,
-    required this.showError,
-    required this.showLoading,
+    required this.status,
     this.physics,
     this.header,
     this.emptyView,
     this.loadingWidget,
     this.errorWidget,
+    this.errorLoadMore = const ErrorLoadMore(),
+    this.errorPage = const ErrorPage(),
     this.shouldDeduplicate = true,
     this.scrollDirection = Axis.vertical,
     this.crossAxisAlignment = CrossAxisAlignment.center,
