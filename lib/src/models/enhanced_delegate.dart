@@ -1,5 +1,4 @@
 import 'package:enhanced_paginated_view/enhanced_paginated_view.dart';
-import 'package:enhanced_paginated_view/src/models/enhanced_loading_delegate.dart';
 import 'package:flutter/material.dart';
 
 /// A delegate class for the EnhancedPaginatedView widget.
@@ -27,8 +26,8 @@ class EnhancedDelegate<T> {
   /// The widget to be displayed as the header of the EnhancedPaginatedView.
   final Widget? header;
 
-  /// The widget to be displayed when the list of data is empty.
-  final Widget? emptyPage;
+  /// The configuration for the empty widget.
+  final EmptyWidgetConfig emptyWidgetConfig;
 
   /// The configuration for the error page.
   final ErrorPageConfig errorPageConfig;
@@ -45,7 +44,7 @@ class EnhancedDelegate<T> {
   /// The [status] parameter is required and represents the current status of the EnhancedPaginatedView.
   /// The [physics] parameter is optional and represents the physics of the scrollable area.
   /// The [header] parameter is optional and represents the widget to be displayed as the header of the EnhancedPaginatedView.
-  /// The [emptyPage] parameter is optional and represents the widget to be displayed when the list of data is empty.
+  /// The [emptyWidgetConfig] parameter is optional and represents the widget to be displayed when the list of data is empty or add customization.
   /// The [loadingConfig] parameter is optional and represents the configuration for the loading state.
   /// The [errorLoadMoreConfig] parameter is optional and represents the configuration for the error when loading more data.
   /// The [errorPageConfig] parameter is optional and represents the configuration for the error page.
@@ -57,7 +56,7 @@ class EnhancedDelegate<T> {
     required this.status,
     this.physics,
     this.header,
-    this.emptyPage,
+    this.emptyWidgetConfig = const EmptyWidgetConfig(),
     this.loadingConfig = const LoadingConfig(),
     this.errorLoadMoreConfig = const ErrorLoadMoreConfig(),
     this.errorPageConfig = const ErrorPageConfig(),
