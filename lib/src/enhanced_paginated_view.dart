@@ -1,7 +1,6 @@
+import 'package:enhanced_paginated_view/enhanced_paginated_view.dart';
 import 'package:enhanced_paginated_view/src/core/custom_type_def.dart';
-import 'package:enhanced_paginated_view/src/models/enhanced_delegate.dart';
 import 'package:enhanced_paginated_view/src/models/enhanced_loading_type.dart';
-import 'package:enhanced_paginated_view/src/models/enhanced_status.dart';
 import 'package:enhanced_paginated_view/src/models/enhanced_view_type.dart';
 import 'package:enhanced_paginated_view/src/views/enhanced_box_view.dart';
 import 'package:enhanced_paginated_view/src/views/enhanced_sliver_view.dart';
@@ -25,10 +24,12 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
     int itemsPerPage = 15,
     required EnhancedDelegate<T> delegate,
     required EnhancedBoxBuilder<T> builder,
+    EnhancedViewDirection direction = EnhancedViewDirection.forward,
   }) {
     return EnhancedPaginatedView._(
       type: EnhancedViewType.box,
       onLoadMore: onLoadMore,
+      direction: direction,
       hasReachedMax: hasReachedMax,
       itemsPerPage: itemsPerPage,
       delegate: delegate,
@@ -50,10 +51,12 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
     int itemsPerPage = 15,
     required EnhancedDelegate<T> delegate,
     required EnhancedSliverBuilder<T> builder,
+    EnhancedViewDirection direction = EnhancedViewDirection.forward,
   }) {
     return EnhancedPaginatedView._(
       onLoadMore: onLoadMore,
       type: EnhancedViewType.sliver,
+      direction: direction,
       hasReachedMax: hasReachedMax,
       itemsPerPage: itemsPerPage,
       delegate: delegate,
@@ -71,6 +74,7 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
     required this.delegate,
     required this.boxBuilder,
     required this.sliverBuilder,
+    required this.direction,
     super.key,
   });
 
@@ -96,6 +100,18 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
   ///
   /// This function is required and should take an integer parameter representing the current page.
   final void Function(int) onLoadMore;
+
+  /// Specifies the direction of the enhanced paginated view.
+  ///
+  /// The [EnhancedViewDirection] enum is used to determine the scrolling direction
+  /// of the enhanced paginated view. It can be set to either [EnhancedViewDirection.forward]
+  /// or [EnhancedViewDirection.reverse].
+  ///
+  /// Example usage:
+  /// ```dart
+  /// final EnhancedViewDirection direction = EnhancedViewDirection.vertical;
+  /// ```
+  final EnhancedViewDirection direction;
 
   /// [delegate] is an instance of [EnhancedDelegate] that provides data and status information.
   final EnhancedDelegate<T> delegate;
@@ -200,18 +216,36 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
           : widget.delegate.status == EnhancedStatus.error && page == 1
               ? ErrorPageWidget(config: widget.delegate.errorPageConfig)
               : switch (widget.type) {
-                  EnhancedViewType.sliver => EnhancedSliverView<T>(
-                      delegate: widget.delegate,
-                      builder: widget.sliverBuilder!,
-                      page: page,
-                      scrollController: scrollController,
-                    ),
-                  EnhancedViewType.box => EnhancedBoxView<T>(
-                      delegate: widget.delegate,
-                      builder: widget.boxBuilder!,
-                      page: page,
-                      scrollController: scrollController,
-                    ),
+                  EnhancedViewType.sliver => switch (widget.direction) {
+                      EnhancedViewDirection.forward => EnhancedSliverView<T>(
+                          delegate: widget.delegate,
+                          builder: widget.sliverBuilder!,
+                          page: page,
+                          scrollController: scrollController,
+                        ),
+                      EnhancedViewDirection.reverse =>
+                        EnhancedSliverView<T>.reverse(
+                          delegate: widget.delegate,
+                          builder: widget.sliverBuilder!,
+                          page: page,
+                          scrollController: scrollController,
+                        ),
+                    },
+                  EnhancedViewType.box => switch (widget.direction) {
+                      EnhancedViewDirection.forward => EnhancedBoxView<T>(
+                          delegate: widget.delegate,
+                          builder: widget.boxBuilder!,
+                          page: page,
+                          scrollController: scrollController,
+                        ),
+                      EnhancedViewDirection.reverse =>
+                        EnhancedBoxView<T>.reverse(
+                          delegate: widget.delegate,
+                          builder: widget.boxBuilder!,
+                          page: page,
+                          scrollController: scrollController,
+                        ),
+                    },
                 },
     );
   }
