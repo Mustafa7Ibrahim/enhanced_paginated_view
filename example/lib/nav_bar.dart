@@ -28,14 +28,10 @@ class _NavBarState extends State<NavBar> {
             icon: Icon(Icons.grid_view_rounded),
             label: 'Grid',
           ),
-          NavigationDestination(
-            icon: Icon(Icons.message_rounded),
-            label: 'Chat',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.line_style_outlined),
-            label: 'Advanced',
-          ),
+          // NavigationDestination(
+          //   icon: Icon(Icons.line_style_outlined),
+          //   label: 'Advanced',
+          // ),
         ],
       ),
       body: IndexedStack(

@@ -30,6 +30,16 @@ class PaginatedBloc extends Bloc<PaginatedEvent, PaginatedState> {
     await Future.delayed(
       const Duration(seconds: 1),
       () {
+        if (event.isEmpty) {
+          emit(
+            state.copyWith(
+              status: EnhancedStatus.loaded,
+              data: [],
+              hasReachedMax: true,
+            ),
+          );
+          return;
+        }
         if (event.page == event.failPage) {
           emit(
             state.copyWith(status: EnhancedStatus.error, error: 'Error'),
