@@ -85,13 +85,7 @@ class EnhancedBoxView<T> extends StatelessWidget {
             )
           else
             delegate.emptyView ?? EmptyWidget(),
-          LoadingErrorWidget(
-            page: page,
-            showError: delegate.showError,
-            showLoading: delegate.showLoading,
-            errorWidget: delegate.errorWidget,
-            loadingWidget: delegate.loadingWidget,
-          ),
+          LoadingErrorWidget(page: page, delegate: delegate),
         ],
       ),
     );
@@ -107,13 +101,7 @@ class EnhancedBoxView<T> extends StatelessWidget {
       child: Column(
         crossAxisAlignment: delegate.crossAxisAlignment,
         children: [
-          LoadingErrorWidget(
-            page: page,
-            showError: delegate.showError,
-            showLoading: delegate.showLoading,
-            errorWidget: delegate.errorWidget,
-            loadingWidget: delegate.loadingWidget,
-          ),
+          LoadingErrorWidget(page: page, delegate: delegate),
           if (delegate.listOfData.isNotEmpty)
             builder(
               delegate.shouldDeduplicate

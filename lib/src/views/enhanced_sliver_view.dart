@@ -80,13 +80,7 @@ class EnhancedSliverView<T> extends StatelessWidget {
           )
         else
           delegate.emptyView ?? EmptyWidget.sliver(),
-        LoadingErrorWidget.sliver(
-          page: page,
-          showError: delegate.showError,
-          showLoading: delegate.showLoading,
-          errorWidget: delegate.errorWidget,
-          loadingWidget: delegate.loadingWidget,
-        ),
+        LoadingErrorWidget.sliver(page: page, delegate: delegate),
       ],
     );
   }
@@ -98,13 +92,7 @@ class EnhancedSliverView<T> extends StatelessWidget {
       physics: delegate.physics,
       scrollDirection: delegate.scrollDirection,
       slivers: [
-        LoadingErrorWidget.sliver(
-          page: page,
-          showError: delegate.showError,
-          showLoading: delegate.showLoading,
-          errorWidget: delegate.errorWidget,
-          loadingWidget: delegate.loadingWidget,
-        ),
+        LoadingErrorWidget.sliver(page: page, delegate: delegate),
         if (delegate.listOfData.isNotEmpty)
           builder(
             context,
