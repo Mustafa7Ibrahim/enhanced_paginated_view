@@ -28,10 +28,10 @@ class GridRiverpod extends ConsumerWidget {
             mainAxisSpacing: 16,
             childAspectRatio: 1,
           ),
+          padding: const EdgeInsets.all(16),
           physics: physics,
           shrinkWrap: shrinkWrap,
           itemCount: items.length,
-          padding: const EdgeInsets.all(16),
           itemBuilder: (BuildContext context, int index) {
             return GridWidget(item: items[index], index: index);
           },

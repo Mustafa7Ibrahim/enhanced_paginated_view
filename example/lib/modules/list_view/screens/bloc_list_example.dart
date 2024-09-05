@@ -1,6 +1,5 @@
 import 'package:enhanced_paginated_view/enhanced_paginated_view.dart';
 import 'package:example/core/bloc/paginated_bloc.dart';
-import 'package:example/widgets/header_widget.dart';
 import 'package:example/widgets/list_view_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,7 +26,7 @@ class BlocListExample extends StatelessWidget {
             delegate: EnhancedDelegate(
               listOfData: state.data,
               status: state.status,
-              header: const HeaderWidget(),
+              // header: const HeaderWidget(),
               errorPageConfig: ErrorPageConfig(
                 onRetry: () => context
                     .read<PaginatedBloc>()
