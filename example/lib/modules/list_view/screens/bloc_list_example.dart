@@ -21,14 +21,19 @@ class BlocListExample extends StatelessWidget {
               listOfData: state.data,
               status: state.status,
               header: const HeaderWidget(),
-              errorPage: ErrorPage(
+              errorPageConfig: ErrorPageConfig(
                 onRetry: () => context
                     .read<PaginatedBloc>()
                     .add(const FetchDataEvent(page: 1)),
               ),
+              errorLoadMoreConfig: ErrorLoadMoreConfig(
+                onRetry: (page) => context
+                    .read<PaginatedBloc>()
+                    .add(FetchDataEvent(page: page)),
+              ),
             ),
             itemsPerPage: 10,
-            isMaxReached: state.hasReachedMax,
+            hasReachedMax: state.hasReachedMax,
             onLoadMore: (page) {
               context
                   .read<PaginatedBloc>()

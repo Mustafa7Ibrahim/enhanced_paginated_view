@@ -12,6 +12,9 @@
 /// EnhancedViewDirection direction = EnhancedViewDirection.forward;
 /// ```
 enum EnhancedViewDirection {
+  /// Represents the forward direction.
   forward,
+
+  /// Represents the reverse direction.
   reverse;
 }

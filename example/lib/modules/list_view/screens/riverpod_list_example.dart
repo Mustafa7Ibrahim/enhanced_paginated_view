@@ -17,7 +17,7 @@ class RiverpodListExample extends ConsumerWidget {
         status: state.status,
         header: const HeaderWidget(),
       ),
-      isMaxReached: state.hasReachedMax,
+      hasReachedMax: state.hasReachedMax,
       onLoadMore: ref.read(listPProvider().notifier).fetchData,
       itemsPerPage: 10,
       builder: (items, physics, reverse, shrinkWrap) {

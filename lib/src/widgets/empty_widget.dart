@@ -6,6 +6,10 @@ import 'package:flutter/material.dart';
 /// This widget is typically used when there is no data to display.
 /// It renders an empty `SizedBox` widget.
 class EmptyWidget extends StatelessWidget {
+  /// The type of enhanced view.
+  final EnhancedViewType enhancedViewType;
+
+  /// Creates an `EmptyWidget` with the specified [enhancedViewType].
   const EmptyWidget._(this.enhancedViewType);
 
   /// Creates an `EmptyWidget` with a box view type.
@@ -18,23 +22,28 @@ class EmptyWidget extends StatelessWidget {
     return const EmptyWidget._(EnhancedViewType.sliver);
   }
 
-  final EnhancedViewType enhancedViewType;
-
   @override
   Widget build(BuildContext context) {
-    return switch (enhancedViewType) {
-      EnhancedViewType.box => buildBox(context),
-      EnhancedViewType.sliver => buildSliver(context),
-    };
+    return _buildContent(context);
   }
 
-  // box build function
-  Widget buildBox(BuildContext context) {
+  /// Builds the content based on the [enhancedViewType].
+  Widget _buildContent(BuildContext context) {
+    switch (enhancedViewType) {
+      case EnhancedViewType.box:
+        return _buildBox(context);
+      case EnhancedViewType.sliver:
+        return _buildSliver(context);
+    }
+  }
+
+  /// Builds the content with a box view type.
+  Widget _buildBox(BuildContext context) {
     return const SizedBox();
   }
 
-  // sliver build function
-  Widget buildSliver(BuildContext context) {
+  /// Builds the content with a sliver view type.
+  Widget _buildSliver(BuildContext context) {
     return const SliverToBoxAdapter(
       child: SizedBox(),
     );

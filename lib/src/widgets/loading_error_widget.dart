@@ -1,9 +1,12 @@
 import 'package:enhanced_paginated_view/enhanced_paginated_view.dart';
+import 'package:enhanced_paginated_view/src/models/enhanced_loading_type.dart';
 import 'package:enhanced_paginated_view/src/models/enhanced_view_type.dart';
 import 'package:enhanced_paginated_view/src/widgets/error_load_more_widget.dart';
 import 'package:enhanced_paginated_view/src/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 
+/// A widget that displays a loading or error state based on the provided delegate's status.
+/// The widget can be used with either a box view type or a sliver view type.
 class LoadingErrorWidget<T> extends StatelessWidget {
   const LoadingErrorWidget._({
     required this.page,
@@ -12,6 +15,9 @@ class LoadingErrorWidget<T> extends StatelessWidget {
   });
 
   /// Creates a `LoadingErrorWidget` with a box view type.
+  ///
+  /// The [page] parameter specifies the current page number.
+  /// The [delegate] parameter is the delegate that provides the loading and error status.
   factory LoadingErrorWidget({
     required int page,
     required EnhancedDelegate<T> delegate,
@@ -24,6 +30,9 @@ class LoadingErrorWidget<T> extends StatelessWidget {
   }
 
   /// Creates a `LoadingErrorWidget` with a sliver view type.
+  ///
+  /// The [page] parameter specifies the current page number.
+  /// The [delegate] parameter is the delegate that provides the loading and error status.
   factory LoadingErrorWidget.sliver({
     required int page,
     required EnhancedDelegate<T> delegate,
@@ -35,8 +44,13 @@ class LoadingErrorWidget<T> extends StatelessWidget {
     );
   }
 
+  /// The current page number.
   final int page;
+
+  /// The view type of the widget.
   final EnhancedViewType enhancedViewType;
+
+  /// The delegate that provides the loading and error status.
   final EnhancedDelegate<T> delegate;
 
   @override
@@ -47,33 +61,43 @@ class LoadingErrorWidget<T> extends StatelessWidget {
     };
   }
 
-  // build the box view
+  /// Builds the widget with a box view type.
+  ///
+  /// The [context] parameter is the build context.
   Widget buildBox(BuildContext context) {
     return Column(
       children: [
         if (delegate.status == EnhancedStatus.loading)
-          delegate.loadingWidget ?? LoadingWidget(),
+          LoadingWidget(
+            config: delegate.loadingConfig,
+            type: EnhancedLoadingType.loadMore,
+          ),
         if (delegate.status == EnhancedStatus.error)
-          if (delegate.errorWidget != null)
-            delegate.errorWidget!(page)
-          else
-            ErrorLoadMoreWidget(errorLoadMore: delegate.errorLoadMore),
+          ErrorLoadMoreWidget(
+            config: delegate.errorLoadMoreConfig,
+            page: page,
+          ),
       ],
     );
   }
 
-  // build the sliver view
+  /// Builds the widget with a sliver view type.
+  ///
+  /// The [context] parameter is the build context.
   Widget buildSliver(BuildContext context) {
     return SliverList(
       delegate: SliverChildListDelegate(
         [
           if (delegate.status == EnhancedStatus.loading)
-            delegate.loadingWidget ?? LoadingWidget(),
+            LoadingWidget(
+              config: delegate.loadingConfig,
+              type: EnhancedLoadingType.loadMore,
+            ),
           if (delegate.status == EnhancedStatus.error)
-            if (delegate.errorWidget != null)
-              delegate.errorWidget!(page)
-            else
-              ErrorLoadMoreWidget.sliver(errorLoadMore: delegate.errorLoadMore),
+            ErrorLoadMoreWidget.sliver(
+              config: delegate.errorLoadMoreConfig,
+              page: page,
+            ),
         ],
       ),
     );

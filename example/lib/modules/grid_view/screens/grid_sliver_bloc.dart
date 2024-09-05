@@ -19,7 +19,7 @@ class GridSliverBloc extends StatelessWidget {
               status: state.status,
             ),
             itemsPerPage: 10,
-            isMaxReached: state.hasReachedMax,
+            hasReachedMax: state.hasReachedMax,
             onLoadMore: (page) {
               context.read<PaginatedBloc>().add(FetchDataEvent(page: page));
             },

@@ -76,7 +76,7 @@ class _VanillaListExampleState extends State<VanillaListExample> {
         status: status,
         header: const HeaderWidget(),
       ),
-      isMaxReached: isMaxReached,
+      hasReachedMax: isMaxReached,
       onLoadMore: loadMore,
       itemsPerPage: 10,
       builder: (items, physics, _, shrinkWrap) {

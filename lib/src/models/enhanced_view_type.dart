@@ -13,6 +13,9 @@
 /// EnhancedViewType viewType = EnhancedViewType.slivers;
 /// ```
 enum EnhancedViewType {
+  /// Represents a sliver-based view.
   sliver,
+
+  /// Represents a box-based view.
   box;
 }

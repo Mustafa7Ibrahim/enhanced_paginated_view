@@ -38,29 +38,30 @@ class ErrorPageWidget extends StatelessWidget {
   ///
   /// All parameters are required and must not be null.
   const ErrorPageWidget._({
-    required this.model,
+    required this.config,
     required this.enhancedViewType,
   });
 
   // box factory constructor for the ErrorPageWidget class
-  factory ErrorPageWidget({required ErrorPage errorPage}) {
+  factory ErrorPageWidget({required ErrorPageConfig config}) {
     return ErrorPageWidget._(
-      model: errorPage,
+      config: config,
       enhancedViewType: EnhancedViewType.box,
     );
   }
 
   // sliver factory constructor for sliver-based view type
   factory ErrorPageWidget.sliver({
-    required ErrorPage errorPage,
+    required ErrorPageConfig config,
   }) {
     return ErrorPageWidget._(
-      model: errorPage,
+      config: config,
       enhancedViewType: EnhancedViewType.sliver,
     );
   }
 
-  final ErrorPage model;
+  /// The configuration for the error page.
+  final ErrorPageConfig config;
 
   /// The type of view to use for the enhanced paginated view.
   final EnhancedViewType enhancedViewType;
@@ -76,7 +77,7 @@ class ErrorPageWidget extends StatelessWidget {
   // box build function
   Widget buildBox(BuildContext context) {
     return SafeArea(
-      child: _FailureWidget(model: model),
+      child: _FailureWidget(config: config),
     );
   }
 
@@ -84,16 +85,17 @@ class ErrorPageWidget extends StatelessWidget {
   Widget buildSliver(BuildContext context) {
     return SliverFillRemaining(
       hasScrollBody: false,
-      child: _FailureWidget(model: model),
+      child: _FailureWidget(config: config),
     );
   }
 }
 
+/// A widget that displays the failure message and retry button.
 class _FailureWidget extends StatelessWidget {
-  const _FailureWidget({required this.model});
+  const _FailureWidget({required this.config});
 
-  /// The title of the failure message.
-  final ErrorPage model;
+  /// The configuration for the error page.
+  final ErrorPageConfig config;
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +116,7 @@ class _FailureWidget extends StatelessWidget {
           ),
           const Spacer(flex: 2),
           Text(
-            model.title ?? "Opps!....",
+            config.title ?? "Opps!....",
             style: Theme.of(context)
                 .textTheme
                 .headlineSmall!
@@ -122,18 +124,18 @@ class _FailureWidget extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            model.description ??
+            config.description ??
                 "Something wrong with your connection, Please try again after a moment.",
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16 * 2.5),
-          model.retryButton ??
+          config.customButton ??
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 48),
                 ),
-                onPressed: model.onRetry,
-                child: Text(model.btnText ?? "Retry".toUpperCase()),
+                onPressed: config.onRetry,
+                child: Text(config.btnText ?? "Retry".toUpperCase()),
               ),
           const SizedBox(height: 16),
         ],

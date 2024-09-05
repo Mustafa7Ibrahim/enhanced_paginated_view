@@ -15,7 +15,7 @@ class GridRiverpod extends ConsumerWidget {
         listOfData: state.data,
         status: state.status,
       ),
-      isMaxReached: state.hasReachedMax,
+      hasReachedMax: state.hasReachedMax,
       onLoadMore: (page) {
         ref.read(listPProvider().notifier).fetchData(page);
       },
