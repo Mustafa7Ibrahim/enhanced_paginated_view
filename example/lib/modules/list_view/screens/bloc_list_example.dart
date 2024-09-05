@@ -1,58 +1,38 @@
 import 'package:enhanced_paginated_view/enhanced_paginated_view.dart';
-import 'package:example/modules/list_view/bloc/paginated_bloc.dart';
+import 'package:example/core/bloc/paginated_bloc.dart';
+import 'package:example/widgets/header_widget.dart';
+import 'package:example/widgets/list_view_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class BlocListExample extends StatefulWidget {
-  const BlocListExample({super.key});
+class BlocListExample extends StatelessWidget {
+  const BlocListExample({super.key, this.failPage});
+  final int? failPage;
 
-  @override
-  State<BlocListExample> createState() => _BlocListExampleState();
-}
-
-class _BlocListExampleState extends State<BlocListExample> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => PaginatedBloc()..add(const FetchDataEvent()),
+      create: (context) =>
+          PaginatedBloc()..add(FetchDataEvent(failPage: failPage)),
       child: BlocBuilder<PaginatedBloc, PaginatedState>(
         builder: (context, state) {
-          if (state.status == PaginatedStatus.initLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (state.status == PaginatedStatus.initError) {
-            return PageFailureWidget(
-              pageFailureModel: PageFailureModel(
-                description: state.error,
-                onRetry: () {
-                  context.read<PaginatedBloc>().add(const FetchDataEvent());
-                },
-              ),
-            );
-          }
           return EnhancedPaginatedView<String>(
             delegate: EnhancedDelegate(
               listOfData: state.data,
-              showLoading: state.status == PaginatedStatus.loading,
-              showError: state.status == PaginatedStatus.error,
-              errorWidget: (page) => Column(
-                children: [
-                  Center(child: Text(' ${state.error}')),
-                  ElevatedButton(
-                    onPressed: () {
-                      context
-                          .read<PaginatedBloc>()
-                          .add(FetchDataEvent(page: page));
-                    },
-                    child: const Text('Retry'),
-                  ),
-                ],
+              status: state.status,
+              header: const HeaderWidget(),
+              errorPage: ErrorPage(
+                onRetry: () => context
+                    .read<PaginatedBloc>()
+                    .add(const FetchDataEvent(page: 1)),
               ),
             ),
             itemsPerPage: 10,
             isMaxReached: state.hasReachedMax,
             onLoadMore: (page) {
-              context.read<PaginatedBloc>().add(FetchDataEvent(page: page));
+              context
+                  .read<PaginatedBloc>()
+                  .add(FetchDataEvent(page: page, failPage: failPage));
             },
             builder: (items, physics, _, shrinkWrap) {
               return ListView.separated(
@@ -63,10 +43,7 @@ class _BlocListExampleState extends State<BlocListExample> {
                 itemCount: items.length,
                 separatorBuilder: (__, _) => const Divider(height: 16),
                 itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    title: Text('Item ${items[index]}'),
-                    subtitle: Text('Item ${index + 1}'),
-                  );
+                  return ListViewItem(item: items[index], index: index);
                 },
               );
             },

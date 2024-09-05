@@ -16,7 +16,7 @@ class GridViewScreen extends StatelessWidget {
           title: const Text('Grid Example'),
           bottom: const TabBar(
             isScrollable: true,
-            padding: EdgeInsets.zero,
+            tabAlignment: TabAlignment.start,
             tabs: [
               Tab(text: 'BLOC'),
               Tab(text: 'BLOC SLIVER'),

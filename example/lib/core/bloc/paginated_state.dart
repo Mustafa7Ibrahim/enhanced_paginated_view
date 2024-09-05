@@ -1,22 +1,14 @@
 part of 'paginated_bloc.dart';
 
-enum PaginatedStatus {
-  initLoading,
-  initError,
-  loading,
-  error,
-  loaded;
-}
-
 final class PaginatedState extends Equatable {
   const PaginatedState({
-    this.status = PaginatedStatus.initLoading,
+    this.status = EnhancedStatus.loading,
     this.data = const [],
     this.hasReachedMax = false,
     this.error,
   });
 
-  final PaginatedStatus status;
+  final EnhancedStatus status;
   final List<String> data;
   final bool hasReachedMax;
   final String? error;
@@ -24,7 +16,7 @@ final class PaginatedState extends Equatable {
   /// copyWith method is used to copy the current state
   /// and update the required fields.
   PaginatedState copyWith({
-    PaginatedStatus? status,
+    EnhancedStatus? status,
     List<String>? data,
     bool? hasReachedMax,
     String? error,

@@ -9,15 +9,19 @@ class ListViewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 5,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('List Example'),
-          bottom: const TabBar(
+          bottom: TabBar(
+            isScrollable: true,
+            tabAlignment: TabAlignment.start,
             tabs: [
-              Tab(text: 'VANILLA'),
-              Tab(text: 'BLOC'),
-              Tab(text: 'RIVERPOD'),
+              const Tab(text: 'VANILLA'),
+              const Tab(text: 'BLOC'),
+              const Tab(text: 'RIVERPOD'),
+              Tab(text: 'Page Error'.toUpperCase()),
+              Tab(text: 'Loading Error'.toUpperCase()),
             ],
           ),
         ),
@@ -26,6 +30,8 @@ class ListViewScreen extends StatelessWidget {
             VanillaListExample(),
             BlocListExample(),
             RiverpodListExample(),
+            BlocListExample(failPage: 1),
+            BlocListExample(failPage: 2),
           ],
         ),
       ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:enhanced_paginated_view/enhanced_paginated_view.dart';
 import 'package:equatable/equatable.dart';
 import 'package:example/core/fake_date.dart';
 
@@ -24,15 +25,14 @@ class PaginatedBloc extends Bloc<PaginatedEvent, PaginatedState> {
     FetchDataEvent event,
     Emitter<PaginatedState> emit,
   ) async {
-    if (state.status != PaginatedStatus.initLoading) {
-      emit(state.copyWith(status: PaginatedStatus.loading));
-    }
+    emit(state.copyWith(status: EnhancedStatus.loading));
+
     await Future.delayed(
-      const Duration(seconds: 3),
+      const Duration(seconds: 1),
       () {
-        if (event.page == 3) {
+        if (event.page == event.failPage) {
           emit(
-            state.copyWith(status: PaginatedStatus.error, error: 'Error'),
+            state.copyWith(status: EnhancedStatus.error, error: 'Error'),
           );
           return;
         }
@@ -48,7 +48,7 @@ class PaginatedBloc extends Bloc<PaginatedEvent, PaginatedState> {
         }
         emit(
           state.copyWith(
-            status: PaginatedStatus.loaded,
+            status: EnhancedStatus.loaded,
             data: [...state.data, ...initList],
             hasReachedMax: 3 <= event.page,
           ),

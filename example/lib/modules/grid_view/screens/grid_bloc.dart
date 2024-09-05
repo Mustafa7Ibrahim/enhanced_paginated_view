@@ -1,5 +1,6 @@
 import 'package:enhanced_paginated_view/enhanced_paginated_view.dart';
-import 'package:example/modules/list_view/bloc/paginated_bloc.dart';
+import 'package:example/core/bloc/paginated_bloc.dart';
+import 'package:example/widgets/grid_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,24 +13,10 @@ class GridBloc extends StatelessWidget {
       create: (context) => PaginatedBloc()..add(const FetchDataEvent()),
       child: BlocBuilder<PaginatedBloc, PaginatedState>(
         builder: (context, state) {
-          if (state.status == PaginatedStatus.initLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (state.status == PaginatedStatus.initError) {
-            return PageFailureWidget(
-              pageFailureModel: PageFailureModel(
-                description: state.error,
-                onRetry: () {
-                  context.read<PaginatedBloc>().add(const FetchDataEvent());
-                },
-              ),
-            );
-          }
           return EnhancedPaginatedView<String>(
             delegate: EnhancedDelegate(
               listOfData: state.data,
-              showLoading: state.status == PaginatedStatus.loading,
-              showError: state.status == PaginatedStatus.error,
+              status: state.status,
             ),
             itemsPerPage: 10,
             isMaxReached: state.hasReachedMax,
@@ -51,22 +38,7 @@ class GridBloc extends StatelessWidget {
                 itemCount: items.length,
                 padding: const EdgeInsets.all(16),
                 itemBuilder: (BuildContext context, int index) {
-                  return Card(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          items[index],
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                        Text(
-                          'Index: $index',
-                          style: const TextStyle(fontSize: 16),
-                        )
-                      ],
-                    ),
-                  );
+                  return GridWidget(item: items[index], index: index);
                 },
               );
             },
