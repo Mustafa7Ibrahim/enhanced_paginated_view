@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class PageFailureModel {
+class ErrorPage {
   /// The title of the failure message.
   final String? title;
 
@@ -16,7 +16,7 @@ class PageFailureModel {
   /// A custom widget for the retry button.
   final Widget? retryButton;
 
-  PageFailureModel({
+  const ErrorPage({
     this.title,
     this.description,
     this.btnText,
