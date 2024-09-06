@@ -18,7 +18,6 @@ import 'package:flutter/material.dart';
 ///
 /// The [EnhancedBoxView] widget provides two factory constructors:
 /// - [EnhancedBoxView] creates a forward scrolling view.
-/// - [EnhancedBoxView.reverse] creates a reverse scrolling view.
 ///
 /// The [EnhancedBoxView] widget overrides the [build] method to build the view based on the [direction].
 /// It internally calls either the [forwardBuild] or [reverseBuild] method to build the view accordingly.
@@ -32,18 +31,6 @@ import 'package:flutter/material.dart';
 /// It uses a [SingleChildScrollView] with a [Column] as its child.
 /// The [delegate] provides the necessary configuration for the view,
 /// and the [builder] function is used to build the individual items in the view.
-///
-/// Example usage:
-/// ```dart
-/// EnhancedBoxView(
-///   delegate: MyDelegate(),
-///   builder: (data, physics, reverse, forward) {
-///     // build individual items
-///   },
-///   page: 1,
-///   scrollController: ScrollController(),
-/// )
-/// ```
 class EnhancedBoxView<T> extends StatelessWidget {
   /// The delegate that provides the necessary data and configuration for the view.
   final EnhancedDelegate<T> delegate;
@@ -66,47 +53,7 @@ class EnhancedBoxView<T> extends StatelessWidget {
   /// The [builder] function builds the individual items in the view.
   /// The [page] represents the current page of the view.
   /// The [scrollController] controls the scrolling behavior of the view.
-  factory EnhancedBoxView({
-    Key? key,
-    required EnhancedDelegate<T> delegate,
-    required EnhancedBoxBuilder<T> builder,
-    required int page,
-    required ScrollController scrollController,
-  }) {
-    return EnhancedBoxView._(
-      page: page,
-      key: key,
-      delegate: delegate,
-      builder: builder,
-      scrollController: scrollController,
-      direction: EnhancedViewDirection.forward,
-    );
-  }
-
-  /// Creates a reverse scrolling [EnhancedBoxView].
-  ///
-  /// The [delegate] provides the necessary data and configuration for the view.
-  /// The [builder] function builds the individual items in the view.
-  /// The [page] represents the current page of the view.
-  /// The [scrollController] controls the scrolling behavior of the view.
-  factory EnhancedBoxView.reverse({
-    Key? key,
-    required EnhancedDelegate<T> delegate,
-    required EnhancedBoxBuilder<T> builder,
-    required int page,
-    required ScrollController scrollController,
-  }) {
-    return EnhancedBoxView._(
-      page: page,
-      key: key,
-      delegate: delegate,
-      builder: builder,
-      scrollController: scrollController,
-      direction: EnhancedViewDirection.reverse,
-    );
-  }
-
-  const EnhancedBoxView._({
+  const EnhancedBoxView({
     super.key,
     required this.delegate,
     required this.builder,
