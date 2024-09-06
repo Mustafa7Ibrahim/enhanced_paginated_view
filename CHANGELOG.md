@@ -1,3 +1,17 @@
+## 2.0.0
+
+- Add support for slivers.
+- Add support for custom loading widget.
+- Add support for custom error widget.
+- Add support for custom empty widget.
+- Add support for custom scroll physics.
+- **BREAKING** : Remove the showLoading, showError in favor of the `EnhancedStatus`.
+- **BREAKING** : change `shouldDeduplicate` to `removeDuplicates`.
+- **BREAKING** : change `isMaxReached` to `hasReachedMax`.
+- Add New property `direction` to control the direction of the list and take `EnhancedViewDirection` as a value.
+- Add a new EnhancedDelegate to control the behavior of the list and customize the widgets.
+  
+
 ## 1.0.7
 
 - Change the way of comparing the items to remove the duplicate items from the list.

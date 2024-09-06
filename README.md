@@ -5,9 +5,9 @@
 
 The `EnhancedPaginatedView` package offers a flexible, highly customizable builder function that supports various scrollable widgets like `ListView`, `GridView`, or `Slivers`. With dynamic layout rendering and options for handling loading states, errors, and scroll behavior, it simplifies the implementation of paginated views. Whether using `box-based` or `sliver-based` layouts, it optimizes performance for large data sets while enhancing the user experience without the need to rewrite code for each widget.
 
-| List View                                                                                                                              | Grid View                                                                                                                             |
-| -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| <img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/main/assets/list_example.gif?raw=true" alt="List View"> | <img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/main/assets/grid_example.gif?raw=true" alt="GridView"> |
+| List View                                                                                                                         | Grid View                                                                                                                        |
+| --------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| <img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/main/assets/list_example.gif?raw=true" alt="List View" style="width: 200px;"> | <img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/main/assets/grid_example.gif?raw=true" alt="GridView" style="width: 200px;"> |
 
 
 
@@ -154,7 +154,7 @@ ErrorPageConfig(
 
 ###### Default Error Page
 
-<img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/main/assets/page_error.jpg?raw=true" alt="GridView" style="width: 300px;">
+<img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/main/assets/page_error.jpg?raw=true" alt="GridView" style="width: 150px;">
 
 
 ##### EmptyWidgetConfig
@@ -171,7 +171,9 @@ EmptyWidgetConfig(
 
 ###### Default Empty Widget
 
-<img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/main/assets/empty_screen.jpg?raw=true" alt="GridView" style="width: 300px;">
+<img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/main/assets/empty_screen.jpg?raw=true" alt="GridView" style="width: 150px;">
+
+
 
 ### Enum Types
 
@@ -208,7 +210,7 @@ class Example extends StatefulWidget {
 
 class _ExampleState extends State<Example> {
   final List<int> initList = [];
-  final int maxItems = 30;
+  final int maxItems = 45;
   EnhancedStatus status = EnhancedStatus.loaded;
   bool isMaxReached = false;
 
@@ -220,7 +222,7 @@ class _ExampleState extends State<Example> {
     setState(() => status = EnhancedStatus.loading);
     await Future.delayed(Duration(seconds: 1), () {
       setState(() {
-        initList.addAll(List.generate(10, (index) => index + page * 10));
+        initList.addAll(List.generate(15, (index) => index + page * 15));
         status = EnhancedStatus.loaded;
       });
     });
@@ -228,15 +230,27 @@ class _ExampleState extends State<Example> {
 
   @override
   Widget build(BuildContext context) {
-    return EnhancedPaginatedView(
+    return EnhancedPaginatedView.slivers(
       onLoadMore: loadMore,
       hasReachedMax: isMaxReached,
-      delegate: EnhancedDelegate(
-        listOfData: initList,
+      delegate: EnhancedDelegate<YourDataType>(
+        listOfData: yourDataList,
         status: status,
-        crossAxisAlignment: CrossAxisAlignment.start,
       ),
-      builder: (context, item) => ListTile(title: Text('Item $item')),
+      builder: (context, data) {
+        return SliverGrid.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 1,
+          ),
+          itemCount: data.length,
+          itemBuilder: (BuildContext context, int index) {
+            return GridWidget(item: data[index], index: index);
+          },
+        );
+      },
     );
   }
 }

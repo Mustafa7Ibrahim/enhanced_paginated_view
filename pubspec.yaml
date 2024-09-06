@@ -1,6 +1,6 @@
 name: enhanced_paginated_view
-description: the enhanced paginated list view is one of a kind list widget that support pagination
-version: 1.0.7
+description: the enhanced paginated view is one of a kind widget that support pagination
+version: 2.0.0
 homepage: https://github.com/Mustafa7Ibrahim/enhanced_paginated_view.git
 
 environment:
