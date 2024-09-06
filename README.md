@@ -7,7 +7,7 @@ The `EnhancedPaginatedView` package offers a flexible, highly customizable build
 
 | List View                                                                                                                              | Grid View                                                                                                                             |
 | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| <img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/main/assets/list_view_example.gif?raw=true" alt="List View"> | <img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/main/assets/grid_view_example.gif?raw=true" alt="GridView"> |
+| <img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/main/assets/list_example.gif?raw=true" alt="List View"> | <img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/main/assets/grid_example.gif?raw=true" alt="GridView"> |
 
 
 
