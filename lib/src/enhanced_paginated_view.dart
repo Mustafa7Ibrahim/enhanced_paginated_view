@@ -18,6 +18,7 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
   /// The [itemsPerPage] integer controls the number of items loaded per page.
   /// The [delegate] is an instance of [EnhancedDelegate] that provides data and status information.
   /// The [boxBuilder] is a builder function for creating a box-based view.
+  /// The [direction] specifies the direction of the enhanced paginated view.
   factory EnhancedPaginatedView({
     required void Function(int) onLoadMore,
     required bool hasReachedMax,
@@ -45,6 +46,7 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
   /// The [itemsPerPage] integer controls the number of items loaded per page.
   /// The [delegate] is an instance of [EnhancedDelegate] that provides data and status information.
   /// The [sliverBuilder] is a builder function for creating a sliver-based view.
+  /// The [direction] specifies the direction of the enhanced paginated view.
   factory EnhancedPaginatedView.slivers({
     required void Function(int) onLoadMore,
     required bool hasReachedMax,
@@ -128,29 +130,29 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
 }
 
 class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
-  final ScrollController scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
 
-  bool isLoading = false;
-  late int loadThreshold;
+  bool _isLoading = false;
+  late int _loadThreshold;
 
   /// Returns the current page number.
   int get page => widget.delegate.listOfData.length ~/ widget.itemsPerPage + 1;
 
   /// Loads more data when called.
   ///
-  /// This function is called only if [isLoading] is false.
+  /// This function is called only if [_isLoading] is false.
   void loadMore() {
-    if (isLoading) return;
-    isLoading = true;
+    if (_isLoading) return;
+    _isLoading = true;
     widget.onLoadMore(page);
     // Use a delayed Future to reset the loading flag after a short delay
-    Future.delayed(const Duration(milliseconds: 250), () => isLoading = false);
+    Future.delayed(const Duration(milliseconds: 250), () => _isLoading = false);
   }
 
   @override
   void initState() {
     super.initState();
-    loadThreshold = widget.itemsPerPage - 3;
+    _loadThreshold = widget.itemsPerPage - 3;
   }
 
   /// Checks if more data needs to be loaded and loads it if necessary.
@@ -161,7 +163,7 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
       return;
     }
 
-    if (widget.delegate.listOfData.length <= loadThreshold) {
+    if (widget.delegate.listOfData.length <= _loadThreshold) {
       // Load more data when the list gets shorter than the minimum threshold
       if (page < 2) {
         loadMore();
@@ -181,8 +183,8 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
 
     if (scrollInfo is ScrollUpdateNotification) {
       // Check if the last 5 items are visible
-      final lastVisibleIndex =
-          scrollController.position.maxScrollExtent - scrollInfo.metrics.pixels;
+      final lastVisibleIndex = _scrollController.position.maxScrollExtent -
+          scrollInfo.metrics.pixels;
       if (lastVisibleIndex <= 100) {
         // The last 5 items are visible
         // You can now take appropriate action
@@ -200,7 +202,7 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
 
   @override
   void dispose() {
-    scrollController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -216,36 +218,20 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
           : widget.delegate.status == EnhancedStatus.error && page == 1
               ? ErrorPageWidget(config: widget.delegate.errorPageConfig)
               : switch (widget.type) {
-                  EnhancedViewType.sliver => switch (widget.direction) {
-                      EnhancedViewDirection.forward => EnhancedSliverView<T>(
-                          delegate: widget.delegate,
-                          builder: widget.sliverBuilder!,
-                          page: page,
-                          scrollController: scrollController,
-                        ),
-                      EnhancedViewDirection.reverse =>
-                        EnhancedSliverView<T>.reverse(
-                          delegate: widget.delegate,
-                          builder: widget.sliverBuilder!,
-                          page: page,
-                          scrollController: scrollController,
-                        ),
-                    },
-                  EnhancedViewType.box => switch (widget.direction) {
-                      EnhancedViewDirection.forward => EnhancedBoxView<T>(
-                          delegate: widget.delegate,
-                          builder: widget.boxBuilder!,
-                          page: page,
-                          scrollController: scrollController,
-                        ),
-                      EnhancedViewDirection.reverse =>
-                        EnhancedBoxView<T>.reverse(
-                          delegate: widget.delegate,
-                          builder: widget.boxBuilder!,
-                          page: page,
-                          scrollController: scrollController,
-                        ),
-                    },
+                  EnhancedViewType.sliver => EnhancedSliverView<T>(
+                      delegate: widget.delegate,
+                      builder: widget.sliverBuilder!,
+                      page: page,
+                      scrollController: _scrollController,
+                      direction: widget.direction,
+                    ),
+                  EnhancedViewType.box => EnhancedBoxView<T>(
+                      delegate: widget.delegate,
+                      builder: widget.boxBuilder!,
+                      page: page,
+                      scrollController: _scrollController,
+                      direction: widget.direction,
+                    ),
                 },
     );
   }
