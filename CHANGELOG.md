@@ -1,4 +1,4 @@
-## 2.0.0
+## 2.0.1
 
 - Remove the dependency on the `flutter_Svg` package.
 
