@@ -154,7 +154,7 @@ ErrorPageConfig(
 
 ###### Default Error Page
 
-<img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/main/assets/page_error.jpg?raw=true" alt="GridView" style="width: 400px;">
+<img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/main/assets/page_error.jpg?raw=true" alt="GridView" style="width: 300px;">
 
 
 ##### EmptyWidgetConfig
@@ -171,7 +171,7 @@ EmptyWidgetConfig(
 
 ###### Default Empty Widget
 
-<img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/main/assets/empty_screen.jpg?raw=true" alt="GridView" style="width: 400px;">
+<img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/main/assets/empty_screen.jpg?raw=true" alt="GridView" style="width: 300px;">
 
 ### Enum Types
 
