@@ -1,8 +1,6 @@
 import 'package:enhanced_paginated_view/src/models/enhanced_view_type.dart';
 import 'package:enhanced_paginated_view/src/models/error_page_config.dart';
-import 'package:enhanced_paginated_view/src/res/failed_icon.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 /// A widget that displays a failure message with an optional retry button.
 ///
@@ -106,17 +104,6 @@ class _FailureWidget extends StatelessWidget {
       child: Column(
         children: [
           const Spacer(flex: 2),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.8,
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: SvgPicture.string(
-                failedIcon,
-                fit: BoxFit.scaleDown,
-              ),
-            ),
-          ),
-          const Spacer(flex: 2),
           Text(
             config.title ?? "Opps!....",
             style: Theme.of(context)
@@ -139,7 +126,7 @@ class _FailureWidget extends StatelessWidget {
                 onPressed: config.onRetry,
                 child: Text(config.btnText ?? "Retry".toUpperCase()),
               ),
-          const SizedBox(height: 16),
+          const Spacer(flex: 2),
         ],
       ),
     );

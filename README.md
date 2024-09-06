@@ -157,7 +157,6 @@ ErrorPageConfig(
 ```dart
 EmptyWidgetConfig(
   title: "No data found",
-  svgIcon: "assets/icons/no_data.svg",
   customView: CustomEmptyView(),
 )
 ```

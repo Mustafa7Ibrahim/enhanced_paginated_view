@@ -1,7 +1,6 @@
 import 'package:enhanced_paginated_view/src/models/empty_widget_config.dart';
 import 'package:enhanced_paginated_view/src/models/enhanced_view_type.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 /// A widget that represents an empty state.
 ///
@@ -60,32 +59,15 @@ class _EmptyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) => Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: constraints.maxWidth,
-              child: AspectRatio(
-                aspectRatio: 1,
-                child: SvgPicture.string(
-                  config.svgIcon,
-                  fit: BoxFit.scaleDown,
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              config.title,
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineSmall!
-                  .copyWith(fontWeight: FontWeight.bold),
-            ),
-          ],
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.7,
+      child: Center(
+        child: Text(
+          config.title,
+          style: Theme.of(context)
+              .textTheme
+              .headlineSmall!
+              .copyWith(fontWeight: FontWeight.bold),
         ),
       ),
     );

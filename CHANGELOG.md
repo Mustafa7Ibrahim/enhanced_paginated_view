@@ -1,5 +1,9 @@
 ## 2.0.0
 
+- Remove the dependency on the `flutter_Svg` package.
+
+## 2.0.0
+
 - Add support for slivers.
 - Add support for custom loading widget.
 - Add support for custom error widget.
