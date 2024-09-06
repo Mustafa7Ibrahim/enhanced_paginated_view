@@ -16,45 +16,14 @@ class EnhancedSliverView<T> extends StatelessWidget {
   /// The [builder] parameter is required and represents the builder function that generates the sliver widgets based on the provided data.
   /// The [page] parameter is required and represents the current page number.
   /// The [scrollController] parameter is required and represents the scroll controller for the view.
-  factory EnhancedSliverView({
-    Key? key,
-    required EnhancedDelegate<T> delegate,
-    required EnhancedSliverBuilder<T> builder,
-    required int page,
-    required ScrollController scrollController,
-  }) {
-    return EnhancedSliverView._(
-      key: key,
-      delegate: delegate,
-      builder: builder,
-      page: page,
-      scrollController: scrollController,
-      direction: EnhancedViewDirection.forward,
-    );
-  }
-
-  /// Creates an instance of [EnhancedSliverView] with reverse direction.
-  ///
-  /// The [delegate] parameter is required and represents the delegate that provides the necessary data and configuration for the view.
-  /// The [builder] parameter is required and represents the builder function that generates the sliver widgets based on the provided data.
-  /// The [page] parameter is required and represents the current page number.
-  /// The [scrollController] parameter is required and represents the scroll controller for the view.
-  factory EnhancedSliverView.reverse({
-    Key? key,
-    required EnhancedDelegate<T> delegate,
-    required EnhancedSliverBuilder<T> builder,
-    required int page,
-    required ScrollController scrollController,
-  }) {
-    return EnhancedSliverView._(
-      key: key,
-      delegate: delegate,
-      builder: builder,
-      page: page,
-      scrollController: scrollController,
-      direction: EnhancedViewDirection.reverse,
-    );
-  }
+  const EnhancedSliverView({
+    super.key,
+    required this.delegate,
+    required this.direction,
+    required this.builder,
+    required this.page,
+    required this.scrollController,
+  });
 
   /// The delegate that provides the necessary data and configuration for the view.
   final EnhancedDelegate<T> delegate;
@@ -70,15 +39,6 @@ class EnhancedSliverView<T> extends StatelessWidget {
 
   /// The scroll controller for the view.
   final ScrollController scrollController;
-
-  const EnhancedSliverView._({
-    super.key,
-    required this.delegate,
-    required this.direction,
-    required this.builder,
-    required this.page,
-    required this.scrollController,
-  });
 
   @override
   Widget build(BuildContext context) {
