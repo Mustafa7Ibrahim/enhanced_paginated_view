@@ -1,4 +1,8 @@
 # Enhanced Paginated View
+<a href="https://pub.dev/packages/enhanced_paginated_view"><img src="https://img.shields.io/pub/v/enhanced_paginated_view.svg" alt="Pub"></a>
+<a href="https://pub.dev/packages/enhanced_paginated_view/score"><img src="https://img.shields.io/pub/likes/enhanced_paginated_view?logo=flutter" alt="Pub likes"></a>
+<a href="https://pub.dev/packages/enhanced_paginated_view"><img src="https://img.shields.io/pub/popularity/enhanced_paginated_view?logo=flutter" alt="Pub popularity"></a>
+<a href="https://pub.dev/packages/enhanced_paginated_view/score"><img src="https://img.shields.io/pub/points/enhanced_paginated_view?logo=flutter" alt="Pub points"></a>
 
 ## Overview
 
