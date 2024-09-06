@@ -57,6 +57,9 @@ EnhancedPaginatedView(
   builder: (items, physics, reverse, shrinkWrap) {
     return ListView.builder(
       itemCount: items.length,
+      physics: physics,
+      shrinkWrap: shrinkWrap,
+      reverse: reverse,
       itemBuilder: (context, index) {
         return ListTile(title: Text(items[index].toString()));
       },
