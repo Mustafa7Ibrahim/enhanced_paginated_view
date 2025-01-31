@@ -47,12 +47,24 @@ class EnhancedBoxView<T> extends StatelessWidget {
   /// The scroll controller that controls the scrolling behavior of the view.
   final ScrollController scrollController;
 
+  /// A boolean that determines if the refresh indicator is enabled.
+  final bool hasRefreshEnabled;
+
+  /// The function that is called when the user pulls down to refresh the view.
+  final Future<void> Function()? onRefresh;
+
+  /// The builder function for the refresh indicator.
+  final Widget Function(BuildContext, Widget)? refreshIndicatorBuilder;
+
   /// Creates a forward scrolling [EnhancedBoxView].
   ///
   /// The [delegate] provides the necessary data and configuration for the view.
   /// The [builder] function builds the individual items in the view.
   /// The [page] represents the current page of the view.
   /// The [scrollController] controls the scrolling behavior of the view.
+  /// The [hasRefreshEnabled] boolean determines if the refresh indicator is enabled.
+  /// The [onRefresh] function is called when the user pulls down to refresh the view.
+  /// The [refreshIndicatorBuilder] is a builder function for the refresh indicator.
   const EnhancedBoxView({
     super.key,
     required this.delegate,
@@ -60,75 +72,61 @@ class EnhancedBoxView<T> extends StatelessWidget {
     required this.direction,
     required this.page,
     required this.scrollController,
+    this.hasRefreshEnabled = false,
+    this.onRefresh,
+    this.refreshIndicatorBuilder,
   });
 
   @override
   Widget build(BuildContext context) {
     return switch (direction) {
-      EnhancedViewDirection.forward => forwardBuild(context),
-      EnhancedViewDirection.reverse => reverseBuild(context),
+      EnhancedViewDirection.forward => buildView(context, false),
+      EnhancedViewDirection.reverse => buildView(context, true),
     };
   }
 
-  /// Builds the view with a forward scrolling direction.
-  ///
-  /// It uses a [SingleChildScrollView] with a [Column] as its child.
-  /// The [delegate] provides the necessary configuration for the view,
-  /// and the [builder] function is used to build the individual items in the view.
-  Widget forwardBuild(BuildContext context) {
-    return SingleChildScrollView(
-      controller: scrollController,
-      physics: delegate.physics,
-      scrollDirection: delegate.scrollDirection,
-      child: Column(
-        crossAxisAlignment: delegate.crossAxisAlignment,
-        children: [
-          if (delegate.header != null) delegate.header!,
-          if (delegate.listOfData.isNotEmpty)
-            builder(
-              delegate.removeDuplicatedItems
-                  ? delegate.listOfData.removeDuplication()
-                  : delegate.listOfData,
-              const NeverScrollableScrollPhysics(),
-              false,
-              true,
-            )
-          else
-            delegate.emptyWidgetConfig.customView ??
-                EmptyWidget(config: delegate.emptyWidgetConfig),
-          LoadingErrorWidget(page: page, delegate: delegate),
-        ],
-      ),
-    );
+  Widget buildView(BuildContext context, bool reverse) {
+    if (hasRefreshEnabled) return buildWithRefreshIndicator(context, reverse);
+
+    return buildScrollView(reverse);
   }
 
-  /// Builds the view with a reverse scrolling direction.
-  ///
-  /// It uses a [SingleChildScrollView] with a [Column] as its child.
-  /// The [delegate] provides the necessary configuration for the view,
-  /// and the [builder] function is used to build the individual items in the view.
-  Widget reverseBuild(BuildContext context) {
+  Widget buildWithRefreshIndicator(BuildContext context, bool reverse) {
+    final refreshIndicator = RefreshIndicator(
+      onRefresh: onRefresh!,
+      child: buildScrollView(reverse),
+    );
+
+    if (refreshIndicatorBuilder != null) {
+      return refreshIndicatorBuilder!(context, refreshIndicator);
+    }
+
+    return refreshIndicator;
+  }
+
+  SingleChildScrollView buildScrollView(bool reverse) {
     return SingleChildScrollView(
-      reverse: true,
+      reverse: reverse,
       controller: scrollController,
       physics: delegate.physics,
       scrollDirection: delegate.scrollDirection,
       child: Column(
         crossAxisAlignment: delegate.crossAxisAlignment,
         children: [
-          LoadingErrorWidget(page: page, delegate: delegate),
+          if (reverse) LoadingErrorWidget(page: page, delegate: delegate),
           if (delegate.listOfData.isNotEmpty)
             builder(
               delegate.removeDuplicatedItems
                   ? delegate.listOfData.removeDuplication()
                   : delegate.listOfData,
               const NeverScrollableScrollPhysics(),
-              true,
+              reverse,
               true,
             )
           else
             delegate.emptyWidgetConfig.customView ??
                 EmptyWidget(config: delegate.emptyWidgetConfig),
+          if (!reverse) LoadingErrorWidget(page: page, delegate: delegate),
           if (delegate.header != null) delegate.header!,
         ],
       ),

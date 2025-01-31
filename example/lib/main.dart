@@ -71,6 +71,10 @@ class _VanillaListExampleState extends State<VanillaListExample> {
   @override
   Widget build(BuildContext context) {
     return EnhancedPaginatedView(
+      hasRefreshEnabled: true,
+      onRefresh: () async {
+        debugPrint('onRefresh called');
+      },
       delegate: EnhancedDelegate(
         listOfData: initList,
         status: status,

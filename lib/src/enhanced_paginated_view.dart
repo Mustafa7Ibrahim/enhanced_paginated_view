@@ -19,6 +19,9 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
   /// The [delegate] is an instance of [EnhancedDelegate] that provides data and status information.
   /// The [boxBuilder] is a builder function for creating a box-based view.
   /// The [direction] specifies the direction of the enhanced paginated view.
+  /// The [hasRefreshEnabled] boolean determines if the refresh indicator is enabled.
+  /// The [onRefresh] function is called when the user pulls down to refresh the view.
+  /// The [refreshIndicatorBuilder] is a builder function for the refresh indicator.
   factory EnhancedPaginatedView({
     required void Function(int) onLoadMore,
     required bool hasReachedMax,
@@ -26,6 +29,9 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
     required EnhancedDelegate<T> delegate,
     required EnhancedBoxBuilder<T> builder,
     EnhancedViewDirection direction = EnhancedViewDirection.forward,
+    bool hasRefreshEnabled = false,
+    Future<void> Function()? onRefresh,
+    Widget Function(BuildContext, Widget)? refreshIndicatorBuilder,
   }) {
     return EnhancedPaginatedView._(
       type: EnhancedViewType.box,
@@ -36,6 +42,9 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
       delegate: delegate,
       boxBuilder: builder,
       sliverBuilder: null,
+      hasRefreshEnabled: hasRefreshEnabled,
+      onRefresh: onRefresh,
+      refreshIndicatorBuilder: refreshIndicatorBuilder,
     );
   }
 
@@ -47,6 +56,9 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
   /// The [delegate] is an instance of [EnhancedDelegate] that provides data and status information.
   /// The [sliverBuilder] is a builder function for creating a sliver-based view.
   /// The [direction] specifies the direction of the enhanced paginated view.
+  /// The [hasRefreshEnabled] boolean determines if the refresh indicator is enabled.
+  /// The [onRefresh] function is called when the user pulls down to refresh the view.
+  /// The [refreshIndicatorBuilder] is a builder function for the refresh indicator.
   factory EnhancedPaginatedView.slivers({
     required void Function(int) onLoadMore,
     required bool hasReachedMax,
@@ -54,6 +66,9 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
     required EnhancedDelegate<T> delegate,
     required EnhancedSliverBuilder<T> builder,
     EnhancedViewDirection direction = EnhancedViewDirection.forward,
+    bool hasRefreshEnabled = false,
+    Future<void> Function()? onRefresh,
+    Widget Function(BuildContext, Widget)? refreshIndicatorBuilder,
   }) {
     return EnhancedPaginatedView._(
       onLoadMore: onLoadMore,
@@ -64,6 +79,9 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
       delegate: delegate,
       boxBuilder: null,
       sliverBuilder: builder,
+      hasRefreshEnabled: hasRefreshEnabled,
+      onRefresh: onRefresh,
+      refreshIndicatorBuilder: refreshIndicatorBuilder,
     );
   }
 
@@ -77,8 +95,12 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
     required this.boxBuilder,
     required this.sliverBuilder,
     required this.direction,
+    required this.hasRefreshEnabled,
+    required this.onRefresh,
+    required this.refreshIndicatorBuilder,
     super.key,
-  });
+  }) : assert(!hasRefreshEnabled || onRefresh != null,
+            'onRefresh must be provided if hasRefreshEnabled is true');
 
   /// [hasReachedMax] is a boolean that controls the loading widget.
   ///
@@ -124,6 +146,14 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
   /// [sliverBuilder] is a builder function for creating a sliver-based view.
   final EnhancedSliverBuilder<T>? sliverBuilder;
 
+  /// [hasRefreshEnabled] is a boolean that determines if the refresh indicator is enabled.
+  final bool hasRefreshEnabled;
+
+  /// [onRefresh] is a function that is called when the user pulls down to refresh the view.
+  final Future<void> Function()? onRefresh;
+
+  /// [refreshIndicatorBuilder] is a builder function for the refresh indicator.
+  final Widget Function(BuildContext, Widget)? refreshIndicatorBuilder;
   @override
   State<EnhancedPaginatedView<T>> createState() =>
       _EnhancedPaginatedViewState<T>();
@@ -231,6 +261,8 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
                       page: page,
                       scrollController: _scrollController,
                       direction: widget.direction,
+                      hasRefreshEnabled: widget.hasRefreshEnabled,
+                      onRefresh: widget.onRefresh,
                     ),
                 },
     );
