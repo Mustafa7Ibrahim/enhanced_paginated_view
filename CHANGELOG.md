@@ -1,65 +1,89 @@
-## 2.0.1
+## [2.0.2]
 
-- Remove the dependency on the `flutter_Svg` package.
+### Added  
+- **Pull-to-Refresh Support**: Introduced the `onRefresh` callback, allowing users to refresh the list by pulling down. If not provided, the refresh indicator will be disabled.  
+- **Custom Refresh Indicator**: Added `refreshBuilder`, enabling users to define a custom refresh indicator. If not specified, the default refresh indicator will be used.  
 
-## 2.0.0
+## [2.0.1]  
 
-- Add support for slivers.
-- Add support for custom loading widget.
-- Add support for custom error widget.
-- Add support for custom empty widget.
-- Add support for custom scroll physics.
-- **BREAKING** : Remove the showLoading, showError in favor of the `EnhancedStatus`.
-- **BREAKING** : change `shouldDeduplicate` to `removeDuplicates`.
-- **BREAKING** : change `isMaxReached` to `hasReachedMax`.
-- Add New property `direction` to control the direction of the list and take `EnhancedViewDirection` as a value.
-- Add a new EnhancedDelegate to control the behavior of the list and customize the widgets.
-  
+### Removed  
+- **flutter_svg Dependency**: Eliminated reliance on the `flutter_svg` package to reduce dependencies.  
 
-## 1.0.7
+## [2.0.0]  
 
-- Change the way of comparing the items to remove the duplicate items from the list.
-- Fix docs.
+### Added  
+- **Sliver Support**: Now supports slivers for better integration with `CustomScrollView`.  
+- **Customization Options**: Introduced new properties for customization:  
+  - Custom loading widget  
+  - Custom error widget  
+  - Custom empty widget  
+  - Custom scroll physics  
+- **New Direction Control**: Added the `direction` property, allowing users to control the list direction via `EnhancedViewDirection`.  
+- **EnhancedDelegate**: Introduced `EnhancedDelegate` to provide greater control over list behavior and widget customization.  
 
-## 1.0.6
+### Breaking Changes  
+- **State Management Update**:  
+  - `showLoading` and `showError` were removed in favor of `EnhancedStatus`.  
+  - `shouldDeduplicate` renamed to `removeDuplicates`.  
+  - `isMaxReached` renamed to `hasReachedMax`.  
 
-- Fix docs.
+## [1.0.7]  
 
-## 1.0.5
+### Improved  
+- **Duplicate Item Handling**: Enhanced the item comparison logic to better remove duplicate items from the list.  
 
-- Add new property `itemsPerPage` to calculate page number more accurately.
-- Add new property `shouldDeduplicate` to remove duplicate items from the list.
-- Add new extension method `enhancedDeduplication()` to remove duplicate items from the list.
+### Fixed  
+- **Documentation Updates**  
 
-## 1.0.4
+## [1.0.6]  
 
-- Improve overall performance.
-- Get rid of the `LoadingModes` and use a new way to trigger the `onLoadMore` behavior.
+### Fixed  
+- **Documentation Updates**  
 
-## 1.0.3
+## [1.0.5]  
 
-- Fix docs.
+### Added  
+- **Pagination Enhancements**:  
+  - Introduced `itemsPerPage` to improve page number calculations.  
+  - Added `shouldDeduplicate` to remove duplicate items.  
+  - New `enhancedDeduplication()` extension method to handle duplicate removal.  
 
-## 1.0.2
+## [1.0.4]  
 
-- Improve the performance of the `onLoadMore` behavior to have three modes.
-  `LoadingMode.smooth`: is the default mode, it will trigger the `onLoadMore` when the user scroll to 75% of the list.
-  `LoadingMode.restrict`: it will trigger the `onLoadMore` when the user scroll to 100% of the list.
+### Improved  
+- **Performance Enhancements**: Optimized loading behavior by removing `LoadingModes` in favor of a more efficient `onLoadMore` trigger mechanism.  
 
-- New default `emptyWidget` widget.
-- New default `LoadingWidget` widget.
-- New default `errorWidget` widget.
-- Now it's possible to change the `ScrollPhysics` of the list.
+## [1.0.3]  
 
-## 1.0.1
+### Fixed  
+- **Documentation Updates**  
 
-- **BREAKING** : The `isLoadingState` is now `showLoading`.
-- **BREAKING** : The `showErrorWidget` is now `showError`.
-- **BREAKING** : The `emptyWidget` is now `emptyView`.
-- Update the bloc example and the docs.
+## [1.0.2]  
 
-## 1.0.0
+### Improved  
+- **OnLoadMore Performance**: Introduced new loading behaviors:  
+  - `LoadingMode.smooth`: Triggers `onLoadMore` when scrolling reaches 75%.  
+  - `LoadingMode.restrict`: Triggers `onLoadMore` at 100%.  
 
-- Stable version.
-- Add reverse support. that would be handy when you for example want to show a list of items in reverse order. in a chat app for example.
-- Improve the example code with some of misunderstanding variables .
+### Added  
+- **Default Widgets**:  
+  - New `emptyWidget`.  
+  - New `LoadingWidget`.  
+  - New `errorWidget`.  
+- **Custom ScrollPhysics**: Users can now modify the `ScrollPhysics` of the list.  
+
+## [1.0.1]  
+
+### Breaking Changes  
+- `isLoadingState` renamed to `showLoading`.  
+- `showErrorWidget` renamed to `showError`.  
+- `emptyWidget` renamed to `emptyView`.  
+
+### Improved  
+- **Bloc Example and Documentation Updates**  
+
+## [1.0.0]  
+
+### Stable Release  
+- **Reverse Order Support**: Added support for reversing the list order (useful for chat applications).  
+- **Example Code Refinements**: Improved clarity in example implementations.
