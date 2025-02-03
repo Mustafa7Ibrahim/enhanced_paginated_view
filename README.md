@@ -1,12 +1,13 @@
+
 # Enhanced Paginated View
 <a href="https://pub.dev/packages/enhanced_paginated_view"><img src="https://img.shields.io/pub/v/enhanced_paginated_view.svg" alt="Pub"></a>
 <a href="https://pub.dev/packages/enhanced_paginated_view/score"><img src="https://img.shields.io/pub/likes/enhanced_paginated_view?logo=flutter" alt="Pub likes"></a>
-<a href="https://pub.dev/packages/enhanced_paginated_view"><img src="https://img.shields.io/pub/popularity/enhanced_paginated_view?logo=flutter" alt="Pub popularity"></a>
+<a href="https://pub.dev/packages/enhanced_paginated_view"><img src="https://img.shields.io/pub/dt/enhanced_paginated_view?logo=flutter" alt="downloads"></a>
 <a href="https://pub.dev/packages/enhanced_paginated_view/score"><img src="https://img.shields.io/pub/points/enhanced_paginated_view?logo=flutter" alt="Pub points"></a>
 
 ## Overview
 
-The `EnhancedPaginatedView` package offers a flexible, highly customizable builder function that supports various scrollable widgets like `ListView`, `GridView`, or `Slivers`. With dynamic layout rendering and options for handling loading states, errors, and scroll behavior, it simplifies the implementation of paginated views. Whether using `box-based` or `sliver-based` layouts, it optimizes performance for large data sets while enhancing the user experience without the need to rewrite code for each widget.
+The `EnhancedPaginatedView` package offers a flexible, highly customizable builder function that supports various scrollable widgets like `ListView`, `GridView`, or Slivers. With dynamic layout rendering and options for handling loading states, errors, and scroll behavior, it simplifies the implementation of paginated views. Whether using `box-based` or `sliver-based` layouts, it optimizes performance for large data sets while enhancing the user experience without the need to rewrite code for each widget.
 
 | List View                                                                                                                                               | Grid View                                                                                                                                              |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -21,6 +22,8 @@ The `EnhancedPaginatedView` package offers a flexible, highly customizable build
 - Support for infinite scrolling and manual pagination control
 - Delegate-based architecture for data handling
 - Compatible with various state management solutions (e.g., BLoC, Riverpod)
+- **New**: Pull-to-Refresh support with the `onRefresh` callback
+- **New**: Custom refresh indicator with the `refreshBuilder` function
 
 ## Getting Started
 
@@ -98,6 +101,80 @@ EnhancedPaginatedView.slivers(
 )
 ```
 
+## New Features (v2.0.2)
+
+### Pull-to-Refresh Support
+
+With version `2.0.2`, the package now supports pull-to-refresh functionality. You can implement the `onRefresh` callback to refresh the list when the user pulls down. If no callback is provided, the refresh indicator will be disabled by default.
+
+```dart
+EnhancedPaginatedView(
+  onLoadMore: (int page) {
+    // Load more data
+  },
+  hasReachedMax: false,
+  itemsPerPage: 15,
+  delegate: EnhancedDelegate(
+    listOfData: yourDataList,
+    status: EnhancedStatus.loaded,
+  ),
+  onRefresh: () async {
+    // Trigger data refresh
+  },
+  builder: (items, physics, reverse, shrinkWrap) {
+    return ListView.builder(
+      itemCount: items.length,
+      physics: physics,
+      reverse: reverse,
+      shrinkWrap: shrinkWrap,
+      itemBuilder: (context, index) {
+        return ListTile(title: Text(items[index].toString()));
+      },
+    );
+  },
+)
+```
+
+### Custom Refresh Indicator
+
+You can now specify a custom refresh indicator using the `refreshBuilder` parameter. This allows for complete control over the look and feel of the refresh indicator.
+
+```dart
+EnhancedPaginatedView(
+  onLoadMore: (int page) {
+    // Load more data
+  },
+  hasReachedMax: false,
+  itemsPerPage: 15,
+  delegate: EnhancedDelegate(
+    listOfData: yourDataList,
+    status: EnhancedStatus.loaded,
+  ),
+  onRefresh: () async {
+    // Trigger data refresh
+  },
+  refreshBuilder: (context, onRefresh, child) {
+    return RefreshIndicator(
+      color: Colors.white,
+      backgroundColor: Colors.green,
+      onRefresh: onRefresh,
+      child: child,
+    );
+  },
+  builder: (items, physics, reverse, shrinkWrap) {
+    return ListView.builder(
+      itemCount: items.length,
+      physics: physics,
+      reverse: reverse,
+      shrinkWrap: shrinkWrap,
+      itemBuilder: (context, index) {
+        return ListTile(title: Text(items[index].toString()));
+      },
+    );
+  },
+)
+```
+
 ## Key Components
 
 ### 1. EnhancedPaginatedView Widget
@@ -111,6 +188,8 @@ The primary widget in the package, supporting both box-based and sliver-based vi
 - `delegate` (required): `EnhancedDelegate` instance providing data and configuration.
 - `builder` (required): Function for building each scroll view.
 - `direction`: Defines scroll direction (default: `EnhancedViewDirection.forward`).
+- `onRefresh`: Optional callback for pull-to-refresh functionality.
+- `refreshBuilder`: Optional builder function for customizing the refresh indicator.
 
 ### 2. EnhancedDelegate Class
 
