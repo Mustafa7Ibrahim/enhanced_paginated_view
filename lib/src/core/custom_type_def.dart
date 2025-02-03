@@ -27,3 +27,9 @@ typedef EnhancedSliverBuilder<T> = Widget Function(
   BuildContext context,
   List<T> data,
 );
+
+typedef EnhancedRefreshBuilder<T> = Widget Function(
+  BuildContext context,
+  Future<void> Function() onRefresh,
+  Widget child,
+);

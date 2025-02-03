@@ -18,6 +18,17 @@ class GridBloc extends StatelessWidget {
               listOfData: state.data,
               status: state.status,
             ),
+            onRefresh: () async {
+              context.read<PaginatedBloc>().add(const FetchDataEvent());
+            },
+            refreshBuilder: (context, onRefresh, child) {
+              return RefreshIndicator(
+                color: Colors.white,
+                backgroundColor: Colors.green,
+                onRefresh: onRefresh,
+                child: child,
+              );
+            },
             itemsPerPage: 10,
             hasReachedMax: state.hasReachedMax,
             onLoadMore: (page) {

@@ -19,8 +19,13 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
   /// The [delegate] is an instance of [EnhancedDelegate] that provides data and status information.
   /// The [boxBuilder] is a builder function for creating a box-based view.
   /// The [direction] specifies the direction of the enhanced paginated view.
+  /// The [refreshBuilder] is a builder function for creating a refresh indicator.
+  /// The [onRefresh] function is called when the user pulls down to refresh the list.
   factory EnhancedPaginatedView({
+    Key? key,
     required void Function(int) onLoadMore,
+    Future<void> Function()? onRefresh,
+    EnhancedRefreshBuilder<T>? refreshBuilder,
     required bool hasReachedMax,
     int itemsPerPage = 15,
     required EnhancedDelegate<T> delegate,
@@ -28,6 +33,7 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
     EnhancedViewDirection direction = EnhancedViewDirection.forward,
   }) {
     return EnhancedPaginatedView._(
+      key: key,
       type: EnhancedViewType.box,
       onLoadMore: onLoadMore,
       direction: direction,
@@ -36,6 +42,8 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
       delegate: delegate,
       boxBuilder: builder,
       sliverBuilder: null,
+      refreshBuilder: refreshBuilder,
+      onRefresh: onRefresh,
     );
   }
 
@@ -47,8 +55,13 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
   /// The [delegate] is an instance of [EnhancedDelegate] that provides data and status information.
   /// The [sliverBuilder] is a builder function for creating a sliver-based view.
   /// The [direction] specifies the direction of the enhanced paginated view.
+  /// The [refreshBuilder] is a builder function for creating a refresh indicator.
+  /// The [onRefresh] function is called when the user pulls down to refresh the list.
   factory EnhancedPaginatedView.slivers({
+    Key? key,
     required void Function(int) onLoadMore,
+    Future<void> Function()? onRefresh,
+    EnhancedRefreshBuilder<T>? refreshBuilder,
     required bool hasReachedMax,
     int itemsPerPage = 15,
     required EnhancedDelegate<T> delegate,
@@ -56,6 +69,7 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
     EnhancedViewDirection direction = EnhancedViewDirection.forward,
   }) {
     return EnhancedPaginatedView._(
+      key: key,
       onLoadMore: onLoadMore,
       type: EnhancedViewType.sliver,
       direction: direction,
@@ -64,11 +78,14 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
       delegate: delegate,
       boxBuilder: null,
       sliverBuilder: builder,
+      refreshBuilder: refreshBuilder,
+      onRefresh: onRefresh,
     );
   }
 
   // Private constructor
   const EnhancedPaginatedView._({
+    super.key,
     required this.onLoadMore,
     required this.hasReachedMax,
     required this.itemsPerPage,
@@ -77,7 +94,8 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
     required this.boxBuilder,
     required this.sliverBuilder,
     required this.direction,
-    super.key,
+    required this.onRefresh,
+    required this.refreshBuilder,
   });
 
   /// [hasReachedMax] is a boolean that controls the loading widget.
@@ -123,6 +141,14 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
 
   /// [sliverBuilder] is a builder function for creating a sliver-based view.
   final EnhancedSliverBuilder<T>? sliverBuilder;
+
+  /// [onRefresh] is a function that is called when the user pulls down to refresh the list.
+  /// if this function is not provided, the refresh indicator will not be shown.
+  final Future<void> Function()? onRefresh;
+
+  /// [refreshBuilder] is a builder function for creating a refresh indicator.
+  /// if this function is not provided, the default refresh indicator will be shown.
+  final EnhancedRefreshBuilder<T>? refreshBuilder;
 
   @override
   State<EnhancedPaginatedView<T>> createState() =>
@@ -208,31 +234,62 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return NotificationListener(
+    Widget content;
+
+    switch (widget.delegate.status) {
+      case EnhancedStatus.loading:
+        if (page == 1) {
+          content = LoadingWidget(
+            config: widget.delegate.loadingConfig,
+            type: EnhancedLoadingType.page,
+          );
+        } else {
+          content = _buildContent();
+        }
+        break;
+      case EnhancedStatus.error:
+        if (page == 1) {
+          content = ErrorPageWidget(config: widget.delegate.errorPageConfig);
+        } else {
+          content = _buildContent();
+        }
+        break;
+      default:
+        content = _buildContent();
+    }
+
+    if (widget.onRefresh != null) {
+      content = widget.refreshBuilder != null
+          ? widget.refreshBuilder!(context, widget.onRefresh!, content)
+          : (widget.direction == EnhancedViewDirection.forward
+              ? RefreshIndicator(onRefresh: widget.onRefresh!, child: content)
+              : content);
+    }
+
+    return NotificationListener<ScrollNotification>(
       onNotification: onNotification,
-      child: widget.delegate.status == EnhancedStatus.loading && page == 1
-          ? LoadingWidget(
-              config: widget.delegate.loadingConfig,
-              type: EnhancedLoadingType.page,
-            )
-          : widget.delegate.status == EnhancedStatus.error && page == 1
-              ? ErrorPageWidget(config: widget.delegate.errorPageConfig)
-              : switch (widget.type) {
-                  EnhancedViewType.sliver => EnhancedSliverView<T>(
-                      delegate: widget.delegate,
-                      builder: widget.sliverBuilder!,
-                      page: page,
-                      scrollController: _scrollController,
-                      direction: widget.direction,
-                    ),
-                  EnhancedViewType.box => EnhancedBoxView<T>(
-                      delegate: widget.delegate,
-                      builder: widget.boxBuilder!,
-                      page: page,
-                      scrollController: _scrollController,
-                      direction: widget.direction,
-                    ),
-                },
+      child: content,
     );
+  }
+
+  Widget _buildContent() {
+    switch (widget.type) {
+      case EnhancedViewType.sliver:
+        return EnhancedSliverView<T>(
+          delegate: widget.delegate,
+          builder: widget.sliverBuilder!,
+          page: page,
+          scrollController: _scrollController,
+          direction: widget.direction,
+        );
+      case EnhancedViewType.box:
+        return EnhancedBoxView<T>(
+          delegate: widget.delegate,
+          builder: widget.boxBuilder!,
+          page: page,
+          scrollController: _scrollController,
+          direction: widget.direction,
+        );
+    }
   }
 }

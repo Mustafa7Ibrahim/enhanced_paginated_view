@@ -25,7 +25,12 @@ class PaginatedBloc extends Bloc<PaginatedEvent, PaginatedState> {
     FetchDataEvent event,
     Emitter<PaginatedState> emit,
   ) async {
-    emit(state.copyWith(status: EnhancedStatus.loading));
+    emit(
+      state.copyWith(
+        status: EnhancedStatus.loading,
+        data: event.page == 1 ? [] : state.data,
+      ),
+    );
 
     await Future.delayed(
       const Duration(seconds: 1),

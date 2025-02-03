@@ -29,34 +29,42 @@ class VanillaListExample extends StatefulWidget {
 }
 
 class _VanillaListExampleState extends State<VanillaListExample> {
-  final initList = [];
+  List<String> initList = [];
   final maxItems = 30;
   EnhancedStatus status = EnhancedStatus.loaded;
   bool isMaxReached = false;
 
   Future<void> loadMore(int page) async {
-    // here we simulate that the list reached the end
-    // and we set the isMaxReached to true to stop
-    // the loading widget from showing
     if (initList.length >= maxItems) {
       setState(() => isMaxReached = true);
       return;
     }
     setState(() => status = EnhancedStatus.loading);
-    await Future.delayed(
-      const Duration(seconds: 1),
-      () {
-        setState(() {
-          if (page == 2) {
-            initList.addAll(items2);
-          }
-          if (page == 3) {
-            initList.addAll(items3);
-          }
-          status = EnhancedStatus.loaded;
-        });
-      },
-    );
+    await Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        // Handle page 1 by adding initial items
+        if (page == 1) {
+          initList.addAll(item1);
+        } else if (page == 2) {
+          initList.addAll(items2);
+        } else if (page == 3) {
+          initList.addAll(items3);
+        }
+        status = EnhancedStatus.loaded;
+      });
+    });
+  }
+
+  Future<void> refresh() async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    if (!mounted) return;
+    setState(() {
+      initList = ["Refreshed item"];
+      isMaxReached = false;
+      status = EnhancedStatus.loaded;
+    });
+    // Explicitly load more to fill the list
+    loadMore(1);
   }
 
   /// remove an item from the list
@@ -71,6 +79,7 @@ class _VanillaListExampleState extends State<VanillaListExample> {
   @override
   Widget build(BuildContext context) {
     return EnhancedPaginatedView(
+      onRefresh: refresh,
       delegate: EnhancedDelegate(
         listOfData: initList,
         status: status,

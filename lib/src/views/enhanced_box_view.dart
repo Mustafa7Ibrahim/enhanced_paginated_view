@@ -4,6 +4,7 @@ import 'package:enhanced_paginated_view/src/models/enhanced_view_direction.dart'
 import 'package:enhanced_paginated_view/src/models/enhanced_delegate.dart';
 import 'package:enhanced_paginated_view/src/widgets/empty_widget.dart';
 import 'package:enhanced_paginated_view/src/widgets/loading_error_widget.dart';
+import 'package:flutter/gestures.dart';
 
 import 'package:flutter/material.dart';
 
@@ -110,6 +111,7 @@ class EnhancedBoxView<T> extends StatelessWidget {
   Widget reverseBuild(BuildContext context) {
     return SingleChildScrollView(
       reverse: true,
+      dragStartBehavior: DragStartBehavior.down,
       controller: scrollController,
       physics: delegate.physics,
       scrollDirection: delegate.scrollDirection,

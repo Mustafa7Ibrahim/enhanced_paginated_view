@@ -14,6 +14,9 @@ class GridSliverBloc extends StatelessWidget {
       child: BlocBuilder<PaginatedBloc, PaginatedState>(
         builder: (context, state) {
           return EnhancedPaginatedView<String>.slivers(
+            onRefresh: () async {
+              context.read<PaginatedBloc>().add(const FetchDataEvent());
+            },
             delegate: EnhancedDelegate(
               listOfData: state.data,
               status: state.status,
