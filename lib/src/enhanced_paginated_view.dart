@@ -4,8 +4,8 @@ import 'package:enhanced_paginated_view/src/models/enhanced_loading_type.dart';
 import 'package:enhanced_paginated_view/src/models/enhanced_view_type.dart';
 import 'package:enhanced_paginated_view/src/views/enhanced_box_view.dart';
 import 'package:enhanced_paginated_view/src/views/enhanced_sliver_view.dart';
-import 'package:enhanced_paginated_view/src/widgets/loading_widget.dart';
 import 'package:enhanced_paginated_view/src/widgets/error_page_widget.dart';
+import 'package:enhanced_paginated_view/src/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 
 /// This is the EnhancedPaginatedView widget.
@@ -200,23 +200,27 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
   /// Handles scroll notifications and loads more data if necessary.
   ///
   /// Returns false to allow the notification to continue to be dispatched.
-  bool onNotification(ScrollNotification scrollInfo) {
+  bool onNotification(ScrollUpdateNotification scrollInfo) {
     if (widget.hasReachedMax ||
         widget.delegate.status == EnhancedStatus.loading ||
         widget.delegate.status == EnhancedStatus.error) {
       return false;
     }
 
-    if (scrollInfo is ScrollUpdateNotification) {
-      // Check if the last 5 items are visible
-      final lastVisibleIndex = _scrollController.position.maxScrollExtent -
-          scrollInfo.metrics.pixels;
-      if (lastVisibleIndex <= 100) {
-        // The last 5 items are visible
-        // You can now take appropriate action
-        loadMore();
-      }
+    if (scrollInfo.metrics.atEdge) {
+      loadMore();
     }
+
+    // if (scrollInfo is ScrollUpdateNotification) {
+    //   // Check if the last 5 items are visible
+    //   final lastVisibleIndex = _scrollController.position.maxScrollExtent -
+    //       scrollInfo.metrics.pixels;
+    //   if (lastVisibleIndex <= 100) {
+    //     // The last 5 items are visible
+    //     // You can now take appropriate action
+    //     loadMore();
+    //   }
+    // }
     return false;
   }
 
@@ -266,7 +270,7 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
               : content);
     }
 
-    return NotificationListener<ScrollNotification>(
+    return NotificationListener<ScrollUpdateNotification>(
       onNotification: onNotification,
       child: content,
     );
