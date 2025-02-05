@@ -96,8 +96,8 @@ class _Loading extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: SizedBox(
-          width: isAndroid ? 20.0 : null,
-          height: isAndroid ? 20.0 : null,
+          width: isAndroid ? 10.0 : null,
+          height: isAndroid ? 10.0 : null,
           child: const CircularProgressIndicator.adaptive(),
         ),
       ),
