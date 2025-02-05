@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:enhanced_paginated_view/src/models/loading_config.dart';
 import 'package:enhanced_paginated_view/src/models/enhanced_loading_type.dart';
 import 'package:enhanced_paginated_view/src/models/enhanced_view_type.dart';
@@ -82,15 +84,22 @@ class LoadingWidget extends StatelessWidget {
 }
 
 /// A private widget that displays the loading indicator.
+
 class _Loading extends StatelessWidget {
   const _Loading();
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    final isAndroid = Platform.isAndroid;
+
+    return Center(
       child: Padding(
-        padding: EdgeInsets.all(12.0),
-        child: CircularProgressIndicator.adaptive(),
+        padding: const EdgeInsets.all(12.0),
+        child: SizedBox(
+          width: isAndroid ? 20.0 : null,
+          height: isAndroid ? 20.0 : null,
+          child: const CircularProgressIndicator.adaptive(),
+        ),
       ),
     );
   }
