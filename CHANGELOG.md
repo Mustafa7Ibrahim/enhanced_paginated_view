@@ -1,3 +1,8 @@
+## [2.0.3]
+
+### Chore  
+- Update docs
+
 ## [2.0.2]
 
 ### Added  

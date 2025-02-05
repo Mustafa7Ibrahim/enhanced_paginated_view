@@ -2,28 +2,31 @@
 # Enhanced Paginated View
 <a href="https://pub.dev/packages/enhanced_paginated_view"><img src="https://img.shields.io/pub/v/enhanced_paginated_view.svg" alt="Pub"></a>
 <a href="https://pub.dev/packages/enhanced_paginated_view/score"><img src="https://img.shields.io/pub/likes/enhanced_paginated_view?logo=flutter" alt="Pub likes"></a>
-<a href="https://pub.dev/packages/enhanced_paginated_view"><img src="https://img.shields.io/pub/dt/enhanced_paginated_view?logo=flutter" alt="downloads"></a>
 <a href="https://pub.dev/packages/enhanced_paginated_view/score"><img src="https://img.shields.io/pub/points/enhanced_paginated_view?logo=flutter" alt="Pub points"></a>
+<!-- <a href="https://pub.dev/packages/enhanced_paginated_view"><img src="https://img.shields.io/pub/dt/enhanced_paginated_view?logo=flutter" alt="downloads"></a> -->
 
-## Overview
+## Overview 🚀  
 
-The `EnhancedPaginatedView` package offers a flexible, highly customizable builder function that supports various scrollable widgets like `ListView`, `GridView`, or Slivers. With dynamic layout rendering and options for handling loading states, errors, and scroll behavior, it simplifies the implementation of paginated views. Whether using `box-based` or `sliver-based` layouts, it optimizes performance for large data sets while enhancing the user experience without the need to rewrite code for each widget.
+`EnhancedPaginatedView` makes pagination effortless! It seamlessly integrates with `ListView`, `GridView`, and Slivers, providing a **highly customizable** builder that dynamically renders layouts while handling loading, errors, and scrolling—all without extra hassle.  
+
+Designed for both **box-based** and **sliver-based** layouts, it optimizes performance for large datasets, **reducing boilerplate** and improving the user experience. Say goodbye to complex pagination logic—`EnhancedPaginatedView` lets you build smooth, efficient, and responsive lists with minimal effort!
 
 | List View                                                                                                                                               | Grid View                                                                                                                                              |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | <img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/main/assets/list_example.gif?raw=true" alt="List View" style="width: 200px;"> | <img src="https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/blob/main/assets/grid_example.gif?raw=true" alt="GridView" style="width: 200px;"> |
 
-## Features
+## Features 🚀  
 
-- Supports box-based or sliver-based views for flexible UI layouts
-- Customizable scroll direction (forward or reverse)
-- Integrated error handling and retry mechanisms
-- Customizable loading indicators
-- Support for infinite scrolling and manual pagination control
-- Delegate-based architecture for data handling
-- Compatible with various state management solutions (e.g., BLoC, Riverpod)
-- **New**: Pull-to-Refresh support with the `onRefresh` callback
-- **New**: Custom refresh indicator with the `refreshBuilder` function
+- **Flexible Layouts** – Supports both **box-based** and **sliver-based** views for seamless UI integration.  
+- **Custom Scroll Direction** – Easily switch between **forward** or **reverse** scrolling.  
+- **Built-in Error Handling** – Includes **retry mechanisms** for a smoother user experience.  
+- **Customizable Loading Indicators** – Fully configurable loading states for both **initial load** and **load more** scenarios.  
+- **Infinite Scrolling & Manual Pagination** – Supports both **automatic** and **controlled** pagination strategies.  
+- **Delegate-Based Architecture** – Simplifies data management and enhances separation of concerns.  
+- **State Management Compatibility** – Works seamlessly with **BLoC, Riverpod, Provider, and other state management solutions**.  
+- **✨ New: Pull-to-Refresh Support** – Refresh the list dynamically with the `onRefresh` callback.  
+- **✨ New: Custom Refresh Indicator** – Fully control the refresh UI using the `refreshBuilder` function.  
+
 
 ## Getting Started
 
@@ -48,10 +51,9 @@ import 'package:enhanced_paginated_view/enhanced_paginated_view.dart';
 
 ```dart
 EnhancedPaginatedView(
-  onLoadMore: (int page) {
+  onLoadMore: (page) {
     // Load more data
   },
-  hasReachedMax: false,
   itemsPerPage: 15,
   delegate: EnhancedDelegate(
     listOfData: yourDataList,
@@ -75,10 +77,9 @@ EnhancedPaginatedView(
 
 ```dart
 EnhancedPaginatedView.slivers(
-  onLoadMore: (int page) {
+  onLoadMore: (page) {
     // Load more data
   },
-  hasReachedMax: false,
   itemsPerPage: 15,
   delegate: EnhancedDelegate<YourDataType>(
     listOfData: yourDataList,
@@ -101,55 +102,19 @@ EnhancedPaginatedView.slivers(
 )
 ```
 
-## New Features (v2.0.2)
+---
 
-### Pull-to-Refresh Support
+### Pull-to-Refresh with Custom Refresh Indicator  
 
-With version `2.0.2`, the package now supports pull-to-refresh functionality. You can implement the `onRefresh` callback to refresh the list when the user pulls down. If no callback is provided, the refresh indicator will be disabled by default.
+Starting from version `2.0.2`, the package supports pull-to-refresh functionality. You can implement the `onRefresh` callback to refresh the list when the user pulls down. If no callback is provided, the refresh indicator will be disabled by default.  
 
-```dart
-EnhancedPaginatedView(
-  onLoadMore: (int page) {
-    // Load more data
-  },
-  hasReachedMax: false,
-  itemsPerPage: 15,
-  delegate: EnhancedDelegate(
-    listOfData: yourDataList,
-    status: EnhancedStatus.loaded,
-  ),
-  onRefresh: () async {
-    // Trigger data refresh
-  },
-  builder: (items, physics, reverse, shrinkWrap) {
-    return ListView.builder(
-      itemCount: items.length,
-      physics: physics,
-      reverse: reverse,
-      shrinkWrap: shrinkWrap,
-      itemBuilder: (context, index) {
-        return ListTile(title: Text(items[index].toString()));
-      },
-    );
-  },
-)
-```
-
-### Custom Refresh Indicator
-
-You can now specify a custom refresh indicator using the `refreshBuilder` parameter. This allows for complete control over the look and feel of the refresh indicator.
+Additionally, you can customize the refresh indicator using the `refreshBuilder` parameter, giving you complete control over its appearance and behavior.  
 
 ```dart
 EnhancedPaginatedView(
   onLoadMore: (int page) {
     // Load more data
   },
-  hasReachedMax: false,
-  itemsPerPage: 15,
-  delegate: EnhancedDelegate(
-    listOfData: yourDataList,
-    status: EnhancedStatus.loaded,
-  ),
   onRefresh: () async {
     // Trigger data refresh
   },
@@ -161,6 +126,11 @@ EnhancedPaginatedView(
       child: child,
     );
   },
+  itemsPerPage: 15,
+  delegate: EnhancedDelegate(
+    listOfData: yourDataList,
+    status: EnhancedStatus.loaded,
+  ),
   builder: (items, physics, reverse, shrinkWrap) {
     return ListView.builder(
       itemCount: items.length,
@@ -173,46 +143,48 @@ EnhancedPaginatedView(
     );
   },
 )
-```
+``` 
 
-## Key Components
 
-### 1. EnhancedPaginatedView Widget
+## Key Components  
 
-The primary widget in the package, supporting both box-based and sliver-based views.
+### 1. `EnhancedPaginatedView` Widget  
 
-#### Constructor Parameters:
-- `onLoadMore` (required): Callback function triggered when scrolling to the list bottom.
-- `hasReachedMax` (required): Boolean controlling whether to load more items.
-- `itemsPerPage`: Optional integer setting items loaded per page (default: 15).
-- `delegate` (required): `EnhancedDelegate` instance providing data and configuration.
-- `builder` (required): Function for building each scroll view.
-- `direction`: Defines scroll direction (default: `EnhancedViewDirection.forward`).
-- `onRefresh`: Optional callback for pull-to-refresh functionality.
-- `refreshBuilder`: Optional builder function for customizing the refresh indicator.
+| Parameter        | Type                    | Required | Description                                      |
+| ---------------- | ----------------------- | -------- | ------------------------------------------------ |
+| `onLoadMore`     | Function                | ✅        | Callback triggered when scrolling to the bottom. |
+| `hasReachedMax`  | `bool`                  | ✅        | Controls whether more items should be loaded.    |
+| `itemsPerPage`   | `int`                   | ❌        | Number of items loaded per page (default: `15`). |
+| `delegate`       | `EnhancedDelegate`      | ✅        | Provides data and configuration.                 |
+| `builder`        | Function                | ✅        | Builds the scroll view.                          |
+| `direction`      | `EnhancedViewDirection` | ❌        | Defines scroll direction (default: `forward`).   |
+| `onRefresh`      | Function                | ❌        | Callback for pull-to-refresh functionality.      |
+| `refreshBuilder` | Function                | ❌        | Customizes the refresh indicator.                |
 
-### 2. EnhancedDelegate Class
+### 2. `EnhancedDelegate` Class  
 
-Manages data and provides configuration options for `EnhancedPaginatedView`.
+| Property                | Type                 | Required | Description                                               |
+| ----------------------- | -------------------- | -------- | --------------------------------------------------------- |
+| `listOfData`            | `List<dynamic>`      | ✅        | List of items to display.                                 |
+| `status`                | `EnhancedStatus`     | ✅        | Current status (`loading`, `loaded`, or `error`).         |
+| `physics`               | `ScrollPhysics`      | ❌        | Custom scroll physics.                                    |
+| `removeDuplicatedItems` | `bool`               | ❌        | Removes duplicates (default: `true`).                     |
+| `scrollDirection`       | `Axis`               | ❌        | Scroll direction (default: `Axis.vertical`).              |
+| `crossAxisAlignment`    | `CrossAxisAlignment` | ❌        | Aligns children along the cross-axis (default: `center`). |
+| `header`                | `Widget`             | ❌        | Widget displayed at the top of the list.                  |
+| `emptyWidgetConfig`     | `Widget`             | ❌        | Configuration for the empty state widget.                 |
+| `loadingConfig`         | `Widget`             | ❌        | Configuration for the loading widget.                     |
+| `errorPageConfig`       | `Widget`             | ❌        | Configuration for the error page.                         |
+| `errorLoadMoreConfig`   | `Widget`             | ❌        | Configuration for the load-more error message.            |
 
-#### Properties:
-- `listOfData` (required): List of items to display.
-- `status` (required): Current status (loading, loaded, or error).
-- `physics`: Custom scroll physics (optional).
-- `removeDuplicatedItems`: Boolean to remove duplicates (default: `true`).
-- `scrollDirection`: Scroll direction (default: `Axis.vertical`).
-- `crossAxisAlignment`: Alignment of children along cross-axis (default: `CrossAxisAlignment.center`).
-- `header`: Widget displayed at list top (optional).
-- `emptyWidgetConfig`: Configuration for empty state widget.
-- `loadingConfig`: Configuration for loading widget.
-- `errorPageConfig`: Configuration for error page.
-- `errorLoadMoreConfig`: Configuration for load-more error message.
+---
 
-### 3. Loading, Error, and Empty States
+### 3. Loading, Error, and Empty States  
 
-Customizable UI components for various states:
+The package provides customizable UI components for handling different states:  
 
-#### LoadingConfig
+#### 🔄 Loading State (`LoadingConfig`)  
+Defines widgets for page-level loading and load-more scenarios.  
 ```dart
 LoadingConfig(
   pageWidget: CircularProgressIndicator(),
@@ -220,7 +192,8 @@ LoadingConfig(
 )
 ```
 
-#### ErrorPageConfig
+#### ❌ Error State (`ErrorPageConfig`)  
+Displays a custom error page with retry functionality.  
 ```dart
 ErrorPageConfig(
   title: "Error loading data",
@@ -228,11 +201,12 @@ ErrorPageConfig(
   btnText: "Retry",
   onRetry: () => loadMore(1),
   customButton: CustomButton(),
-  customView: CustomErrorPageView()
+  customView: CustomErrorPageView(),
 )
 ```
 
-#### EmptyWidgetConfig
+#### 📭 Empty State (`EmptyWidgetConfig`)  
+Provides a custom view when no data is available.  
 ```dart
 EmptyWidgetConfig(
   title: "No data found",
@@ -240,9 +214,12 @@ EmptyWidgetConfig(
 )
 ```
 
-## Enum Types
+---
 
-### EnhancedStatus
+## 🏷 Enum Types  
+
+### ✅ `EnhancedStatus`  
+Defines possible states of the paginated view.  
 ```dart
 enum EnhancedStatus {
   loading,
@@ -251,7 +228,8 @@ enum EnhancedStatus {
 }
 ```
 
-### EnhancedViewDirection
+### 🔃 `EnhancedViewDirection`  
+Controls the scrolling direction of the list.  
 ```dart
 enum EnhancedViewDirection {
   forward,
