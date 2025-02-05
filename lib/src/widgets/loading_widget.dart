@@ -90,8 +90,7 @@ class _Loading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isAndroid = Platform.isAndroid;
-
+    final isAndroid = Theme.of(context).platform == TargetPlatform.android;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(12.0),
