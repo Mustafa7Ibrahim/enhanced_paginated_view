@@ -43,4 +43,30 @@ extension EnhancedDeduplication<T> on Iterable<T> {
 
     return resultList;
   }
+
+  /// Returns a new List with all duplicate elements removed, using the key
+  /// returned by [keyOf] to determine equality instead of the element's own
+  /// `==`/`hashCode`.
+  ///
+  /// The order of the elements is preserved.
+  ///
+  /// Example:
+  ///
+  /// ```dart
+  /// final list = [Person(id: 1), Person(id: 2), Person(id: 1)];
+  /// final result = list.removeDuplicationBy((p) => p.id);
+  /// print(result); // [Person(id: 1), Person(id: 2)]
+  /// ```
+  List<T> removeDuplicationBy<K>(K Function(T element) keyOf) {
+    final uniqueKeys = HashSet<K>();
+    final resultList = <T>[];
+
+    for (final item in this) {
+      if (uniqueKeys.add(keyOf(item))) {
+        resultList.add(item);
+      }
+    }
+
+    return resultList;
+  }
 }

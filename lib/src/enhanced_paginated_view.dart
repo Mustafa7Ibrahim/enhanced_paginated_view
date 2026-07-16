@@ -1,7 +1,11 @@
-import 'package:enhanced_paginated_view/enhanced_paginated_view.dart';
 import 'package:enhanced_paginated_view/src/core/custom_type_def.dart';
+import 'package:enhanced_paginated_view/src/core/enhanced_deduplication.dart';
+import 'package:enhanced_paginated_view/src/core/enhanced_pagination_controller.dart';
+import 'package:enhanced_paginated_view/src/models/enhanced_config.dart';
+import 'package:enhanced_paginated_view/src/models/enhanced_delegate.dart';
 import 'package:enhanced_paginated_view/src/models/enhanced_loading_type.dart';
-import 'package:enhanced_paginated_view/src/models/enhanced_view_type.dart';
+import 'package:enhanced_paginated_view/src/models/enhanced_status.dart';
+import 'package:enhanced_paginated_view/src/models/enhanced_view_direction.dart';
 import 'package:enhanced_paginated_view/src/views/enhanced_box_view.dart';
 import 'package:enhanced_paginated_view/src/views/enhanced_sliver_view.dart';
 import 'package:enhanced_paginated_view/src/widgets/error_page_widget.dart';
@@ -10,137 +14,111 @@ import 'package:flutter/material.dart';
 
 /// This is the EnhancedPaginatedView widget.
 /// It provides a paginated view of items of type [T].
-class EnhancedPaginatedView<T> extends StatefulWidget {
-  /// Constructs an EnhancedPaginatedView widget.
+abstract class EnhancedPaginatedView<T> extends StatefulWidget {
+  /// Constructs an EnhancedPaginatedView widget backed by a "bring your own
+  /// scrollable" [builder] (e.g. a [ListView] or [GridView]).
   ///
-  /// The [onLoadMore] function is called when the user reaches the end of the list.
-  /// The [hasReachedMax] boolean is used to control the loading widget.
-  /// The [itemsPerPage] integer controls the number of items loaded per page.
-  /// The [delegate] is an instance of [EnhancedDelegate] that provides data and status information.
-  /// The [boxBuilder] is a builder function for creating a box-based view.
+  /// The [onLoadMore] function is called with the page to load when the user
+  /// scrolls close to the end of the list.
+  /// The [hasReachedMax] boolean disables further load-more calls once true.
+  /// The [delegate] is an instance of [EnhancedDelegate] carrying the data
+  /// and status.
+  /// The [config] carries presentation/behavior options.
+  /// The [builder] builds the box-based scrollable that renders [data].
   /// The [direction] specifies the direction of the enhanced paginated view.
   /// The [refreshBuilder] is a builder function for creating a refresh indicator.
   /// The [onRefresh] function is called when the user pulls down to refresh the list.
-  factory EnhancedPaginatedView({
+  /// The [loadMoreThreshold] is how many pixels before the end edge of the
+  /// scrollable a load-more request should be triggered.
+  ///
+  /// Note: because [builder] supplies its own scrollable, this variant is
+  /// wrapped in a [SingleChildScrollView] with `shrinkWrap`-like eager
+  /// layout. For very large lists prefer [EnhancedPaginatedView.slivers].
+  const factory EnhancedPaginatedView({
     Key? key,
-    required void Function(int) onLoadMore,
-    Future<void> Function()? onRefresh,
-    EnhancedRefreshBuilder<T>? refreshBuilder,
-    required bool hasReachedMax,
-    int itemsPerPage = 15,
     required EnhancedDelegate<T> delegate,
+    EnhancedConfig config,
+    required bool hasReachedMax,
+    required void Function(int page) onLoadMore,
     required EnhancedBoxBuilder<T> builder,
-    EnhancedViewDirection direction = EnhancedViewDirection.forward,
-  }) {
-    return EnhancedPaginatedView._(
-      key: key,
-      type: EnhancedViewType.box,
-      onLoadMore: onLoadMore,
-      direction: direction,
-      hasReachedMax: hasReachedMax,
-      itemsPerPage: itemsPerPage,
-      delegate: delegate,
-      boxBuilder: builder,
-      sliverBuilder: null,
-      refreshBuilder: refreshBuilder,
-      onRefresh: onRefresh,
-    );
-  }
+    EnhancedPaginationController? controller,
+    EnhancedViewDirection direction,
+    Future<void> Function()? onRefresh,
+    EnhancedRefreshBuilder<T>? refreshBuilder,
+    double loadMoreThreshold,
+  }) = _BoxEnhancedPaginatedView<T>;
 
-  /// Constructs an EnhancedPaginatedView widget with a CustomScrollView-based view.
+  /// Constructs an EnhancedPaginatedView widget backed by a
+  /// [CustomScrollView]-compatible [builder] that returns sliver widgets.
   ///
-  /// The [onLoadMore] function is called when the user reaches the end of the list.
-  /// The [hasReachedMax] boolean is used to control the loading widget.
-  /// The [itemsPerPage] integer controls the number of items loaded per page.
-  /// The [delegate] is an instance of [EnhancedDelegate] that provides data and status information.
-  /// The [sliverBuilder] is a builder function for creating a sliver-based view.
+  /// The [onLoadMore] function is called with the page to load when the user
+  /// scrolls close to the end of the list.
+  /// The [hasReachedMax] boolean disables further load-more calls once true.
+  /// The [delegate] is an instance of [EnhancedDelegate] carrying the data
+  /// and status.
+  /// The [config] carries presentation/behavior options.
+  /// The [builder] builds the sliver(s) that render [data].
   /// The [direction] specifies the direction of the enhanced paginated view.
   /// The [refreshBuilder] is a builder function for creating a refresh indicator.
   /// The [onRefresh] function is called when the user pulls down to refresh the list.
-  factory EnhancedPaginatedView.slivers({
+  /// The [loadMoreThreshold] is how many pixels before the end edge of the
+  /// scrollable a load-more request should be triggered.
+  const factory EnhancedPaginatedView.slivers({
     Key? key,
-    required void Function(int) onLoadMore,
+    required EnhancedDelegate<T> delegate,
+    EnhancedConfig config,
+    required bool hasReachedMax,
+    required void Function(int page) onLoadMore,
+    required EnhancedSliverBuilder<T> builder,
+    EnhancedPaginationController? controller,
+    EnhancedViewDirection direction,
     Future<void> Function()? onRefresh,
     EnhancedRefreshBuilder<T>? refreshBuilder,
-    required bool hasReachedMax,
-    int itemsPerPage = 15,
-    required EnhancedDelegate<T> delegate,
-    required EnhancedSliverBuilder<T> builder,
-    EnhancedViewDirection direction = EnhancedViewDirection.forward,
-  }) {
-    return EnhancedPaginatedView._(
-      key: key,
-      onLoadMore: onLoadMore,
-      type: EnhancedViewType.sliver,
-      direction: direction,
-      hasReachedMax: hasReachedMax,
-      itemsPerPage: itemsPerPage,
-      delegate: delegate,
-      boxBuilder: null,
-      sliverBuilder: builder,
-      refreshBuilder: refreshBuilder,
-      onRefresh: onRefresh,
-    );
-  }
+    double loadMoreThreshold,
+  }) = _SliverEnhancedPaginatedView<T>;
 
-  // Private constructor
+  // Private constructor shared by both variants.
   const EnhancedPaginatedView._({
     super.key,
-    required this.onLoadMore,
-    required this.hasReachedMax,
-    required this.itemsPerPage,
-    required this.type,
     required this.delegate,
-    required this.boxBuilder,
-    required this.sliverBuilder,
-    required this.direction,
-    required this.onRefresh,
-    required this.refreshBuilder,
+    this.config = const EnhancedConfig(),
+    required this.hasReachedMax,
+    required this.onLoadMore,
+    this.controller,
+    this.direction = EnhancedViewDirection.forward,
+    this.onRefresh,
+    this.refreshBuilder,
+    this.loadMoreThreshold = 200,
   });
+
+  /// [delegate] is an instance of [EnhancedDelegate] that provides data and status information.
+  final EnhancedDelegate<T> delegate;
+
+  /// [config] carries presentation/behavior configuration for the view.
+  final EnhancedConfig config;
 
   /// [hasReachedMax] is a boolean that controls the loading widget.
   ///
   /// This boolean is set to true when the list reaches the end.
   final bool hasReachedMax;
 
-  /// [itemsPerPage] is an integer that controls the number of items loaded per page.
-  ///
-  /// This helps with requesting the right page number from the server
-  /// in case of delete or update operations.
-  ///
-  /// The default value is 15.
-  final int itemsPerPage;
-
-  /// [type] specifies the type of the view.
-  ///
-  /// The default value is [EnhancedViewType.box].
-  final EnhancedViewType type;
-
   /// [onLoadMore] is a function that is called when the user reaches the end of the list.
   ///
-  /// This function is required and should take an integer parameter representing the current page.
-  final void Function(int) onLoadMore;
+  /// This function is required and receives the page number to load next.
+  final void Function(int page) onLoadMore;
+
+  /// [controller] tracks the current page and in-flight load-more state.
+  ///
+  /// If not provided, an internal controller is created and disposed
+  /// automatically.
+  final EnhancedPaginationController? controller;
 
   /// Specifies the direction of the enhanced paginated view.
   ///
   /// The [EnhancedViewDirection] enum is used to determine the scrolling direction
   /// of the enhanced paginated view. It can be set to either [EnhancedViewDirection.forward]
   /// or [EnhancedViewDirection.reverse].
-  ///
-  /// Example usage:
-  /// ```dart
-  /// final EnhancedViewDirection direction = EnhancedViewDirection.vertical;
-  /// ```
   final EnhancedViewDirection direction;
-
-  /// [delegate] is an instance of [EnhancedDelegate] that provides data and status information.
-  final EnhancedDelegate<T> delegate;
-
-  /// [boxBuilder] is a builder function for creating a box-based view.
-  final EnhancedBoxBuilder<T>? boxBuilder;
-
-  /// [sliverBuilder] is a builder function for creating a sliver-based view.
-  final EnhancedSliverBuilder<T>? sliverBuilder;
 
   /// [onRefresh] is a function that is called when the user pulls down to refresh the list.
   /// if this function is not provided, the refresh indicator will not be shown.
@@ -150,150 +128,278 @@ class EnhancedPaginatedView<T> extends StatefulWidget {
   /// if this function is not provided, the default refresh indicator will be shown.
   final EnhancedRefreshBuilder<T>? refreshBuilder;
 
+  /// How many pixels before the end edge of the scrollable a load-more
+  /// request should be triggered.
+  final double loadMoreThreshold;
+
+  /// Renders the content for [data] using the concrete builder supplied by
+  /// the chosen factory (box or sliver).
+  Widget _buildContent({
+    required BuildContext context,
+    required List<T> data,
+    required EnhancedStatus status,
+    required int page,
+    required ScrollController scrollController,
+  });
+
   @override
   State<EnhancedPaginatedView<T>> createState() =>
       _EnhancedPaginatedViewState<T>();
 }
 
+/// Box-based variant of [EnhancedPaginatedView].
+class _BoxEnhancedPaginatedView<T> extends EnhancedPaginatedView<T> {
+  const _BoxEnhancedPaginatedView({
+    super.key,
+    required super.delegate,
+    super.config,
+    required super.hasReachedMax,
+    required super.onLoadMore,
+    required this.builder,
+    super.controller,
+    super.direction,
+    super.onRefresh,
+    super.refreshBuilder,
+    super.loadMoreThreshold,
+  }) : super._();
+
+  /// Builds the box-based scrollable that renders the data.
+  final EnhancedBoxBuilder<T> builder;
+
+  @override
+  Widget _buildContent({
+    required BuildContext context,
+    required List<T> data,
+    required EnhancedStatus status,
+    required int page,
+    required ScrollController scrollController,
+  }) {
+    return EnhancedBoxView<T>(
+      data: data,
+      config: config,
+      status: status,
+      builder: builder,
+      direction: direction,
+      page: page,
+      scrollController: scrollController,
+    );
+  }
+}
+
+/// Sliver-based variant of [EnhancedPaginatedView].
+class _SliverEnhancedPaginatedView<T> extends EnhancedPaginatedView<T> {
+  const _SliverEnhancedPaginatedView({
+    super.key,
+    required super.delegate,
+    super.config,
+    required super.hasReachedMax,
+    required super.onLoadMore,
+    required this.builder,
+    super.controller,
+    super.direction,
+    super.onRefresh,
+    super.refreshBuilder,
+    super.loadMoreThreshold,
+  }) : super._();
+
+  /// Builds the sliver(s) that render the data.
+  final EnhancedSliverBuilder<T> builder;
+
+  @override
+  Widget _buildContent({
+    required BuildContext context,
+    required List<T> data,
+    required EnhancedStatus status,
+    required int page,
+    required ScrollController scrollController,
+  }) {
+    return EnhancedSliverView<T>(
+      data: data,
+      config: config,
+      status: status,
+      direction: direction,
+      builder: builder,
+      page: page,
+      scrollController: scrollController,
+    );
+  }
+}
+
 class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
   final ScrollController _scrollController = ScrollController();
+  late EnhancedPaginationController _paginationController;
+  bool _ownsPaginationController = false;
+  late List<T> _dedupedData;
 
-  bool _isLoading = false;
-  late int _loadThreshold;
-
-  /// Returns the current page number.
-  int get page => widget.delegate.listOfData.length ~/ widget.itemsPerPage + 1;
-
-  /// Loads more data when called.
-  ///
-  /// This function is called only if [_isLoading] is false.
-  void loadMore() {
-    if (_isLoading) return;
-    _isLoading = true;
-    widget.onLoadMore(page);
-    // Use a delayed Future to reset the loading flag after a short delay
-    Future.delayed(const Duration(milliseconds: 250), () => _isLoading = false);
-  }
+  /// Length of the source list the last time [_dedupedData] was computed.
+  /// Tracked in a field (not via `oldWidget`) so that in-place mutations of
+  /// the *same* list instance are still detected and re-deduplicated.
+  int _dedupeSourceLength = 0;
 
   @override
   void initState() {
     super.initState();
-    _loadThreshold = widget.itemsPerPage - 3;
+    _attachPaginationController();
+    _dedupedData = _dedupe(widget.delegate.listOfData);
+    _dedupeSourceLength = widget.delegate.listOfData.length;
   }
 
-  /// Checks if more data needs to be loaded and loads it if necessary.
-  void checkAndLoadDataIfNeeded() {
-    if (widget.hasReachedMax ||
-        widget.delegate.status == EnhancedStatus.loading ||
-        widget.delegate.status == EnhancedStatus.error) {
-      return;
-    }
-
-    if (widget.delegate.listOfData.length <= _loadThreshold) {
-      // Load more data when the list gets shorter than the minimum threshold
-      if (page < 2) {
-        loadMore();
-      }
+  void _attachPaginationController() {
+    final EnhancedPaginationController? injected = widget.controller;
+    if (injected != null) {
+      _paginationController = injected;
+      _ownsPaginationController = false;
+    } else {
+      _paginationController = EnhancedPaginationController();
+      _ownsPaginationController = true;
     }
   }
 
-  /// Handles scroll notifications and loads more data if necessary.
-  ///
-  /// Returns false to allow the notification to continue to be dispatched.
-  bool onNotification(ScrollUpdateNotification scrollInfo) {
-    if (widget.hasReachedMax ||
-        widget.delegate.status == EnhancedStatus.loading ||
-        widget.delegate.status == EnhancedStatus.error) {
-      return false;
-    }
+  List<T> _dedupe(List<T> data) {
+    return widget.config.removeDuplicatedItems
+        ? data.removeDuplication()
+        : data;
+  }
 
-    if (scrollInfo.metrics.atEdge) {
-      loadMore();
-    }
+  /// Requests the next page, guarding against duplicate in-flight requests.
+  void _loadMore() {
+    if (_paginationController.isLoadingMore) return;
+    _paginationController.markLoadStarted();
+    widget.onLoadMore(_paginationController.page);
+  }
 
-    // if (scrollInfo is ScrollUpdateNotification) {
-    //   // Check if the last 5 items are visible
-    //   final lastVisibleIndex = _scrollController.position.maxScrollExtent -
-    //       scrollInfo.metrics.pixels;
-    //   if (lastVisibleIndex <= 100) {
-    //     // The last 5 items are visible
-    //     // You can now take appropriate action
-    //     loadMore();
-    //   }
-    // }
+  bool _handleScrollNotification(ScrollNotification notification) {
+    // Only react to the view's own scrollable. Without this guard, an inner
+    // scrollable (e.g. a horizontal carousel inside a list item) bubbling its
+    // notifications would spuriously trigger the outer load-more.
+    if (notification.depth != 0) return false;
+    if (notification is ScrollUpdateNotification) {
+      _maybeLoadMore(notification.metrics);
+    }
     return false;
+  }
+
+  void _maybeLoadMore(ScrollMetrics metrics) {
+    if (widget.hasReachedMax) return;
+    if (widget.delegate.status != EnhancedStatus.loaded) return;
+    if (_paginationController.isLoadingMore) return;
+    if (metrics.extentAfter <= widget.loadMoreThreshold) {
+      _loadMore();
+    }
+  }
+
+  /// Guards against short initial pages that don't fill the viewport, which
+  /// would otherwise never produce a scroll notification to trigger the
+  /// next load-more request.
+  void _scheduleViewportFillCheck() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (!_scrollController.hasClients) return;
+      if (_scrollController.position.maxScrollExtent != 0) return;
+      if (widget.hasReachedMax) return;
+      if (widget.delegate.status != EnhancedStatus.loaded) return;
+      if (_paginationController.isLoadingMore) return;
+      _loadMore();
+    });
+  }
+
+  Future<void> _handleRefresh() async {
+    _paginationController.reset();
+    await widget.onRefresh!();
   }
 
   @override
   void didUpdateWidget(covariant EnhancedPaginatedView<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    checkAndLoadDataIfNeeded();
+
+    if (widget.controller != oldWidget.controller) {
+      if (_ownsPaginationController) {
+        _paginationController.dispose();
+      }
+      _attachPaginationController();
+    }
+
+    final List<T> data = widget.delegate.listOfData;
+    if (!identical(data, oldWidget.delegate.listOfData) ||
+        data.length != _dedupeSourceLength ||
+        widget.config.removeDuplicatedItems !=
+            oldWidget.config.removeDuplicatedItems) {
+      _dedupedData = _dedupe(data);
+      _dedupeSourceLength = data.length;
+    }
+
+    final int oldLength = oldWidget.delegate.listOfData.length;
+    final int newLength = data.length;
+    final EnhancedStatus oldStatus = oldWidget.delegate.status;
+    final EnhancedStatus newStatus = widget.delegate.status;
+
+    if (_paginationController.isLoadingMore) {
+      // A tracked load-more request must always resolve — the in-flight lock
+      // must never be left stuck (which would permanently disable load-more).
+      if (newStatus == EnhancedStatus.error) {
+        // Failed: clear the lock but hold the page so a retry re-requests it.
+        _paginationController.markLoadFailed();
+      } else if (newLength > oldLength ||
+          (oldStatus == EnhancedStatus.loading &&
+              newStatus == EnhancedStatus.loaded)) {
+        // Resolved with new data (or a loading→loaded round-trip): advance
+        // the page and clear the lock.
+        _paginationController.markDataReceived();
+      }
+      // Otherwise still waiting (e.g. the frame between requesting and the
+      // consumer emitting `loading`) — keep the lock held.
+    } else if (oldStatus == EnhancedStatus.loading &&
+        newStatus == EnhancedStatus.loaded) {
+      // Consumer-driven page load (e.g. a bloc's initial fetch) with no
+      // widget-tracked request in flight. Local edits that keep the status
+      // `loaded` must not advance the page, so this only reacts to a genuine
+      // loading→loaded transition.
+      _paginationController.markDataReceived();
+    }
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    if (_ownsPaginationController) {
+      _paginationController.dispose();
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    _scheduleViewportFillCheck();
+
+    final bool isEmpty = widget.delegate.listOfData.isEmpty;
     Widget content;
-
-    switch (widget.delegate.status) {
-      case EnhancedStatus.loading:
-        if (page == 1) {
-          content = LoadingWidget(
-            config: widget.delegate.loadingConfig,
-            type: EnhancedLoadingType.page,
-          );
-        } else {
-          content = _buildContent();
-        }
-        break;
-      case EnhancedStatus.error:
-        if (page == 1) {
-          content = ErrorPageWidget(config: widget.delegate.errorPageConfig);
-        } else {
-          content = _buildContent();
-        }
-        break;
-      default:
-        content = _buildContent();
+    if (isEmpty && widget.delegate.status == EnhancedStatus.loading) {
+      content = LoadingWidget(
+        config: widget.config.loadingConfig,
+        type: EnhancedLoadingType.page,
+      );
+    } else if (isEmpty && widget.delegate.status == EnhancedStatus.error) {
+      content = ErrorPageWidget(config: widget.config.errorPageConfig);
+    } else {
+      content = widget._buildContent(
+        context: context,
+        data: _dedupedData,
+        status: widget.delegate.status,
+        page: _paginationController.page,
+        scrollController: _scrollController,
+      );
     }
 
-    if (widget.onRefresh != null) {
+    final Future<void> Function()? onRefresh = widget.onRefresh;
+    if (onRefresh != null) {
       content = widget.refreshBuilder != null
-          ? widget.refreshBuilder!(context, widget.onRefresh!, content)
-          : (widget.direction == EnhancedViewDirection.forward
-              ? RefreshIndicator(onRefresh: widget.onRefresh!, child: content)
-              : content);
+          ? widget.refreshBuilder!(context, _handleRefresh, content)
+          : RefreshIndicator(onRefresh: _handleRefresh, child: content);
     }
 
-    return NotificationListener<ScrollUpdateNotification>(
-      onNotification: onNotification,
+    return NotificationListener<ScrollNotification>(
+      onNotification: _handleScrollNotification,
       child: content,
     );
-  }
-
-  Widget _buildContent() {
-    switch (widget.type) {
-      case EnhancedViewType.sliver:
-        return EnhancedSliverView<T>(
-          delegate: widget.delegate,
-          builder: widget.sliverBuilder!,
-          page: page,
-          scrollController: _scrollController,
-          direction: widget.direction,
-        );
-      case EnhancedViewType.box:
-        return EnhancedBoxView<T>(
-          delegate: widget.delegate,
-          builder: widget.boxBuilder!,
-          page: page,
-          scrollController: _scrollController,
-          direction: widget.direction,
-        );
-    }
   }
 }

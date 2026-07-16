@@ -1,21 +1,21 @@
-import 'package:enhanced_paginated_view/enhanced_paginated_view.dart';
-import 'package:flutter/material.dart';
+import 'package:enhanced_paginated_view/src/models/enhanced_status.dart';
+import 'package:flutter/foundation.dart';
 
-/// A delegate class for the EnhancedPaginatedView widget.
+/// Immutable data holder for [EnhancedPaginatedView].
 ///
-/// This delegate class provides configuration options for the EnhancedPaginatedView widget.
+/// This delegate carries only the *data* related state of the paginated
+/// view: the current [listOfData] and the [status] of the most recent load.
+/// All presentation/behavior configuration lives on `EnhancedConfig` instead.
+@immutable
 class EnhancedDelegate<T> {
-  /// The physics of the scrollable area.
-  final ScrollPhysics? physics;
-
-  /// Whether to remove duplicated items from the list of data.
-  final bool removeDuplicatedItems;
-
-  /// The direction in which the list should scroll.
-  final Axis scrollDirection;
-
-  /// The alignment of the children along the cross axis.
-  final CrossAxisAlignment crossAxisAlignment;
+  /// Creates a new instance of the EnhancedDelegate class.
+  ///
+  /// The [listOfData] parameter is required and represents the list of data to be displayed.
+  /// The [status] parameter is required and represents the current status of the EnhancedPaginatedView.
+  const EnhancedDelegate({
+    required this.listOfData,
+    required this.status,
+  });
 
   /// The list of data to be displayed in the EnhancedPaginatedView.
   final List<T> listOfData;
@@ -23,45 +23,26 @@ class EnhancedDelegate<T> {
   /// The current status of the EnhancedPaginatedView.
   final EnhancedStatus status;
 
-  /// The widget to be displayed as the header of the EnhancedPaginatedView.
-  final Widget? header;
+  /// Creates a copy of this delegate with the given fields replaced.
+  EnhancedDelegate<T> copyWith({
+    List<T>? listOfData,
+    EnhancedStatus? status,
+  }) {
+    return EnhancedDelegate<T>(
+      listOfData: listOfData ?? this.listOfData,
+      status: status ?? this.status,
+    );
+  }
 
-  /// The configuration for the empty widget.
-  final EmptyWidgetConfig emptyWidgetConfig;
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is EnhancedDelegate<T> &&
+        (identical(other.listOfData, listOfData) ||
+            listEquals(other.listOfData, listOfData)) &&
+        other.status == status;
+  }
 
-  /// The configuration for the error page.
-  final ErrorPageConfig errorPageConfig;
-
-  /// The configuration for the error when loading more data.
-  final ErrorLoadMoreConfig errorLoadMoreConfig;
-
-  /// The configuration for the loading state.
-  final LoadingConfig loadingConfig;
-
-  /// Creates a new instance of the EnhancedDelegate class.
-  ///
-  /// The [listOfData] parameter is required and represents the list of data to be displayed.
-  /// The [status] parameter is required and represents the current status of the EnhancedPaginatedView.
-  /// The [physics] parameter is optional and represents the physics of the scrollable area.
-  /// The [header] parameter is optional and represents the widget to be displayed as the header of the EnhancedPaginatedView.
-  /// The [emptyWidgetConfig] parameter is optional and represents the widget to be displayed when the list of data is empty or add customization.
-  /// The [loadingConfig] parameter is optional and represents the configuration for the loading state.
-  /// The [errorLoadMoreConfig] parameter is optional and represents the configuration for the error when loading more data.
-  /// The [errorPageConfig] parameter is optional and represents the configuration for the error page.
-  /// The [removeDuplicatedItems] parameter is optional and determines whether to remove duplicated items from the list of data.
-  /// The [scrollDirection] parameter is optional and represents the direction in which the list should scroll.
-  /// The [crossAxisAlignment] parameter is optional and represents the alignment of the children along the cross axis.
-  EnhancedDelegate({
-    required this.listOfData,
-    required this.status,
-    this.physics,
-    this.header,
-    this.emptyWidgetConfig = const EmptyWidgetConfig(),
-    this.loadingConfig = const LoadingConfig(),
-    this.errorLoadMoreConfig = const ErrorLoadMoreConfig(),
-    this.errorPageConfig = const ErrorPageConfig(),
-    this.removeDuplicatedItems = true,
-    this.scrollDirection = Axis.vertical,
-    this.crossAxisAlignment = CrossAxisAlignment.center,
-  });
+  @override
+  int get hashCode => Object.hash(Object.hashAll(listOfData), status);
 }

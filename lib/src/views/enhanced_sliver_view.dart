@@ -1,6 +1,6 @@
 import 'package:enhanced_paginated_view/src/core/custom_type_def.dart';
-import 'package:enhanced_paginated_view/src/core/enhanced_deduplication.dart';
-import 'package:enhanced_paginated_view/src/models/enhanced_delegate.dart';
+import 'package:enhanced_paginated_view/src/models/enhanced_config.dart';
+import 'package:enhanced_paginated_view/src/models/enhanced_status.dart';
 import 'package:enhanced_paginated_view/src/models/enhanced_view_direction.dart';
 import 'package:enhanced_paginated_view/src/widgets/empty_widget.dart';
 import 'package:enhanced_paginated_view/src/widgets/loading_error_widget.dart';
@@ -8,25 +8,30 @@ import 'package:flutter/material.dart';
 
 /// A widget that represents an enhanced sliver view.
 ///
-/// This widget is used to display a list of data in a sliver format, with enhanced features such as pagination and error handling.
+/// This widget is used to display an already-deduplicated list of data in a
+/// sliver format, with enhanced features such as pagination and error
+/// handling.
 class EnhancedSliverView<T> extends StatelessWidget {
   /// Creates an instance of [EnhancedSliverView].
-  ///
-  /// The [delegate] parameter is required and represents the delegate that provides the necessary data and configuration for the view.
-  /// The [builder] parameter is required and represents the builder function that generates the sliver widgets based on the provided data.
-  /// The [page] parameter is required and represents the current page number.
-  /// The [scrollController] parameter is required and represents the scroll controller for the view.
   const EnhancedSliverView({
     super.key,
-    required this.delegate,
+    required this.data,
+    required this.config,
+    required this.status,
     required this.direction,
     required this.builder,
     required this.page,
     required this.scrollController,
   });
 
-  /// The delegate that provides the necessary data and configuration for the view.
-  final EnhancedDelegate<T> delegate;
+  /// The already-deduplicated data to be displayed.
+  final List<T> data;
+
+  /// The presentation configuration for the view.
+  final EnhancedConfig config;
+
+  /// The current status of the paginated view.
+  final EnhancedStatus status;
 
   /// The direction of the sliver view.
   final EnhancedViewDirection direction;
@@ -42,55 +47,32 @@ class EnhancedSliverView<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return switch (direction) {
-      EnhancedViewDirection.forward => forwardBuild(context),
-      EnhancedViewDirection.reverse => reverseBuild(context),
-    };
-  }
+    final bool isReverse = direction == EnhancedViewDirection.reverse;
 
-  /// forward build
-  Widget forwardBuild(BuildContext context) {
+    final List<Widget> slivers = [
+      if (config.header != null) config.header!,
+      _buildListOrEmpty(context),
+      LoadingErrorWidget.sliver(
+        page: page,
+        status: status,
+        loadingConfig: config.loadingConfig,
+        errorLoadMoreConfig: config.errorLoadMoreConfig,
+      ),
+    ];
+
     return CustomScrollView(
       controller: scrollController,
-      physics: delegate.physics,
-      scrollDirection: delegate.scrollDirection,
-      slivers: [
-        if (delegate.header != null) delegate.header!,
-        if (delegate.listOfData.isNotEmpty)
-          builder(
-            context,
-            delegate.removeDuplicatedItems
-                ? delegate.listOfData.removeDuplication()
-                : delegate.listOfData,
-          )
-        else
-          delegate.emptyWidgetConfig.customView ??
-              EmptyWidget.sliver(config: delegate.emptyWidgetConfig),
-        LoadingErrorWidget.sliver(page: page, delegate: delegate),
-      ],
+      physics: config.physics,
+      scrollDirection: config.scrollDirection,
+      slivers: isReverse ? slivers.reversed.toList() : slivers,
     );
   }
 
-  /// reverse build
-  Widget reverseBuild(BuildContext context) {
-    return CustomScrollView(
-      controller: scrollController,
-      physics: delegate.physics,
-      scrollDirection: delegate.scrollDirection,
-      slivers: [
-        LoadingErrorWidget.sliver(page: page, delegate: delegate),
-        if (delegate.listOfData.isNotEmpty)
-          builder(
-            context,
-            delegate.removeDuplicatedItems
-                ? delegate.listOfData.removeDuplication()
-                : delegate.listOfData,
-          )
-        else
-          delegate.emptyWidgetConfig.customView ??
-              EmptyWidget.sliver(config: delegate.emptyWidgetConfig),
-        if (delegate.header != null) delegate.header!,
-      ],
-    );
+  /// Builds the list content, or an empty-state widget when [data] is empty.
+  Widget _buildListOrEmpty(BuildContext context) {
+    if (data.isEmpty) {
+      return EmptyWidget.sliver(config: config.emptyWidgetConfig);
+    }
+    return builder(context, data);
   }
 }

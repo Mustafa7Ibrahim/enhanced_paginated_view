@@ -1,92 +1,41 @@
-import 'package:enhanced_paginated_view/src/models/enhanced_view_type.dart';
 import 'package:enhanced_paginated_view/src/models/error_page_config.dart';
 import 'package:flutter/material.dart';
 
 /// A widget that displays a failure message with an optional retry button.
 ///
-/// The `ErrorPageWidget` is typically used to indicate that a page has failed to load
-/// or an error has occurred. It displays an icon, a title, a description, and a retry button.
-///
-/// The widget takes the following parameters:
-/// - [title]: The title of the failure message.
-/// - [description]: A description of the failure.
-/// - [btnText]: The text to display on the retry button.
-/// - [onRetry]: A callback function to be called when the retry button is pressed.
-/// - [retryButton]: A custom widget for the retry button.
+/// The `ErrorPageWidget` is typically used to indicate that the first page
+/// failed to load. It displays a title, a description, and a retry button.
 ///
 /// Example usage:
 /// ```dart
 /// ErrorPageWidget(
-///   title: 'Error',
-///   description: 'Something went wrong. Please try again.',
-///   btnText: 'Retry',
-///   onRetry: () {
-///     // Retry logic here
-///   },
-///   retryButton: ElevatedButton(
-///     onPressed: () {
+///   config: ErrorPageConfig(
+///     title: 'Error',
+///     description: 'Something went wrong. Please try again.',
+///     btnText: 'Retry',
+///     onRetry: () {
 ///       // Retry logic here
 ///     },
-///     child: Text('Retry'),
 ///   ),
 /// )
 /// ```
 class ErrorPageWidget extends StatelessWidget {
-  /// Creates a `ErrorPageWidget`.
-  ///
-  /// All parameters are required and must not be null.
-  const ErrorPageWidget._({
-    required this.config,
-    required this.enhancedViewType,
-  });
-
-  // box factory constructor for the ErrorPageWidget class
-  factory ErrorPageWidget({required ErrorPageConfig config}) {
-    return ErrorPageWidget._(
-      config: config,
-      enhancedViewType: EnhancedViewType.box,
-    );
-  }
-
-  // sliver factory constructor for sliver-based view type
-  factory ErrorPageWidget.sliver({
-    required ErrorPageConfig config,
-  }) {
-    return ErrorPageWidget._(
-      config: config,
-      enhancedViewType: EnhancedViewType.sliver,
-    );
-  }
+  /// Creates an `ErrorPageWidget` for a box-based view.
+  const ErrorPageWidget({super.key, required this.config});
 
   /// The configuration for the error page.
   final ErrorPageConfig config;
 
-  /// The type of view to use for the enhanced paginated view.
-  final EnhancedViewType enhancedViewType;
+  /// Creates an `ErrorPageWidget` for a sliver-based view.
+  static Widget sliver({Key? key, required ErrorPageConfig config}) {
+    return SliverToBoxAdapter(
+      child: ErrorPageWidget(key: key, config: config),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return switch (enhancedViewType) {
-      EnhancedViewType.box => buildBox(context),
-      EnhancedViewType.sliver => buildSliver(context),
-    };
-  }
-
-  // box build function
-  Widget buildBox(BuildContext context) {
-    return config.customView ??
-        SafeArea(
-          child: _FailureWidget(config: config),
-        );
-  }
-
-  // sliver build function
-  Widget buildSliver(BuildContext context) {
-    return config.customView ??
-        SliverFillRemaining(
-          hasScrollBody: false,
-          child: _FailureWidget(config: config),
-        );
+    return config.customView ?? SafeArea(child: _FailureWidget(config: config));
   }
 }
 
@@ -105,7 +54,7 @@ class _FailureWidget extends StatelessWidget {
         children: [
           const Spacer(flex: 2),
           Text(
-            config.title ?? "Opps!....",
+            config.title ?? "Oops!",
             style: Theme.of(context)
                 .textTheme
                 .headlineSmall!

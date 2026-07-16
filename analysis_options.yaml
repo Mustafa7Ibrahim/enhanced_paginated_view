@@ -2,3 +2,11 @@ include: package:flutter_lints/flutter.yaml
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
+
+linter:
+  rules:
+    prefer_const_constructors: true
+    prefer_const_constructors_in_immutables: true
+    require_trailing_commas: true
+    unnecessary_lambdas: true
+    prefer_final_locals: true

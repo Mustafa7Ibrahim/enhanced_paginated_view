@@ -1,6 +1,5 @@
-import 'package:enhanced_paginated_view/src/models/loading_config.dart';
 import 'package:enhanced_paginated_view/src/models/enhanced_loading_type.dart';
-import 'package:enhanced_paginated_view/src/models/enhanced_view_type.dart';
+import 'package:enhanced_paginated_view/src/models/loading_config.dart';
 import 'package:flutter/material.dart';
 
 /// A widget that displays a loading indicator in the center of the screen.
@@ -11,37 +10,12 @@ import 'package:flutter/material.dart';
 /// Example usage:
 ///
 /// ```dart
-/// LoadingWidget(),
+/// LoadingWidget(config: LoadingConfig(), type: EnhancedLoadingType.page),
 /// ```
 class LoadingWidget extends StatelessWidget {
-  /// Creates a `LoadingWidget` with the specified [config] and [type].
-  ///
-  /// The default view type is [EnhancedViewType.box].
-  factory LoadingWidget({
-    required LoadingConfig config,
-    required EnhancedLoadingType type,
-  }) {
-    return LoadingWidget._(
-      enhancedViewType: EnhancedViewType.box,
-      config: config,
-      type: type,
-    );
-  }
-
-  /// Creates a `LoadingWidget` with a sliver view type.
-  factory LoadingWidget.sliver({
-    required LoadingConfig config,
-    required EnhancedLoadingType type,
-  }) {
-    return LoadingWidget._(
-      enhancedViewType: EnhancedViewType.sliver,
-      config: config,
-      type: type,
-    );
-  }
-
-  /// The view type of the loading widget.
-  final EnhancedViewType enhancedViewType;
+  /// Creates a `LoadingWidget` for a box-based view with the specified
+  /// [config] and [type].
+  const LoadingWidget({super.key, required this.config, required this.type});
 
   /// The loading configuration.
   final LoadingConfig config;
@@ -49,35 +23,23 @@ class LoadingWidget extends StatelessWidget {
   /// The loading type.
   final EnhancedLoadingType type;
 
-  const LoadingWidget._({
-    required this.enhancedViewType,
-    required this.config,
-    required this.type,
-  });
+  /// Creates a `LoadingWidget` for a sliver-based view.
+  static Widget sliver({
+    Key? key,
+    required LoadingConfig config,
+    required EnhancedLoadingType type,
+  }) {
+    return SliverToBoxAdapter(
+      child: LoadingWidget(key: key, config: config, type: type),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return switch (enhancedViewType) {
-      EnhancedViewType.box => buildBox(context),
-      EnhancedViewType.sliver => buildSliver(context),
-    };
-  }
-
-  /// Builds the loading widget with a box view type.
-  Widget buildBox(BuildContext context) {
     if (type == EnhancedLoadingType.loadMore) {
       return config.loadMoreWidget ?? const _Loading();
     }
     return config.pageWidget ?? const _Loading();
-  }
-
-  /// Builds the loading widget with a sliver view type.
-  Widget buildSliver(BuildContext context) {
-    if (type == EnhancedLoadingType.loadMore) {
-      return config.loadMoreWidget ??
-          const SliverFillRemaining(child: _Loading());
-    }
-    return config.pageWidget ?? const SliverFillRemaining(child: _Loading());
   }
 }
 
