@@ -549,6 +549,43 @@ void main() {
         expect(controller.page, 1);
       },
     );
+
+    testWidgets(
+      'regression: pull-to-refresh works when the list is shorter than the '
+      'viewport (content does not fill the screen)',
+      (WidgetTester tester) async {
+        int refreshCalls = 0;
+
+        await tester.pumpWidget(
+          wrapInApp(
+            PaginationHarness(
+              // Two 100px items in a 400px viewport: the content does not
+              // fill the screen, so the scrollable is not draggable unless
+              // an always-scrollable physics is applied.
+              initialData: const [0, 1],
+              initialStatus: EnhancedStatus.loaded,
+              initialHasReachedMax: true, // avoid viewport-fill auto-loading
+              onLoadMore: (_) {},
+              onRefresh: () async {
+                refreshCalls++;
+              },
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.fling(
+          find.byType(SingleChildScrollView),
+          const Offset(0, 300),
+          1000,
+        );
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 1));
+        await tester.pumpAndSettle();
+
+        expect(refreshCalls, 1);
+      },
+    );
   });
 
   group('Load-more lock recovery (regression)', () {

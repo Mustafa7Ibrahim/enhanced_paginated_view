@@ -140,6 +140,7 @@ abstract class EnhancedPaginatedView<T> extends StatefulWidget {
     required EnhancedStatus status,
     required int page,
     required ScrollController scrollController,
+    required ScrollPhysics? physics,
   });
 
   @override
@@ -173,6 +174,7 @@ class _BoxEnhancedPaginatedView<T> extends EnhancedPaginatedView<T> {
     required EnhancedStatus status,
     required int page,
     required ScrollController scrollController,
+    required ScrollPhysics? physics,
   }) {
     return EnhancedBoxView<T>(
       data: data,
@@ -182,6 +184,7 @@ class _BoxEnhancedPaginatedView<T> extends EnhancedPaginatedView<T> {
       direction: direction,
       page: page,
       scrollController: scrollController,
+      physics: physics,
     );
   }
 }
@@ -212,6 +215,7 @@ class _SliverEnhancedPaginatedView<T> extends EnhancedPaginatedView<T> {
     required EnhancedStatus status,
     required int page,
     required ScrollController scrollController,
+    required ScrollPhysics? physics,
   }) {
     return EnhancedSliverView<T>(
       data: data,
@@ -221,6 +225,7 @@ class _SliverEnhancedPaginatedView<T> extends EnhancedPaginatedView<T> {
       builder: builder,
       page: page,
       scrollController: scrollController,
+      physics: physics,
     );
   }
 }
@@ -308,6 +313,20 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
     await widget.onRefresh!();
   }
 
+  /// The scroll physics to apply to the view's scrollable.
+  ///
+  /// When [EnhancedPaginatedView.onRefresh] is provided, this forces an
+  /// always-scrollable physics (preserving any configured physics as its
+  /// parent) so pull-to-refresh keeps working even when the content is
+  /// shorter than the viewport and would otherwise not be draggable.
+  ScrollPhysics? get _effectivePhysics {
+    final ScrollPhysics? configured = widget.config.physics;
+    if (widget.onRefresh != null) {
+      return AlwaysScrollableScrollPhysics(parent: configured);
+    }
+    return configured;
+  }
+
   @override
   void didUpdateWidget(covariant EnhancedPaginatedView<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -387,6 +406,7 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
         status: widget.delegate.status,
         page: _paginationController.page,
         scrollController: _scrollController,
+        physics: _effectivePhysics,
       );
     }
 

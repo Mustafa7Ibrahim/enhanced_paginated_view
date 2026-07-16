@@ -20,6 +20,9 @@
 - **Load-more firing at the top**: Load-more no longer incorrectly triggers while scrolled near the top of the list.  
 - **Reverse refresh dropped**: Fixed pull-to-refresh being silently ignored when `direction` is `EnhancedViewDirection.reverse`.  
 - **Loading state hack removed**: Removed a 250ms `Future.delayed` used to fake loading-state transitions, replaced with tracking driven by actual status transitions and completion.  
+- **Short pages now auto-load (#5)**: When the loaded items don't fill the viewport (e.g. a small `itemsPerPage`/short list on a tall screen), the widget now automatically requests the next page until the viewport is filled or `hasReachedMax` is reached.  
+- **Pull-to-refresh on short lists (#5)**: Pull-to-refresh now works even when the content is shorter than the viewport; the scrollable is made always-scrollable while `onRefresh` is set so the gesture is always available.  
+- **Nested scrollables**: Inner scrollables (e.g. a horizontal carousel inside a list item) no longer spuriously trigger the outer load-more.  
 
 ### Breaking Changes  
 - **`EnhancedDelegate` is now data-only**: It only accepts `listOfData` and `status`. All presentation/behavior fields (`physics`, `header`, `scrollDirection`, `crossAxisAlignment`, `removeDuplicatedItems`, `emptyWidgetConfig`, `loadingConfig`, `errorLoadMoreConfig`, `errorPageConfig`) have moved to the new `EnhancedConfig`, passed via `config`.  

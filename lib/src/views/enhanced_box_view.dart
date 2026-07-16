@@ -27,6 +27,7 @@ class EnhancedBoxView<T> extends StatelessWidget {
     required this.direction,
     required this.page,
     required this.scrollController,
+    required this.physics,
   });
 
   /// The already-deduplicated data to be displayed.
@@ -34,6 +35,11 @@ class EnhancedBoxView<T> extends StatelessWidget {
 
   /// The presentation configuration for the view.
   final EnhancedConfig config;
+
+  /// The effective scroll physics for the outer scrollable. This is resolved
+  /// by the parent so that pull-to-refresh stays available even when the
+  /// content is shorter than the viewport.
+  final ScrollPhysics? physics;
 
   /// The current status of the paginated view.
   final EnhancedStatus status;
@@ -70,7 +76,7 @@ class EnhancedBoxView<T> extends StatelessWidget {
       dragStartBehavior:
           isReverse ? DragStartBehavior.down : DragStartBehavior.start,
       controller: scrollController,
-      physics: config.physics,
+      physics: physics,
       scrollDirection: config.scrollDirection,
       child: Column(
         crossAxisAlignment: config.crossAxisAlignment,

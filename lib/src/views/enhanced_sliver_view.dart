@@ -22,6 +22,7 @@ class EnhancedSliverView<T> extends StatelessWidget {
     required this.builder,
     required this.page,
     required this.scrollController,
+    required this.physics,
   });
 
   /// The already-deduplicated data to be displayed.
@@ -29,6 +30,11 @@ class EnhancedSliverView<T> extends StatelessWidget {
 
   /// The presentation configuration for the view.
   final EnhancedConfig config;
+
+  /// The effective scroll physics for the scrollable. This is resolved by the
+  /// parent so that pull-to-refresh stays available even when the content is
+  /// shorter than the viewport.
+  final ScrollPhysics? physics;
 
   /// The current status of the paginated view.
   final EnhancedStatus status;
@@ -62,7 +68,7 @@ class EnhancedSliverView<T> extends StatelessWidget {
 
     return CustomScrollView(
       controller: scrollController,
-      physics: config.physics,
+      physics: physics,
       scrollDirection: config.scrollDirection,
       slivers: isReverse ? slivers.reversed.toList() : slivers,
     );
