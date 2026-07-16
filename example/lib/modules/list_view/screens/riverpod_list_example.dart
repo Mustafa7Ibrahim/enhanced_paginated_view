@@ -18,7 +18,6 @@ class RiverpodListExample extends ConsumerWidget {
       ),
       hasReachedMax: state.hasReachedMax,
       onLoadMore: ref.read(listPProvider().notifier).fetchData,
-      itemsPerPage: 10,
       builder: (items, physics, reverse, shrinkWrap) {
         return ListView.separated(
           physics: physics,
