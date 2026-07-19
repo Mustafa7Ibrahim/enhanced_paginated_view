@@ -1,0 +1,16 @@
+name: Publish to pub.dev
+
+# pub.dev OIDC automated publishing is tag-based. This must match the
+# "Tag pattern" configured on pub.dev (v{{version}}), e.g. v2.0.4.
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+
+jobs:
+  publish:
+    permissions:
+      id-token: write # Required for authentication using OIDC
+    # Official reusable workflow — sets up both Dart and Flutter SDKs,
+    # runs `dart pub publish --dry-run`, then publishes via OIDC (no secrets).
+    uses: dart-lang/setup-dart/.github/workflows/publish.yml@v1

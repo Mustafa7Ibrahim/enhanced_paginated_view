@@ -207,7 +207,11 @@ packages:
       path: ".."
       relative: true
     source: path
+<<<<<<< HEAD
     version: "3.0.0"
+=======
+    version: "2.0.3"
+>>>>>>> main
   equatable:
     dependency: "direct main"
     description:

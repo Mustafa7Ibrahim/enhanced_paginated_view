@@ -1,3 +1,12 @@
 {
-  "cSpell.words": ["fialed", "Ibrahim", "microtask", "Mustafa", "Opps"]
+  "cSpell.words": [
+    "dedupe",
+    "fialed",
+    "Ibrahim",
+    "microtask",
+    "Mustafa",
+    "Opps"
+  ],
+  "dart.flutterSdkPath": "/Users/mustafa/.puro/envs/v41/flutter",
+  "dart.sdkPath": "/Users/mustafa/.puro/envs/v41/flutter/bin/cache/dart-sdk"
 }
