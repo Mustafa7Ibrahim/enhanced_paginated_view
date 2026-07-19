@@ -270,7 +270,14 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
   void _loadMore() {
     if (_paginationController.isLoadingMore) return;
     _paginationController.markLoadStarted();
-    widget.onLoadMore(_paginationController.page);
+    try {
+      widget.onLoadMore(_paginationController.page);
+    } catch (_) {
+      // A synchronous failure must release the in-flight lock, otherwise
+      // load-more would be permanently disabled. The error still propagates.
+      _paginationController.markLoadFailed();
+      rethrow;
+    }
   }
 
   bool _handleScrollNotification(ScrollNotification notification) {
@@ -325,6 +332,38 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
       return AlwaysScrollableScrollPhysics(parent: configured);
     }
     return configured;
+  }
+
+  /// Wraps a full-page empty state (loading/error) so pull-to-refresh keeps
+  /// working when there is no content.
+  ///
+  /// [RefreshIndicator] needs a scrollable descendant to detect overscroll,
+  /// but the empty loading/error widgets are not scrollable on their own. When
+  /// [EnhancedPaginatedView.onRefresh] is set, this places the child inside an
+  /// always-scrollable [SingleChildScrollView] sized to fill the viewport. The
+  /// child is given a bounded height (rather than the scroll view's unbounded
+  /// height) so full-page states that rely on [Expanded]/[Spacer] lay out
+  /// correctly. When no refresh handler is present, the child is returned
+  /// as-is.
+  ///
+  /// This assumes a vertical axis; for a horizontal refresh, supply a custom
+  /// [EnhancedPaginatedView.refreshBuilder].
+  Widget _wrapEmptyState(Widget child) {
+    if (widget.onRefresh == null) return child;
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        return SingleChildScrollView(
+          controller: _scrollController,
+          physics: _effectivePhysics,
+          child: SizedBox(
+            height: constraints.maxHeight.isFinite
+                ? constraints.maxHeight
+                : null,
+            child: child,
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -393,12 +432,16 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
     final bool isEmpty = widget.delegate.listOfData.isEmpty;
     Widget content;
     if (isEmpty && widget.delegate.status == EnhancedStatus.loading) {
-      content = LoadingWidget(
-        config: widget.config.loadingConfig,
-        type: EnhancedLoadingType.page,
+      content = _wrapEmptyState(
+        LoadingWidget(
+          config: widget.config.loadingConfig,
+          type: EnhancedLoadingType.page,
+        ),
       );
     } else if (isEmpty && widget.delegate.status == EnhancedStatus.error) {
-      content = ErrorPageWidget(config: widget.config.errorPageConfig);
+      content = _wrapEmptyState(
+        ErrorPageWidget(config: widget.config.errorPageConfig),
+      );
     } else {
       content = widget._buildContent(
         context: context,

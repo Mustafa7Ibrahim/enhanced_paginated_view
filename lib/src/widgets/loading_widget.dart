@@ -23,17 +23,6 @@ class LoadingWidget extends StatelessWidget {
   /// The loading type.
   final EnhancedLoadingType type;
 
-  /// Creates a `LoadingWidget` for a sliver-based view.
-  static Widget sliver({
-    Key? key,
-    required LoadingConfig config,
-    required EnhancedLoadingType type,
-  }) {
-    return SliverToBoxAdapter(
-      child: LoadingWidget(key: key, config: config, type: type),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     if (type == EnhancedLoadingType.loadMore) {

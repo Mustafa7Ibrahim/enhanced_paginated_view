@@ -26,13 +26,6 @@ class ErrorPageWidget extends StatelessWidget {
   /// The configuration for the error page.
   final ErrorPageConfig config;
 
-  /// Creates an `ErrorPageWidget` for a sliver-based view.
-  static Widget sliver({Key? key, required ErrorPageConfig config}) {
-    return SliverToBoxAdapter(
-      child: ErrorPageWidget(key: key, config: config),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return config.customView ?? SafeArea(child: _FailureWidget(config: config));

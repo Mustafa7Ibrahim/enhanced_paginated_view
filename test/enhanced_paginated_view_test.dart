@@ -705,4 +705,126 @@ void main() {
       },
     );
   });
+
+  group('CodeRabbit review fixes (regression)', () {
+    testWidgets(
+      '#5: a box widget header renders in the sliver view without throwing',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          wrapInApp(
+            PaginationHarness(
+              initialData: const [0, 1, 2],
+              initialStatus: EnhancedStatus.loaded,
+              onLoadMore: (_) {},
+              useSlivers: true,
+              config: const EnhancedConfig(
+                header: Text('my-header'),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        expect(find.text('my-header'), findsOneWidget);
+        expect(find.byType(SliverToBoxAdapter), findsWidgets);
+      },
+    );
+
+    testWidgets(
+      '#6: a reverse-direction sliver view scrolls in reverse',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          wrapInApp(
+            PaginationHarness(
+              initialData: List<int>.generate(20, (i) => i),
+              initialStatus: EnhancedStatus.loaded,
+              onLoadMore: (_) {},
+              useSlivers: true,
+              direction: EnhancedViewDirection.reverse,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final CustomScrollView scrollView =
+            tester.widget<CustomScrollView>(find.byType(CustomScrollView));
+        expect(scrollView.reverse, isTrue);
+      },
+    );
+
+    testWidgets(
+      '#2: a synchronous throw from onLoadMore releases the in-flight lock',
+      (WidgetTester tester) async {
+        final EnhancedPaginationController controller =
+            EnhancedPaginationController();
+        addTearDown(controller.dispose);
+
+        int calls = 0;
+
+        await tester.pumpWidget(
+          wrapInApp(
+            PaginationHarness(
+              initialData: List<int>.generate(20, (i) => i),
+              initialStatus: EnhancedStatus.loaded,
+              controller: controller,
+              onLoadMore: (_) {
+                calls++;
+                throw StateError('boom');
+              },
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.drag(
+          find.byType(SingleChildScrollView),
+          const Offset(0, -3000),
+        );
+        await tester.pumpAndSettle();
+
+        // The callback threw once and the exception propagated...
+        expect(calls, 1);
+        expect(tester.takeException(), isA<StateError>());
+        // ...but the lock was released rather than left stuck true.
+        expect(controller.isLoadingMore, isFalse);
+      },
+    );
+
+    testWidgets(
+      '#3: pull-to-refresh works on an empty (error) full-page state',
+      (WidgetTester tester) async {
+        int refreshCalls = 0;
+
+        await tester.pumpWidget(
+          wrapInApp(
+            PaginationHarness(
+              initialData: const [],
+              initialStatus: EnhancedStatus.error,
+              onLoadMore: (_) {},
+              onRefresh: () async {
+                refreshCalls++;
+              },
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // The empty error state must sit inside a scrollable so the
+        // RefreshIndicator can detect the overscroll.
+        expect(find.byType(SingleChildScrollView), findsOneWidget);
+
+        await tester.fling(
+          find.byType(SingleChildScrollView),
+          const Offset(0, 300),
+          1000,
+        );
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 1));
+        await tester.pumpAndSettle();
+
+        expect(refreshCalls, 1);
+      },
+    );
+  });
 }

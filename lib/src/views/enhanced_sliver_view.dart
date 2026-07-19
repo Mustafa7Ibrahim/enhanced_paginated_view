@@ -56,7 +56,9 @@ class EnhancedSliverView<T> extends StatelessWidget {
     final bool isReverse = direction == EnhancedViewDirection.reverse;
 
     final List<Widget> slivers = [
-      if (config.header != null) config.header!,
+      // [config.header] is a box widget, so it must be adapted into a sliver
+      // before being placed inside a [CustomScrollView].
+      if (config.header != null) SliverToBoxAdapter(child: config.header!),
       _buildListOrEmpty(context),
       LoadingErrorWidget.sliver(
         page: page,
@@ -68,6 +70,7 @@ class EnhancedSliverView<T> extends StatelessWidget {
 
     return CustomScrollView(
       controller: scrollController,
+      reverse: isReverse,
       physics: physics,
       scrollDirection: config.scrollDirection,
       slivers: isReverse ? slivers.reversed.toList() : slivers,
