@@ -1,0 +1,4 @@
+bug: '(?i)(bug|error|crash|broken|not working|exception|fail)'
+enhancement: '(?i)(feature|request|enhancement|support|add|proposal|suggest)'
+documentation: '(?i)(docs|documentation|readme|typo)'
+question: '(?i)(question|how to|how do i|help)'
