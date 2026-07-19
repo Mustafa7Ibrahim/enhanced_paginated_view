@@ -672,31 +672,29 @@ void main() {
               ),
               hasReachedMax: false,
               onLoadMore: calls.add,
-              builder:
-                  (
-                    List<int> items,
-                    ScrollPhysics physics,
-                    bool reverse,
-                    bool shrinkWrap,
-                  ) {
-                    return ListView.builder(
-                      physics: physics,
-                      reverse: reverse,
-                      shrinkWrap: shrinkWrap,
-                      itemCount: items.length,
-                      itemBuilder: (BuildContext context, int index) =>
-                          SizedBox(
-                            height: 100,
-                            child: ListView.builder(
-                              key: ValueKey<String>('inner-$index'),
-                              scrollDirection: Axis.horizontal,
-                              itemCount: 10,
-                              itemBuilder: (BuildContext context, int i) =>
-                                  const SizedBox(width: 200),
-                            ),
-                          ),
-                    );
-                  },
+              builder: (
+                List<int> items,
+                ScrollPhysics physics,
+                bool reverse,
+                bool shrinkWrap,
+              ) {
+                return ListView.builder(
+                  physics: physics,
+                  reverse: reverse,
+                  shrinkWrap: shrinkWrap,
+                  itemCount: items.length,
+                  itemBuilder: (BuildContext context, int index) => SizedBox(
+                    height: 100,
+                    child: ListView.builder(
+                      key: ValueKey<String>('inner-$index'),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: 10,
+                      itemBuilder: (BuildContext context, int i) =>
+                          const SizedBox(width: 200),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         );

@@ -356,9 +356,8 @@ class _EnhancedPaginatedViewState<T> extends State<EnhancedPaginatedView<T>> {
           controller: _scrollController,
           physics: _effectivePhysics,
           child: SizedBox(
-            height: constraints.maxHeight.isFinite
-                ? constraints.maxHeight
-                : null,
+            height:
+                constraints.maxHeight.isFinite ? constraints.maxHeight : null,
             child: child,
           ),
         );
