@@ -19,7 +19,6 @@ class GridRiverpod extends ConsumerWidget {
       onLoadMore: (page) {
         ref.read(listPProvider().notifier).fetchData(page);
       },
-      itemsPerPage: 10,
       builder: (items, physics, reverse, shrinkWrap) {
         return GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

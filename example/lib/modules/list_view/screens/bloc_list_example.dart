@@ -26,6 +26,8 @@ class BlocListExample extends StatelessWidget {
             delegate: EnhancedDelegate(
               listOfData: state.data,
               status: state.status,
+            ),
+            config: EnhancedConfig(
               // header: const HeaderWidget(),
               errorPageConfig: ErrorPageConfig(
                 onRetry: () => context
@@ -39,7 +41,6 @@ class BlocListExample extends StatelessWidget {
               ),
             ),
             direction: direction,
-            itemsPerPage: 10,
             hasReachedMax: state.hasReachedMax,
             onLoadMore: (page) {
               context

@@ -1,11 +1,13 @@
 name: enhanced_paginated_view
-description: the enhanced paginated view is one of a kind widget that support pagination
-version: 2.0.3
-homepage: https://github.com/Mustafa7Ibrahim/enhanced_paginated_view.git
+description: A highly customizable Flutter widget for paginated list, grid, and sliver views with pull-to-refresh, item deduplication, and load-more support.
+version: 3.0.0
+homepage: https://github.com/Mustafa7Ibrahim/enhanced_paginated_view
+repository: https://github.com/Mustafa7Ibrahim/enhanced_paginated_view
+issue_tracker: https://github.com/Mustafa7Ibrahim/enhanced_paginated_view/issues
 
 environment:
   sdk: ">=3.0.5 <4.0.0"
-  flutter: ">=1.17.0"
+  flutter: ">=3.10.0"
 
 dependencies:
   flutter:
@@ -14,7 +16,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.3
+  flutter_lints: ^5.0.0
 
 flutter:
   uses-material-design: true

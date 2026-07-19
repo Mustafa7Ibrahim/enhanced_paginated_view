@@ -4,19 +4,8 @@ import 'package:flutter/material.dart';
 ///
 /// Use this class to customize the error message, button text, retry function,
 /// and custom button widget when an error occurs while loading more data.
+@immutable
 class ErrorLoadMoreConfig {
-  /// The title of the error message.
-  final String? title;
-
-  /// The text to be displayed on the retry button.
-  final String? btnText;
-
-  /// The function to be called when the retry button is pressed.
-  final void Function(int page)? onRetry;
-
-  /// A custom button widget to be displayed instead of the default retry button.
-  final Widget? customButton;
-
   /// Creates an instance of [ErrorLoadMoreConfig].
   ///
   /// The [title] parameter is optional and can be used to set the title of the error message.
@@ -32,4 +21,44 @@ class ErrorLoadMoreConfig {
     this.onRetry,
     this.customButton,
   });
+
+  /// The title of the error message.
+  final String? title;
+
+  /// The text to be displayed on the retry button.
+  final String? btnText;
+
+  /// The function to be called when the retry button is pressed.
+  final void Function(int page)? onRetry;
+
+  /// A custom button widget to be displayed instead of the default retry button.
+  final Widget? customButton;
+
+  /// Creates a copy of this config with the given fields replaced.
+  ErrorLoadMoreConfig copyWith({
+    String? title,
+    String? btnText,
+    void Function(int page)? onRetry,
+    Widget? customButton,
+  }) {
+    return ErrorLoadMoreConfig(
+      title: title ?? this.title,
+      btnText: btnText ?? this.btnText,
+      onRetry: onRetry ?? this.onRetry,
+      customButton: customButton ?? this.customButton,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is ErrorLoadMoreConfig &&
+        other.title == title &&
+        other.btnText == btnText &&
+        other.onRetry == onRetry &&
+        other.customButton == customButton;
+  }
+
+  @override
+  int get hashCode => Object.hash(title, btnText, onRetry, customButton);
 }

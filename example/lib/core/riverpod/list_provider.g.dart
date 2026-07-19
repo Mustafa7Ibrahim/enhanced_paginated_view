@@ -6,7 +6,7 @@ part of 'list_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$listPHash() => r'47c6d1fa096e73584869ad1f4e884b8e94d43875';
+String _$listPHash() => r'1e8a84a7c8d6b490be5a8f02ed3f4348eb3f605b';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -154,6 +154,8 @@ class ListPProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin ListPRef on AutoDisposeNotifierProviderRef<PaginatedState> {
   /// The parameter `failPage` of this provider.
   int? get failPage;
@@ -168,4 +170,4 @@ class _ListPProviderElement
   int? get failPage => (origin as ListPProvider).failPage;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -1,78 +1,41 @@
-import 'package:enhanced_paginated_view/src/models/enhanced_view_type.dart';
 import 'package:enhanced_paginated_view/src/models/error_load_more_config.dart';
 import 'package:flutter/material.dart';
 
 /// A widget that displays an error message and a retry button when loading more data fails.
-///
-/// This widget can be used with both box and sliver view types.
 class ErrorLoadMoreWidget extends StatelessWidget {
-  const ErrorLoadMoreWidget._({
-    required this.config,
-    required this.type,
+  /// Creates an `ErrorLoadMoreWidget` for a box-based view.
+  ///
+  /// The [page] parameter specifies the current page number.
+  /// The [config] parameter specifies the configuration for the error widget.
+  const ErrorLoadMoreWidget({
+    super.key,
     required this.page,
+    this.config = const ErrorLoadMoreConfig(),
   });
-
-  /// Creates a `ErrorLoadMoreWidget` with a box view type.
-  ///
-  /// The [page] parameter specifies the current page number.
-  /// The [config] parameter specifies the configuration for the error widget.
-  factory ErrorLoadMoreWidget({
-    required int page,
-    ErrorLoadMoreConfig? config,
-  }) {
-    return ErrorLoadMoreWidget._(
-      config: config ?? const ErrorLoadMoreConfig(),
-      page: page,
-      type: EnhancedViewType.box,
-    );
-  }
-
-  /// Creates a `ErrorLoadMoreWidget` with a sliver view type.
-  ///
-  /// The [page] parameter specifies the current page number.
-  /// The [config] parameter specifies the configuration for the error widget.
-  factory ErrorLoadMoreWidget.sliver({
-    required int page,
-    ErrorLoadMoreConfig? config,
-  }) {
-    return ErrorLoadMoreWidget._(
-      page: page,
-      config: config ?? const ErrorLoadMoreConfig(),
-      type: EnhancedViewType.sliver,
-    );
-  }
 
   /// The configuration for the error widget.
   final ErrorLoadMoreConfig config;
 
-  /// The view type of the widget.
-  final EnhancedViewType type;
-
   /// The current page number.
   final int page;
 
+  /// Creates an `ErrorLoadMoreWidget` for a sliver-based view.
+  ///
+  /// The [page] parameter specifies the current page number.
+  /// The [config] parameter specifies the configuration for the error widget.
+  static Widget sliver({
+    Key? key,
+    required int page,
+    ErrorLoadMoreConfig config = const ErrorLoadMoreConfig(),
+  }) {
+    return SliverToBoxAdapter(
+      child: ErrorLoadMoreWidget(key: key, page: page, config: config),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return switch (type) {
-      EnhancedViewType.box => buildBox(context),
-      EnhancedViewType.sliver => buildSliver(context),
-    };
-  }
-
-  /// Builds the error widget with a box view type.
-  ///
-  /// The [context] parameter specifies the build context.
-  Widget buildBox(BuildContext context) {
     return SafeArea(child: _FailureWidget(config: config, page: page));
-  }
-
-  /// Builds the error widget with a sliver view type.
-  ///
-  /// The [context] parameter specifies the build context.
-  Widget buildSliver(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: _FailureWidget(config: config, page: page),
-    );
   }
 }
 

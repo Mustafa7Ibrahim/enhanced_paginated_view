@@ -1,3 +1,34 @@
+## [3.0.0]
+
+### Added  
+- **`EnhancedConfig`**: New class that carries all presentation/behavior configuration (`physics`, `header`, `scrollDirection`, `crossAxisAlignment`, `removeDuplicatedItems`, `emptyWidgetConfig`, `loadingConfig`, `errorLoadMoreConfig`, `errorPageConfig`), passed to `EnhancedPaginatedView` via a new `config` parameter (defaults to `const EnhancedConfig()`).  
+- **`EnhancedPaginationController`**: New optional `ChangeNotifier`-based controller exposing `page` and `isLoadingMore`, passed via a new `controller` parameter. If omitted, one is created and disposed internally.  
+- **`loadMoreThreshold`**: New parameter (default `200`) controlling how many pixels before the end of the scrollable a load-more request is triggered.  
+- **`removeDuplicationBy<K>`**: New extension method on `Iterable<T>` for deduplicating by a derived key (`K Function(T) keyOf`) without needing to override `==`.  
+- **Exported builder typedefs**: `EnhancedBoxBuilder`, `EnhancedSliverBuilder`, and `EnhancedRefreshBuilder` are now exported from the package barrel file.  
+
+### Changed  
+- **Load-more trigger**: Now based on proximity to the end of the scrollable (`extentAfter <= loadMoreThreshold`) instead of an at-edge trigger, so it no longer misfires near the top of the list.  
+- **Deduplication**: Deduplicated data is now computed once and memoized instead of being recomputed on every build.  
+- **Reverse pull-to-refresh**: Pull-to-refresh now works correctly in the `reverse` direction; previously the refresh gesture was silently dropped.  
+- **Full-page loading/error state**: Whether the page-level loading or error widget is shown is now keyed off an empty data list rather than `page == 1`, so consumer-triggered reloads on a non-empty list no longer incorrectly show the full-page state.  
+- **Lints**: Bumped `flutter_lints` to `^5.0.0`.  
+- **Flutter constraint**: Raised the minimum Flutter SDK to `>=3.10.0`.  
+
+### Fixed  
+- **Duplicate initial fetch**: The page counter no longer re-fetches page 1 when the consumer (rather than the widget) triggers the initial load.  
+- **Load-more firing at the top**: Load-more no longer incorrectly triggers while scrolled near the top of the list.  
+- **Reverse refresh dropped**: Fixed pull-to-refresh being silently ignored when `direction` is `EnhancedViewDirection.reverse`.  
+- **Loading state hack removed**: Removed a 250ms `Future.delayed` used to fake loading-state transitions, replaced with tracking driven by actual status transitions and completion.  
+- **Short pages now auto-load (#5)**: When the loaded items don't fill the viewport (e.g. a small `itemsPerPage`/short list on a tall screen), the widget now automatically requests the next page until the viewport is filled or `hasReachedMax` is reached.  
+- **Pull-to-refresh on short lists (#5)**: Pull-to-refresh now works even when the content is shorter than the viewport; the scrollable is made always-scrollable while `onRefresh` is set so the gesture is always available.  
+- **Nested scrollables**: Inner scrollables (e.g. a horizontal carousel inside a list item) no longer spuriously trigger the outer load-more.  
+
+### Breaking Changes  
+- **`EnhancedDelegate` is now data-only**: It only accepts `listOfData` and `status`. All presentation/behavior fields (`physics`, `header`, `scrollDirection`, `crossAxisAlignment`, `removeDuplicatedItems`, `emptyWidgetConfig`, `loadingConfig`, `errorLoadMoreConfig`, `errorPageConfig`) have moved to the new `EnhancedConfig`, passed via `config`.  
+- **`itemsPerPage` removed**: Page tracking is now handled internally (optionally exposed via `EnhancedPaginationController`); there is no replacement parameter.  
+- **Config moved to `EnhancedConfig`**: Any code constructing `EnhancedDelegate` with presentation options must be updated to pass an `EnhancedConfig` via the new `config` parameter instead. See the README's "Migrating from v2 to v3" section for details.  
+
 ## [2.0.3]
 
 ### Chore  

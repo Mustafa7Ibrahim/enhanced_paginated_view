@@ -3,25 +3,8 @@ import 'package:flutter/material.dart';
 /// Represents the configuration for an error page.
 ///
 /// An error page is displayed when there is a failure in loading data for the first page.
+@immutable
 class ErrorPageConfig {
-  /// The title of the failure message.
-  final String? title;
-
-  /// A description of the failure.
-  final String? description;
-
-  /// The text to display on the retry button.
-  final String? btnText;
-
-  /// A callback function to be called when the retry button is pressed.
-  final VoidCallback? onRetry;
-
-  /// A custom widget for the retry button.
-  final Widget? customButton;
-
-  /// A custom view for the error page
-  final Widget? customView;
-
   /// Creates a new instance of [ErrorPageConfig].
   ///
   /// The [title] parameter represents the title of the failure message.
@@ -43,4 +26,63 @@ class ErrorPageConfig {
     this.customButton,
     this.customView,
   });
+
+  /// The title of the failure message.
+  final String? title;
+
+  /// A description of the failure.
+  final String? description;
+
+  /// The text to display on the retry button.
+  final String? btnText;
+
+  /// A callback function to be called when the retry button is pressed.
+  final VoidCallback? onRetry;
+
+  /// A custom widget for the retry button.
+  final Widget? customButton;
+
+  /// A custom view for the error page
+  final Widget? customView;
+
+  /// Creates a copy of this config with the given fields replaced.
+  ErrorPageConfig copyWith({
+    String? title,
+    String? description,
+    String? btnText,
+    VoidCallback? onRetry,
+    Widget? customButton,
+    Widget? customView,
+  }) {
+    return ErrorPageConfig(
+      title: title ?? this.title,
+      description: description ?? this.description,
+      btnText: btnText ?? this.btnText,
+      onRetry: onRetry ?? this.onRetry,
+      customButton: customButton ?? this.customButton,
+      customView: customView ?? this.customView,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is ErrorPageConfig &&
+        other.title == title &&
+        other.description == description &&
+        other.btnText == btnText &&
+        other.onRetry == onRetry &&
+        other.customButton == customButton &&
+        other.customView == customView;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        title,
+        description,
+        btnText,
+        onRetry,
+        customButton,
+        customView,
+      );
 }

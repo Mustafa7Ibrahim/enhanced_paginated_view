@@ -29,7 +29,6 @@ class GridBloc extends StatelessWidget {
                 child: child,
               );
             },
-            itemsPerPage: 10,
             hasReachedMax: state.hasReachedMax,
             onLoadMore: (page) {
               context.read<PaginatedBloc>().add(FetchDataEvent(page: page));

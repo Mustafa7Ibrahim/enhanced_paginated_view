@@ -1,59 +1,33 @@
 import 'package:enhanced_paginated_view/src/models/empty_widget_config.dart';
-import 'package:enhanced_paginated_view/src/models/enhanced_view_type.dart';
 import 'package:flutter/material.dart';
 
 /// A widget that represents an empty state.
 ///
 /// This widget is typically used when there is no data to display.
-/// It renders an empty `SizedBox` widget.
+/// It renders [EmptyWidgetConfig.customView] if provided, otherwise a
+/// centered title.
 class EmptyWidget extends StatelessWidget {
-  /// The type of enhanced view.
-  final EnhancedViewType enhancedViewType;
+  /// Creates an `EmptyWidget` for a box-based view.
+  const EmptyWidget({super.key, required this.config});
 
-  /// the config for the empty widget
+  /// The config for the empty widget.
   final EmptyWidgetConfig config;
 
-  /// Creates an `EmptyWidget` with the specified [enhancedViewType].
-  const EmptyWidget._(this.enhancedViewType, this.config);
-
-  /// Creates an `EmptyWidget` with a box view type.
-  factory EmptyWidget({required EmptyWidgetConfig config}) {
-    return EmptyWidget._(EnhancedViewType.box, config);
-  }
-
-  /// Creates an `EmptyWidget` with a sliver view type.
-  factory EmptyWidget.sliver({required EmptyWidgetConfig config}) {
-    return EmptyWidget._(EnhancedViewType.sliver, config);
+  /// Creates an `EmptyWidget` for a sliver-based view.
+  static Widget sliver({Key? key, required EmptyWidgetConfig config}) {
+    return SliverToBoxAdapter(
+      child: EmptyWidget(key: key, config: config),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return _buildContent(context);
-  }
-
-  /// Builds the content based on the [enhancedViewType].
-  Widget _buildContent(BuildContext context) {
-    switch (enhancedViewType) {
-      case EnhancedViewType.box:
-        return _buildBox(context);
-      case EnhancedViewType.sliver:
-        return _buildSliver(context);
-    }
-  }
-
-  /// Builds the content with a box view type.
-  Widget _buildBox(BuildContext context) {
-    return config.customView ?? _EmptyWidget(config);
-  }
-
-  /// Builds the content with a sliver view type.
-  Widget _buildSliver(BuildContext context) {
-    return config.customView ?? SliverToBoxAdapter(child: _EmptyWidget(config));
+    return config.customView ?? _EmptyWidget(config: config);
   }
 }
 
 class _EmptyWidget extends StatelessWidget {
-  const _EmptyWidget(this.config);
+  const _EmptyWidget({required this.config});
 
   final EmptyWidgetConfig config;
 

@@ -1,10 +1,13 @@
-library enhanced_paginated_view;
+library;
 
 export 'package:enhanced_paginated_view/src/enhanced_paginated_view.dart';
 
+export 'package:enhanced_paginated_view/src/core/custom_type_def.dart';
 export 'package:enhanced_paginated_view/src/core/enhanced_deduplication.dart';
-export 'package:enhanced_paginated_view/src/models/enhanced_delegate.dart';
+export 'package:enhanced_paginated_view/src/core/enhanced_pagination_controller.dart';
 
+export 'package:enhanced_paginated_view/src/models/enhanced_config.dart';
+export 'package:enhanced_paginated_view/src/models/enhanced_delegate.dart';
 export 'package:enhanced_paginated_view/src/models/enhanced_status.dart';
 export 'package:enhanced_paginated_view/src/models/enhanced_view_direction.dart';
 

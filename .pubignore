@@ -1,0 +1,21 @@
+# NOTE: when a .pubignore exists, pub ignores .gitignore entirely, so this file
+# must also reproduce the .gitignore build/tooling exclusions.
+
+# Demo assets are served from GitHub raw URLs in the README — no need to ship them.
+assets/*.gif
+
+# Internal documentation not needed inside the published package.
+doc/
+
+# Build & tooling artifacts (mirrors .gitignore)
+build/
+.dart_tool/
+.packages
+pubspec.lock
+**/doc/api/
+
+# Editor / OS cruft
+.DS_Store
+*.iml
+.idea/
+*.log

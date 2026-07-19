@@ -83,11 +83,12 @@ class _VanillaListExampleState extends State<VanillaListExample> {
       delegate: EnhancedDelegate(
         listOfData: initList,
         status: status,
-        header: const HeaderWidget(),
+      ),
+      config: const EnhancedConfig(
+        header: HeaderWidget(),
       ),
       hasReachedMax: isMaxReached,
       onLoadMore: loadMore,
-      itemsPerPage: 10,
       builder: (items, physics, reverse, shrinkWrap) {
         return ListView.separated(
           physics: physics,
