@@ -78,41 +78,51 @@ void main() {
       controller.markLoadStarted();
       controller.markLoadFailed();
 
-      expect(controller.page, 1, reason: 'a failed load must not advance the page');
+      expect(
+        controller.page,
+        1,
+        reason: 'a failed load must not advance the page',
+      );
       expect(controller.isLoadingMore, isFalse);
 
       controller.dispose();
     });
 
-    test('markLoadFailed after a retry still allows the same page to be requested', () {
-      final controller = EnhancedPaginationController();
+    test(
+      'markLoadFailed after a retry still allows the same page to be requested',
+      () {
+        final controller = EnhancedPaginationController();
 
-      controller.markLoadStarted();
-      controller.markLoadFailed();
-      // Retry the same page.
-      controller.markLoadStarted();
-      controller.markDataReceived();
+        controller.markLoadStarted();
+        controller.markLoadFailed();
+        // Retry the same page.
+        controller.markLoadStarted();
+        controller.markDataReceived();
 
-      expect(controller.page, 2);
+        expect(controller.page, 2);
 
-      controller.dispose();
-    });
+        controller.dispose();
+      },
+    );
 
-    test('reset returns page to the default initialPage and clears the lock', () {
-      final controller = EnhancedPaginationController();
+    test(
+      'reset returns page to the default initialPage and clears the lock',
+      () {
+        final controller = EnhancedPaginationController();
 
-      controller
-        ..markLoadStarted()
-        ..markDataReceived() // page -> 2
-        ..markLoadStarted(); // lock engaged again
+        controller
+          ..markLoadStarted()
+          ..markDataReceived() // page -> 2
+          ..markLoadStarted(); // lock engaged again
 
-      controller.reset();
+        controller.reset();
 
-      expect(controller.page, 1);
-      expect(controller.isLoadingMore, isFalse);
+        expect(controller.page, 1);
+        expect(controller.isLoadingMore, isFalse);
 
-      controller.dispose();
-    });
+        controller.dispose();
+      },
+    );
 
     test('reset notifies listeners', () {
       final controller = EnhancedPaginationController();
@@ -136,7 +146,11 @@ void main() {
       expect(controller.page, 3);
 
       controller.reset();
-      expect(controller.page, 2, reason: 'reset should return to the custom initialPage');
+      expect(
+        controller.page,
+        2,
+        reason: 'reset should return to the custom initialPage',
+      );
 
       controller.dispose();
     });

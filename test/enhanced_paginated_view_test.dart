@@ -141,50 +141,50 @@ void main() {
       expect(find.text('item-3'), findsOneWidget);
     });
 
-    testWidgets(
-      'keeps duplicate items when removeDuplicatedItems is false',
-      (WidgetTester tester) async {
-        await tester.pumpWidget(
-          wrapInApp(
-            PaginationHarness(
-              initialData: const [1, 1, 2],
-              initialStatus: EnhancedStatus.loaded,
-              onLoadMore: (_) {},
-              config: const EnhancedConfig(removeDuplicatedItems: false),
-            ),
-          ),
-        );
-
-        expect(find.textContaining('item-').evaluate().length, 3);
-      },
-    );
-  });
-
-  group('Load-more scroll trigger (box)', () {
-    testWidgets('scrolling to the end triggers onLoadMore with the current page', (
+    testWidgets('keeps duplicate items when removeDuplicatedItems is false', (
       WidgetTester tester,
     ) async {
-      final List<int> calls = [];
-
       await tester.pumpWidget(
         wrapInApp(
           PaginationHarness(
-            initialData: List<int>.generate(20, (i) => i),
+            initialData: const [1, 1, 2],
             initialStatus: EnhancedStatus.loaded,
-            onLoadMore: calls.add,
+            onLoadMore: (_) {},
+            config: const EnhancedConfig(removeDuplicatedItems: false),
           ),
         ),
       );
-      await tester.pumpAndSettle();
 
-      await tester.drag(
-        find.byType(SingleChildScrollView),
-        const Offset(0, -3000),
-      );
-      await tester.pumpAndSettle();
-
-      expect(calls, [1]);
+      expect(find.textContaining('item-').evaluate().length, 3);
     });
+  });
+
+  group('Load-more scroll trigger (box)', () {
+    testWidgets(
+      'scrolling to the end triggers onLoadMore with the current page',
+      (WidgetTester tester) async {
+        final List<int> calls = [];
+
+        await tester.pumpWidget(
+          wrapInApp(
+            PaginationHarness(
+              initialData: List<int>.generate(20, (i) => i),
+              initialStatus: EnhancedStatus.loaded,
+              onLoadMore: calls.add,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.drag(
+          find.byType(SingleChildScrollView),
+          const Offset(0, -3000),
+        );
+        await tester.pumpAndSettle();
+
+        expect(calls, [1]);
+      },
+    );
 
     testWidgets(
       'scrolling only slightly from the top of a tall list does NOT trigger onLoadMore',
@@ -250,31 +250,32 @@ void main() {
       },
     );
 
-    testWidgets('hasReachedMax suppresses load-more even at the end of the list', (
-      WidgetTester tester,
-    ) async {
-      final List<int> calls = [];
+    testWidgets(
+      'hasReachedMax suppresses load-more even at the end of the list',
+      (WidgetTester tester) async {
+        final List<int> calls = [];
 
-      await tester.pumpWidget(
-        wrapInApp(
-          PaginationHarness(
-            initialData: List<int>.generate(20, (i) => i),
-            initialStatus: EnhancedStatus.loaded,
-            initialHasReachedMax: true,
-            onLoadMore: calls.add,
+        await tester.pumpWidget(
+          wrapInApp(
+            PaginationHarness(
+              initialData: List<int>.generate(20, (i) => i),
+              initialStatus: EnhancedStatus.loaded,
+              initialHasReachedMax: true,
+              onLoadMore: calls.add,
+            ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      await tester.drag(
-        find.byType(SingleChildScrollView),
-        const Offset(0, -3000),
-      );
-      await tester.pumpAndSettle();
+        await tester.drag(
+          find.byType(SingleChildScrollView),
+          const Offset(0, -3000),
+        );
+        await tester.pumpAndSettle();
 
-      expect(calls, isEmpty);
-    });
+        expect(calls, isEmpty);
+      },
+    );
 
     testWidgets(
       'regression: page advances after a consumer-driven initial load, '
@@ -366,31 +367,32 @@ void main() {
   });
 
   group('Load-more scroll trigger (slivers)', () {
-    testWidgets('scrolling to the end triggers onLoadMore with the current page', (
-      WidgetTester tester,
-    ) async {
-      final List<int> calls = [];
+    testWidgets(
+      'scrolling to the end triggers onLoadMore with the current page',
+      (WidgetTester tester) async {
+        final List<int> calls = [];
 
-      await tester.pumpWidget(
-        wrapInApp(
-          PaginationHarness(
-            initialData: List<int>.generate(20, (i) => i),
-            initialStatus: EnhancedStatus.loaded,
-            onLoadMore: calls.add,
-            useSlivers: true,
+        await tester.pumpWidget(
+          wrapInApp(
+            PaginationHarness(
+              initialData: List<int>.generate(20, (i) => i),
+              initialStatus: EnhancedStatus.loaded,
+              onLoadMore: calls.add,
+              useSlivers: true,
+            ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      await tester.drag(
-        find.byType(CustomScrollView),
-        const Offset(0, -3000),
-      );
-      await tester.pumpAndSettle();
+        await tester.drag(
+          find.byType(CustomScrollView),
+          const Offset(0, -3000),
+        );
+        await tester.pumpAndSettle();
 
-      expect(calls, [1]);
-    });
+        expect(calls, [1]);
+      },
+    );
 
     testWidgets('renders items and a footer error widget', (
       WidgetTester tester,
@@ -403,7 +405,9 @@ void main() {
             onLoadMore: (_) {},
             useSlivers: true,
             config: const EnhancedConfig(
-              errorLoadMoreConfig: ErrorLoadMoreConfig(title: 'Sliver Footer Error'),
+              errorLoadMoreConfig: ErrorLoadMoreConfig(
+                title: 'Sliver Footer Error',
+              ),
             ),
           ),
         ),
@@ -469,35 +473,39 @@ void main() {
       expect(find.byType(RefreshIndicator), findsNothing);
     });
 
-    testWidgets('uses a provided refreshBuilder instead of the default RefreshIndicator', (
-      WidgetTester tester,
-    ) async {
-      int refreshBuilderCalls = 0;
+    testWidgets(
+      'uses a provided refreshBuilder instead of the default RefreshIndicator',
+      (WidgetTester tester) async {
+        int refreshBuilderCalls = 0;
 
-      await tester.pumpWidget(
-        wrapInApp(
-          PaginationHarness(
-            initialData: const [0, 1, 2],
-            initialStatus: EnhancedStatus.loaded,
-            onLoadMore: (_) {},
-            onRefresh: () async {},
-            refreshBuilder: (context, onRefresh, child) {
-              refreshBuilderCalls++;
-              return Column(
-                children: [
-                  const Text('custom-refresh', key: Key('custom-refresh-marker')),
-                  Expanded(child: child),
-                ],
-              );
-            },
+        await tester.pumpWidget(
+          wrapInApp(
+            PaginationHarness(
+              initialData: const [0, 1, 2],
+              initialStatus: EnhancedStatus.loaded,
+              onLoadMore: (_) {},
+              onRefresh: () async {},
+              refreshBuilder: (context, onRefresh, child) {
+                refreshBuilderCalls++;
+                return Column(
+                  children: [
+                    const Text(
+                      'custom-refresh',
+                      key: Key('custom-refresh-marker'),
+                    ),
+                    Expanded(child: child),
+                  ],
+                );
+              },
+            ),
           ),
-        ),
-      );
+        );
 
-      expect(find.byType(RefreshIndicator), findsNothing);
-      expect(find.byKey(const Key('custom-refresh-marker')), findsOneWidget);
-      expect(refreshBuilderCalls, greaterThan(0));
-    });
+        expect(find.byType(RefreshIndicator), findsNothing);
+        expect(find.byKey(const Key('custom-refresh-marker')), findsOneWidget);
+        expect(refreshBuilderCalls, greaterThan(0));
+      },
+    );
 
     testWidgets(
       'pulling to refresh invokes onRefresh and resets the pagination controller',
@@ -664,29 +672,31 @@ void main() {
               ),
               hasReachedMax: false,
               onLoadMore: calls.add,
-              builder: (
-                List<int> items,
-                ScrollPhysics physics,
-                bool reverse,
-                bool shrinkWrap,
-              ) {
-                return ListView.builder(
-                  physics: physics,
-                  reverse: reverse,
-                  shrinkWrap: shrinkWrap,
-                  itemCount: items.length,
-                  itemBuilder: (BuildContext context, int index) => SizedBox(
-                    height: 100,
-                    child: ListView.builder(
-                      key: ValueKey<String>('inner-$index'),
-                      scrollDirection: Axis.horizontal,
-                      itemCount: 10,
-                      itemBuilder: (BuildContext context, int i) =>
-                          const SizedBox(width: 200),
-                    ),
-                  ),
-                );
-              },
+              builder:
+                  (
+                    List<int> items,
+                    ScrollPhysics physics,
+                    bool reverse,
+                    bool shrinkWrap,
+                  ) {
+                    return ListView.builder(
+                      physics: physics,
+                      reverse: reverse,
+                      shrinkWrap: shrinkWrap,
+                      itemCount: items.length,
+                      itemBuilder: (BuildContext context, int index) =>
+                          SizedBox(
+                            height: 100,
+                            child: ListView.builder(
+                              key: ValueKey<String>('inner-$index'),
+                              scrollDirection: Axis.horizontal,
+                              itemCount: 10,
+                              itemBuilder: (BuildContext context, int i) =>
+                                  const SizedBox(width: 200),
+                            ),
+                          ),
+                    );
+                  },
             ),
           ),
         );
@@ -717,9 +727,7 @@ void main() {
               initialStatus: EnhancedStatus.loaded,
               onLoadMore: (_) {},
               useSlivers: true,
-              config: const EnhancedConfig(
-                header: Text('my-header'),
-              ),
+              config: const EnhancedConfig(header: Text('my-header')),
             ),
           ),
         );
@@ -731,27 +739,27 @@ void main() {
       },
     );
 
-    testWidgets(
-      '#6: a reverse-direction sliver view scrolls in reverse',
-      (WidgetTester tester) async {
-        await tester.pumpWidget(
-          wrapInApp(
-            PaginationHarness(
-              initialData: List<int>.generate(20, (i) => i),
-              initialStatus: EnhancedStatus.loaded,
-              onLoadMore: (_) {},
-              useSlivers: true,
-              direction: EnhancedViewDirection.reverse,
-            ),
+    testWidgets('#6: a reverse-direction sliver view scrolls in reverse', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        wrapInApp(
+          PaginationHarness(
+            initialData: List<int>.generate(20, (i) => i),
+            initialStatus: EnhancedStatus.loaded,
+            onLoadMore: (_) {},
+            useSlivers: true,
+            direction: EnhancedViewDirection.reverse,
           ),
-        );
-        await tester.pumpAndSettle();
+        ),
+      );
+      await tester.pumpAndSettle();
 
-        final CustomScrollView scrollView =
-            tester.widget<CustomScrollView>(find.byType(CustomScrollView));
-        expect(scrollView.reverse, isTrue);
-      },
-    );
+      final CustomScrollView scrollView = tester.widget<CustomScrollView>(
+        find.byType(CustomScrollView),
+      );
+      expect(scrollView.reverse, isTrue);
+    });
 
     testWidgets(
       '#2: a synchronous throw from onLoadMore releases the in-flight lock',
